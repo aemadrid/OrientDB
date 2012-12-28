@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Fetching Strategies |  OrientDB</title>
+  <title>Fetching Strategies</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Fetching-Strategies">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Fetching Strategies
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Starting from release 0.9.20, OrientDB supports fetching strategies by using the <strong>Fetch Plans</strong>. Fetch Plans are used to customize how OrientDB must load linked records.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">Invoice</span>
+   <span class="mi">3</span><span class="o">:</span><span class="mi">100</span> 
+     <span class="o">|</span>
+     <span class="o">|</span> <span class="n">customer</span>
+     <span class="o">+---------&gt;</span> <span class="n">Customer</span>
+     <span class="o">|</span>            <span class="mi">5</span><span class="o">:</span><span class="mi">233</span>
+     <span class="o">|</span> <span class="n">address</span>            <span class="n">city</span>            <span class="n">country</span>
+     <span class="o">+---------&gt;</span> <span class="n">Address</span><span class="o">---------&gt;</span> <span class="n">City</span> <span class="o">---------&gt;</span> <span class="n">Country</span>
+     <span class="o">|</span>            <span class="mi">10</span><span class="o">:</span><span class="mi">1</span>             <span class="mi">11</span><span class="o">:</span><span class="mi">2</span>             <span class="mi">12</span><span class="o">:</span><span class="mi">3</span>
+     <span class="o">|</span>
+     <span class="o">|</span> <span class="n">orders</span>
+     <span class="o">+---------&gt;*</span> <span class="o">[</span><span class="n">OrderItem</span> <span class="n">OrderItem</span> <span class="n">OrderItem</span><span class="o">]</span>
+                  <span class="o">[</span>  <span class="mi">8</span><span class="o">:</span><span class="mi">12</span>      <span class="mi">8</span><span class="o">:</span><span class="mi">19</span>      <span class="mi">8</span><span class="o">:</span><span class="mi">23</span>   <span class="o">]</span>
+</pre></div>
+
+<p>By default OrientDB loads all the linked records in lazy way. So in this example the linked "customer", "city" and "orders" fields are not loaded until are traversed. If you need the entire tree it could be slow the lazy loading of every single linked records. In this case it would need 7 different loads. If the database is open on a remote server they are 7 different network calls.</p>
+
+<p>This is the reason why OrientDB supports custom fetching strategies using the <strong>Fetch Plans</strong>.  The aim of fetch plans is to pre-load connected records in one shot.</p>
+
+<h3>Remote connection</h3>
+
+<p>When a client executes a query (or load directly one single record) setting a fetch plan with level different to 0, then the server traverses all the records of the returning result set and sends them to the client in the same call.</p>
+
+<p>The client avoid to connect directly them to the record by using always the lazy collections (i.e.: OLazyRecordList). Instead, loads all the connected records into the local client. In this ways the collections remain lazy but when you're accessing to the content, the record is early loaded from the local cache avoiding other connections.</p>
+
+<h3>Format</h3>
+
+<p>The fetch plan comes in form of a String and can be used at run-time on:</p>
+
+<ul>
+<li>query</li>
+<li>record loading</li>
+</ul><p>The syntax is:</p>
+
+<div class="highlight"><pre><span class="o">&lt;</span><span class="n">fieldPath</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="n">depth</span><span class="o">-</span><span class="n">level</span><span class="o">&gt;*</span>
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>fieldPath</strong>, is the field name path, expected in dot dotation, starting from the root record or the wildcard <code>*</code> for "any" field</li>
+<li>
+<strong>depth-level</strong>, is the deep level requested. 0 = Load only current record, 1-N = load only the first-Nth connected record. -1 = unlimited</li>
+</ul><p>To express multiple rules separate them by spaces.</p>
+
+<p>Examples with the record tree above:</p>
+
+<ul>
+<li>
+<code>"**:-1"</code>: fetches the entire tree recursively</li>
+<li>
+<code>"**:-1 orders:0"</code>: fetches all the records recursevly but the "orders" field in root class. Note that in "orders" field will be loaded only its direct content (only records 8:12,8:19,8:23, none of other records inside them will be loaded).</li>
+<li>
+<code>"*:0 address.city.country:0"</code>: fetches only not-document fields in the root class and address.city.country field  (records 10:1,11:2,12:3).</li>
+</ul><h3>Circular dependencies</h3>
+
+<p>OrientDB handles circular dependencies avoid any loop while fetches linked records.</p>
+
+<h3>Example using the Java APIs</h3>
+
+<h4>Execute a query with a custom fetch plan</h4>
+
+<div class="highlight"><pre>  List<span class="nt">&lt;ODocument&gt;</span> resultset = database.query(new OSQLSynchQuery<span class="nt">&lt;ODocument&gt;</span>("select * from Profile").setFetchPlan("*:-1"));
+</pre></div>
+
+<h4>Browse objects using a custom fetch plan</h4>
+
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">Account</span> <span class="n">a</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="n">Account</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">setFetchPlan</span><span class="o">(</span><span class="s">"*:0 addresses:-1"</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="n">a</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">);</span>
+  <span class="o">}</span>
+</pre></div>
+<strong>Important:</strong> fetching Object will mean their presence inside your domain entities. So if you load an object using fetchplan <strong>:0 all LINK</strong> type references won't be loaded.
+
+<h3>Older versions</h3>
+
+<h4>v1.0rc7-</h4>
+
+<p><strong>Format</strong></p>
+
+<p>The syntax is:</p>
+
+<div class="highlight"><pre><span class="o">&lt;</span><span class="p">[</span><span class="o">&lt;</span><span class="n">class</span><span class="o">&gt;</span><span class="p">.]</span><span class="n">field</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="n">depth</span><span class="o">-</span><span class="n">level</span><span class="o">&gt;*</span>
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>class</strong>, optional, is the class that owns the <code>field</code>. If not specified, then all the fields called as <code>field</code> of any class traversed will be subject to the rule. <strong>class</strong> follows the object oriented inheritance, so if your class extends other classes (or implements interfaces) the rules are applyied recursively traversing the object inheritance</li>
+<li>
+<strong>field</strong>, is the field name or the wildcard <code>*</code> for "any" field</li>
+<li>
+<strong>depth-level</strong>, is the deep level requested. 0 = no load (therefore lazy-loading), 1-N = load only the first connected record. -1 = unlimited</li>
+</ul><p>To express multiple rules separate them by spaces.</p>
+
+<p>Examples with the record tree above:</p>
+
+<ul>
+<li>
+<code>"**:-1"</code>: fetches the entire tree recursively</li>
+<li>
+<code>"**:-1 orders:0"</code>: fetches all the records but the "orders". Note that "orders" has no the prefix of the class, so any field named "orders" will be not loaded</li>
+<li>
+<code>"*:-1 City.country:0"</code>: fetches all the records but the country field of City class</li>
+</ul>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

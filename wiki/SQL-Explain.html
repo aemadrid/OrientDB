@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>SQL Explain |  OrientDB</title>
+  <title>SQL Explain</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_SQL-Explain">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        SQL Explain
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/SQL.html" class="nr1">Sql</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Profiles any command and returns back result of execution. This is useful to know why a query is slow. Use EXPLAIN as keyword before the command you want to profile.</p>
+
+<h3>Syntax =</h3>
+
+<div class="highlight"><pre><span class="n">EXPLAIN</span> <span class="o">&lt;</span><span class="n">command</span><span class="o">&gt;</span>
+</pre></div>
+
+<ul>
+<li>
+<strong>command</strong> is the command you want to profile.</li>
+</ul><p>Returns a document containing all the profiled metrics:</p>
+
+<table><tbody>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>elapsed</td>
+<td>Time elapsed in seconds to execute the command. The precision is nanosecond</td>
+</tr>
+<tr>
+<td>resultType</td>
+<td>The result type. Can be 'collection', 'document' or 'number'</td>
+</tr>
+<tr>
+<td>resultSize</td>
+<td>The number of record retrieved in case the resultType is a 'collection'</td>
+</tr>
+<tr>
+<td>recordReads</td>
+<td>The number of records read from disk</td>
+</tr>
+<tr>
+<td>documentReads</td>
+<td>The number of documents read from disk. It could be different by recordReads if other kind of records are present in the target of the command. For example if you put in the same cluster documents and recordbytes you could skip many records. Much better to store different records in separate clusters in case of scan</td>
+</tr>
+<tr>
+<td>documentAnalyzedCompatibleClass</td>
+<td>The number of documents analyzed of the requested class of the query. It could be different by documentReads if records of different classes are present in the target of the command. For example if you put in the same cluster documents of class "Account" and "Invoice" you could skip many records of type "Invoice" if your're looking for Account instances. Much better to store records of different classes in separate clusters in case of scan</td>
+</tr>
+<tr>
+<td>involvedIndexes</td>
+<td>The indexes involved in the command</td>
+</tr>
+<tr>
+<td>indexReads</td>
+<td>The number of records read from the index</td>
+</tr>
+</tbody></table><h3>Examples</h3>
+
+<h4>Non indexed query</h4>
+
+<div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">explain</span> <span class="n">select</span> <span class="n">from</span> <span class="n">account</span>
+  
+  <span class="n">Profiled</span> <span class="n">command</span> 
+  <span class="err">'</span><span class="o">{</span><span class="nl">documentReads:</span><span class="mi">1126</span><span class="o">,</span><span class="nl">documentReadsCompatibleClass:</span><span class="mi">1126</span><span class="o">,</span><span class="nl">recordReads:</span><span class="mi">1126</span><span class="o">,</span><span class="nl">elapsed:</span><span class="mi">209</span><span class="o">,</span><span class="nl">resultType:</span><span class="n">collection</span><span class="o">,</span><span class="nl">resultSize:</span><span class="mi">1126</span><span class="o">}</span><span class="err">'</span> <span class="n">in</span> <span class="mi">0</span><span class="o">,</span><span class="mi">212000</span> <span class="n">sec</span><span class="o">(</span><span class="n">s</span><span class="o">).</span>
+</pre></div>
+
+<h4>Indexed query</h4>
+
+<div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">explain</span> <span class="n">select</span> <span class="n">from</span> <span class="n">profile</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Luca</span><span class="err">'</span>
+  
+  <span class="n">Profiled</span> <span class="n">command</span> <span class="err">'</span><span class="o">{</span><span class="nl">involvedIndexes:</span><span class="o">[</span><span class="mi">1</span><span class="o">],</span><span class="nl">indexReads:</span><span class="mi">1</span><span class="o">,</span><span class="nl">documentAnalyzedCompatibleClass:</span><span class="mi">1</span><span class="o">,</span><span class="nl">elapsed:</span><span class="mi">1</span><span class="o">,</span><span class="nl">resultType:</span><span class="n">collection</span><span class="o">,</span><span class="nl">resultSize:</span><span class="mi">1</span><span class="o">}</span><span class="err">'</span> <span class="n">in</span> <span class="mi">0</span><span class="o">,</span><span class="mi">002000</span> <span class="n">sec</span><span class="o">(</span><span class="n">s</span><span class="o">).</span>
+</pre></div>
+
+<p>To know more about other SQL commands look at <a class="internal present" href="/wiki/SQL.html">SQL commands</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

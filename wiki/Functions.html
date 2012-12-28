@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Functions |  OrientDB</title>
+  <title>Functions</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Functions">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Functions
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Since 1.2.0 OrientDB supports <strong>Functions</strong>. A <strong>Function</strong> is an executable unit of code that can takes parameters and returns a result. Using the Functions you can do <a href="http://en.wikipedia.org/wiki/Functional_programming">Functional programming</a> where logic and data are all together in a central place. Functions are similar to the <a href="http://en.wikipedia.org/wiki/Stored_procedure">Stored Procedures</a> of RDBMS.</p>
+
+<p>These the features of OrientDB Functions:</p>
+
+<ul>
+<li>are persistent</li>
+<li>can be written in Javascript, but Ruby, Scala, Java and other languages are coming</li>
+<li>can be executed via <a href="#Usage_via_Java_API">Java</a>, <a href="#Usage_via_HTTP_REST">REST</a> and <a class="internal absent" href="/wiki/Studio.html">Studio</a>
+</li>
+<li>can call each other</li>
+<li>supports recursion</li>
+<li>have automatic mapping of parameters by position and name</li>
+<li>plugins can inject new objects to being used by functions</li>
+</ul><h3>Create your first function</h3>
+
+<p>To start using Functions the simplest way is using the <a class="internal absent" href="/wiki/Studio.html">Studio</a>. Open the database and go to the "Functions" panel. Then write as name "sum", add 2 parameters named "a" and "b" and now write the following code in the text area:
+</p><div class="highlight"><pre>  <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">;</span>
+</pre></div>
+
+<p>Then click on the "Save" button. Well, your function has been saved and will appear on the left between the available functions. Now let's go to test it. On the bottom you will find your brand new function with 2 empty boxes. That's the place where to insert run-time parameter. Write 3 and 5 as parameters and click "Execute" to see the result. "8.0" will appear in the output box below.</p>
+
+<p><img src="http://www.orientdb.org/images/orientdb-studio-function-sum.png"></p>
+
+<h3>Where my functions are saved?</h3>
+
+<p>Functions are saved in the database using the <strong>OFunction</strong> class and the following properties:</p>
+
+<ul>
+<li>
+<strong>name</strong>, as the name of the function</li>
+<li>
+<strong>code</strong>, as the code to execute</li>
+<li>
+<strong>parameters</strong>, as an optional EMBEDDEDLIST of String containing the parameter names if any</li>
+<li>
+<strong>idempotent</strong>, tells if the function is idempotent, namely if it changes the database. Read-only functions are idempotent. This is needed to avoid calling non-idempotent functions using the HTTP GET method</li>
+</ul><h4>Concurrent editing</h4>
+
+<p>Since OrientDB uses 1 record per function, the MVCC mechanism is used against concurrent record updates. This means that concurrent developers can work on functions all together and in case anyone update the function you're saving an error is thrown.</p>
+
+<h3>Usage</h3>
+
+<h4>Usage via Java API</h4>
+
+<p>Using OrientDB's functions from Java is straightforward. First get the reference to the Function Manager, get the right function and execute it passing the parameters if any. In this example parameters are passed by position:
+</p><div class="highlight"><pre>  <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="s">"local:/tmp/db"</span><span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  <span class="n">OFunction</span> <span class="n">sum</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getFunctionLibrary</span><span class="o">().</span><span class="na">getFunction</span><span class="o">(</span><span class="s">"sum"</span><span class="o">);</span>
+  <span class="n">Number</span> <span class="n">result</span> <span class="o">=</span> <span class="n">sum</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+</pre></div>
+
+<p>You can execute functions passing parameters by name:
+</p><div class="highlight"><pre>  Map<span class="nt">&lt;String</span><span class="err">,Object</span><span class="nt">&gt;</span> params = new HashMap<span class="nt">&lt;String</span><span class="err">,Object</span><span class="nt">&gt;</span>();
+  params.put("a", 3);
+  params.put("b", 5);
+  Number result = sum.execute(params);
+</pre></div>
+
+<h4>Usage via HTTP REST</h4>
+
+<p>Each function is exposed as a REST service allowing the receiving of parameters. parameters are passed by position.</p>
+
+<p>Below how to execute the "sum" function created before:
+</p><div class="highlight"><pre>  <span class="nl">http:</span><span class="c1">//localhost:2480/function/demo/sum/3/5</span>
+</pre></div>
+
+<p>This will return a HTTP 202 OK with text:
+</p><div class="highlight"><pre>  <span class="mf">8.0</span>
+</pre></div>
+
+<p>You can call with HTTP GET method only functions declared as "idempotent". Use HTTP POST to call any functions.</p>
+
+<p>For more information look at <a href="OrientDB_REST#Function">HTTP REST protocol</a>. To know how to write server-side function for web applications look at <a href="#Server-Side_functions">Server-Side functions</a>.</p>
+
+<h3>Access to the databases from Functions</h3>
+
+<p>OrientDB always binds special variable to use OrientDB services from inside the functions. The most important are:</p>
+
+<ul>
+<li>
+<strong>db</strong>, that is the current document database instance</li>
+<li>
+<strong>gdb</strong>, that is the current graph database instance</li>
+</ul><p>You can call methods against those objects to interact with the database.</p>
+
+<h4>Execute a query</h4>
+
+<div class="highlight"><pre>  <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="s">"select name from ouser"</span><span class="o">);</span>
+</pre></div>
+
+<h4>Execute a query with external parameters</h4>
+
+<p>Create the new function with name "getyUserRoles" with the parameter "user". Then write this code:
+</p><div class="highlight"><pre>  <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="s">"select roles from ouser where name = ?"</span><span class="o">,</span> <span class="n">name</span> <span class="o">);</span>
+</pre></div>
+
+<p>The name parameter is bound as variable in Javascript! You can use to build your query.</p>
+
+<h3>Write your own repository classes</h3>
+
+<p>Functions are the perfect place where to write the logic your application access to the database. You could adopt a <a href="http://en.wikipedia.org/wiki/Domain-driven_design">DDD</a> approach letting to the function to work as <a href="http://en.wikipedia.org/wiki/Domain-driven_design#Building_blocks_of_DDD">Repositories</a> or <a href="http://en.wikipedia.org/wiki/Data_access_object">DAO</a>.</p>
+
+<p>This mechanism it's very powerful allowing to avoid re-deploying an application if database/query change. Furthermore each function is published and reachable via HTTP REST protocol allowing the automatic creation of a RESTful service.</p>
+
+<h4>Example</h4>
+
+<p>Below an example of functions to build a repository for OUser records.</p>
+
+<p><strong>function user_getAll(){</strong>
+</p><div class="highlight"><pre>  <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="s">"select from ouser"</span> <span class="o">);</span>
+</pre></div>
+<strong>}</strong>
+
+<p><strong>function user_getByName( name ){</strong>
+</p><div class="highlight"><pre>  <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="s">"select from ouser where name = ?"</span><span class="o">,</span> <span class="n">name</span> <span class="o">);</span>
+</pre></div>
+<strong>}</strong>
+
+<p><strong>function user_getAdmin(){</strong>
+</p><div class="highlight"><pre>  <span class="k">return</span> <span class="nf">user_getByName</span><span class="o">(</span><span class="s">"admin"</span><span class="o">);</span>
+</pre></div>
+<strong>}</strong>
+
+<p><strong>function user_create( name, role ){</strong>
+</p><div class="highlight"><pre>  <span class="n">var</span> <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="s">"select from ORole where name = ?"</span><span class="o">,</span> <span class="n">roleName</span><span class="o">);</span> 
+  <span class="k">if</span><span class="o">(</span> <span class="n">role</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">){</span>
+    <span class="n">response</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="mi">404</span><span class="o">,</span> <span class="s">"Role name not found"</span><span class="o">,</span> <span class="s">"text/plain"</span><span class="o">,</span> <span class="s">"Error: role name not found"</span> <span class="o">);</span>
+  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    
+    <span class="n">db</span><span class="o">.</span><span class="na">begin</span><span class="o">();</span>
+    <span class="k">try</span><span class="o">{</span>
+      <span class="n">var</span> <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">({</span> <span class="s">"@class"</span> <span class="o">:</span> <span class="s">"OUser"</span><span class="o">,</span> <span class="n">name</span> <span class="o">:</span> <span class="s">"Luca"</span><span class="o">,</span> <span class="n">password</span> <span class="o">:</span> <span class="s">"Luc4"</span><span class="o">,</span> <span class="n">roles</span> <span class="o">:</span> <span class="n">role</span><span class="o">});</span>
+      <span class="n">db</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+      <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span><span class="k">catch</span> <span class="o">(</span> <span class="n">err</span> <span class="o">){</span>
+      <span class="n">db</span><span class="o">.</span><span class="na">rollback</span><span class="o">();</span>
+      <span class="n">response</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="mi">500</span><span class="o">,</span> <span class="s">"Error on creating new user"</span><span class="o">,</span> <span class="s">"text/plain"</span><span class="o">,</span> <span class="n">err</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span> <span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+<strong>}</strong>
+
+<p><img src="http://www.orientdb.org/images/orientdb-studio-function-repository.png"></p>
+
+<h3>Recursive calls</h3>
+
+<p>Create the new function with name "factorial" with the parameter "n". Then write this code:
+</p><div class="highlight"><pre>  <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">===</span> <span class="mi">0</span><span class="o">)</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="o">;</span>
+  <span class="k">else</span>
+    <span class="k">return</span> <span class="n">num</span> <span class="o">*</span> <span class="n">factorial</span><span class="o">(</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">);</span>
+</pre></div>
+
+<p><img src="http://www.orientdb.org/images/orientdb-studio-function-factorial.png"></p>
+
+<p>This function calls it self to find the factorial number for <code>&lt;num&gt;</code> as parameter. The result is <code>3628800.0</code>.</p>
+
+<h3>Server-Side functions</h3>
+
+<p>Server-Side functions can be used as Servlet replacement. To know how to call a Server-Side function look at <a href="#Usage_via_HTTP_REST">Usage via HTTP REST</a>. When are called via HTTP REST protocol, OrientDB embeds two more variable:</p>
+
+<ul>
+<li>
+<strong>request</strong>, as the HTTP request and implemented by <code>OHttpRequestWrapper</code> class</li>
+<li>
+<strong>response</strong>, as the HTTP request response implemented by <code>OHttpResponseWrapper</code> class</li>
+<li>
+<strong>util</strong>, as an utility class with helper functions to use inside the functions. It's implemented by <code>OFunctionUtilWrapper</code> class</li>
+</ul><h4>Request object</h4>
+
+<p>Refer to this object as "request". Example:
+</p><div class="highlight"><pre>    <span class="n">var</span> <span class="n">params</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameters</span><span class="o">();</span>
+</pre></div>
+
+<table>
+<tr>
+<th>Method signature</th>
+<th>Description</th>
+<th>Return type</th>
+</tr>
+<tr>
+<td>getContent()</td>
+<td>Returns the request's content</td>
+<td>String</td>
+</tr>
+<tr>
+<td>getUser()</td>
+<td>Gets the request's user name</td>
+<td>String</td>
+</tr>
+<tr>
+<td>getContentType()</td>
+<td>Returns the request's content type</td>
+<td>String</td>
+</tr>
+<tr>
+<td>getHttpVersion()</td>
+<td>Return the request's HTTP version</td>
+<td>String</td>
+</tr>
+<tr>
+<td>getHttpMethod()</td>
+<td>Return the request's HTTP method called</td>
+<td>String</td>
+</tr>
+<tr>
+<td>getIfMatch()</td>
+<td>Return the request's IF-MATCH header</td>
+<td>String</td>
+</tr>
+<tr>
+<td>isMultipart()</td>
+<td>Returns if the requests has multipart</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>getArguments()</td>
+<td>Returns the request's arguments passed in REST form. Example: /2012/10/26</td>
+<td>String[]</td>
+</tr>
+<tr>
+<td>getArgument(<code>&lt;position&gt;</code>)</td>
+<td>Returns the request's argument by position, or null if not found</td>
+<td>String</td>
+</tr>
+<tr>
+<td>getParameters()</td>
+<td>Returns the request's parameters</td>
+<td>String</td>
+</tr>
+<tr>
+<td>getParameter(<code>&lt;name&gt;</code>)</td>
+<td>Returns the request's parameter by name or null if not found</td>
+<td>String</td>
+</tr>
+<tr>
+<td>hasParameters(<code>&lt;name&gt;*</code>)</td>
+<td>Returns the number of parameters found between those passed</td>
+<td>Integer</td>
+</tr>
+<tr>
+<td>getSessionId()</td>
+<td>Returns the session-id</td>
+<td>String</td>
+</tr>
+<tr>
+<td>getURL()</td>
+<td>Returns the request's URL</td>
+<td>String</td>
+</tr>
+</table><h4>Response object</h4>
+
+<p>Refer to this object as "response". Example:
+</p><div class="highlight"><pre>  <span class="n">var</span> <span class="n">roles</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="s">"select from ORole where name = ?"</span><span class="o">,</span> <span class="n">roleName</span><span class="o">);</span> 
+  <span class="k">if</span><span class="o">(</span> <span class="n">roles</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">roles</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">){</span>
+    <span class="n">response</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="mi">404</span><span class="o">,</span> <span class="s">"Role name not found"</span><span class="o">,</span> <span class="s">"text/plain"</span><span class="o">,</span> <span class="s">"Error: role name not found"</span> <span class="o">);</span>
+  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    
+    <span class="n">db</span><span class="o">.</span><span class="na">begin</span><span class="o">();</span>
+    <span class="k">try</span><span class="o">{</span>
+      <span class="n">var</span> <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">({</span> <span class="s">"@class"</span> <span class="o">:</span> <span class="s">"OUser"</span><span class="o">,</span> <span class="n">name</span> <span class="o">:</span> <span class="s">"Luca"</span><span class="o">,</span> <span class="n">password</span> <span class="o">:</span> <span class="s">"Luc4"</span><span class="o">,</span> <span class="s">"roles"</span> <span class="o">:</span> <span class="n">roles</span><span class="o">});</span>
+      <span class="n">db</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+      <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span><span class="k">catch</span> <span class="o">(</span> <span class="n">err</span> <span class="o">){</span>
+      <span class="n">db</span><span class="o">.</span><span class="na">rollback</span><span class="o">();</span>
+      <span class="n">response</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="mi">500</span><span class="o">,</span> <span class="s">"Error on creating new user"</span><span class="o">,</span> <span class="s">"text/plain"</span><span class="o">,</span> <span class="n">err</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span> <span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<table>
+<tr>
+<th>Method signature</th>
+<th>Description</th>
+<th>Return type</th>
+</tr>
+<tr>
+<td>getHeader()</td>
+<td>Returns the response's additional headers</td>
+<td>String</td>
+</tr>
+<tr>
+<td>setHeader(String header)</td>
+<td>Sets the response's additional headers to send back. To specify multiple headers use the line breaks</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>getContentType()</td>
+<td>Returns the response's content type. If null will be automatically detected</td>
+<td>String</td>
+</tr>
+<tr>
+<td>setContentType(String contentType)</td>
+<td>Sets the response's content type.  If null will be automatically detected</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>getCharacterSet()</td>
+<td>Returns the response's character set used</td>
+<td>String</td>
+</tr>
+<tr>
+<td>setCharacterSet(String characterSet)</td>
+<td>Sets the response's character set</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>getHttpVersion()</td>
+<td></td>
+<td>String</td>
+</tr>
+<tr>
+<td>writeStatus(int httpCode, String reason)</td>
+<td>Sets the response's status as HTTP code and reason</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>writeStatus(int httpCode, String reason)</td>
+<td>Sets the response's status as HTTP code and reason</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>writeHeaders(String contentType)</td>
+<td>Sets the response's headers using the keep-alive</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>writeHeaders(String contentType, boolean keepAlive)</td>
+<td>Sets the response's headers specifying when using the keep-alive or not</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>writeLine(String content)</td>
+<td>Writes a line in the response. A line feed will be appended at the end of the content</td>
+<td>Request object</td>
+</tr>
+</table><table><tbody>
+<tr>
+<td>writeContent(String content) </td>
+<td>Writes content directly to the response </td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>writeRecords(List<code>&lt;OIdentifiable&gt;</code> records) </td>
+<td>Writes records as response. The records are serialized in JSON format </td>
+<td>Request object</td>
+</tr>
+<tr>
+<td> writeRecords( List<code>&lt;OIdentifiable&gt;</code> records, String fetchPlan)</td>
+<td>Writes records as response specifying a fetch-plan to serialize nested records. The records are serialized in JSON format </td>
+<td>Request object</td>
+</tr>
+<tr>
+<td>writeRecord(ORecord record) </td>
+<td> Writes a record as response. The record is serialized in JSON format</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td> writeRecord(ORecord record, String fetchPlan) </td>
+<td> Writes a record as response. The record is serialized in JSON format</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td> send(int code, String reason, String contentType, Object content) </td>
+<td> Sends the complete HTTP response in one call</td>
+<td>Request object</td>
+</tr>
+<tr>
+<td> send(int code, String reason, String contentType, Object content, String headers) </td>
+<td>Sends the complete HTTP response in one call specifying additional headers. Keep-alive is set </td>
+<td>Request object</td>
+</tr>
+<tr>
+<td> send(int code, String reason, String contentType, Object content, String headers, boolean keepAlive) </td>
+<td> Sends the complete HTTP response in one call specifying additional headers </td>
+<td>Request object</td>
+</tr>
+<tr>
+<td> sendStream(int code, String reason, String contentType, InputStream content, long size) </td>
+<td> Sends the complete HTTP response in one call specifying a stream as content</td>
+<td>Request object </td>
+</tr>
+<tr>
+<td>flush() </td>
+<td> Flushes the content to the TCP/IP socket </td>
+<td>Request object</td>
+</tr>
+</tbody></table>
+
+
+## Util object
+
+Refer to this object as "util". Example:
+<div class="highlight"><pre>  <span class="k">if</span><span class="o">(</span> <span class="n">util</span><span class="o">.</span><span class="na">exists</span><span class="o">(</span><span class="n">year</span><span class="o">)</span> <span class="o">){</span>
+    <span class="n">print</span><span class="o">(</span><span class="s">"\nYes, the year was passed!"</span><span class="o">);</span>
+  <span class="o">}</span>
+</pre></div>
+
+<table>
+<tr>
+<th>Method signature</th>
+<th>Description</th>
+<th>Return type</th>
+</tr>
+<tr>
+<td>exists(<code>&lt;variable&gt;*</code>)</td>
+<td>Returns trues if any of the passed variables are defined. In JS, fr example, a variable is defined if it's not null and not equals to "undefined"</td>
+<td>Boolean</td>
+</tr>
+</table>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

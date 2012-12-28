@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Document Database |  OrientDB</title>
+  <title>Document Database</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Document-Database">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Document Database
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Requirements</h3>
+
+<p>To use the Document Database interface you must include these jars in your classpath:
+</p><div class="highlight"><pre>  <span class="n">orient</span><span class="o">-</span><span class="n">commons</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">core</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<p>If you're using the Document Database interface connected to a remote server (not local/embedded mode) include also:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">-</span><span class="n">client</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">enterprise</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<h3>Introduction</h3>
+
+<p>The Orient Document DB is the base of higher-level implementation like <a class="internal present" href="/wiki/Object-Database.html">Object-Database</a> and <a class="internal present" href="/wiki/Graph-Database.html">Graph-Database</a>. The Document Database API has the following features:</p>
+
+<ul>
+<li>supports <a href="#Multi-threading">Multi threads</a> access</li>
+<li>supports <a class="internal present" href="/wiki/Transactions.html">#Transactions</a>
+</li>
+<li>supports <a href="#Query">queries</a>
+</li>
+<li>supports <a href="#Traverse">traverse</a>
+</li>
+<li>very flexible: can be used in schema-full, schema-less or schema-hybrid mode.</li>
+</ul><p>This is an example to store 2 linked documents in the database:
+</p><div class="highlight"><pre>  <span class="c1">// OPEN THE DATABASE</span>
+  <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">).</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="c1">// CREATE A NEW DOCUMENT AND FILL IT</span>
+  <span class="n">ODocument</span> <span class="n">doc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="s">"Person"</span><span class="o">);</span>
+  <span class="n">doc</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Luke"</span> <span class="o">);</span>
+  <span class="n">doc</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"surname"</span><span class="o">,</span> <span class="s">"Skywalker"</span> <span class="o">);</span>
+  <span class="n">doc</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"city"</span><span class="o">,</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="s">"City"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span><span class="s">"Rome"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"country"</span><span class="o">,</span> <span class="s">"Italy"</span><span class="o">)</span> <span class="o">);</span>
+                
+  <span class="c1">// SAVE THE DOCUMENT</span>
+  <span class="n">doc</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+  
+  <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+This is the very first example. While the code is pretty clear and easy to understand please note that we haven't declared the type "Person" before now. When an ODocument instance is saved, the declared type "Person" will be created without constraints. To declare persistent classes look at the <a class="internal present" href="/wiki/Schema.html">Schema management</a>.
+
+<h3>Use the database</h3>
+
+<p>Before to execute any operation you need an opened database instance. You can <a href="#Open_a_database">open an existent database</a> or <a href="#Create_a_new_database">create a new one</a>. Databases instances aren't thread safe, so use one database per thread.</p>
+
+<p>Before to open or create a database instance you need a valid URL. URL is where the database is available. URL says what kind of <a class="internal present" href="/wiki/Concepts.html#storage">will be used. for example *memory:* means in-memory only database, *local:* is for embedded ones and *remote:* to use a remote database hosted on a up &amp; running [[DBServer OrientDB Server</a>] instance. For more information look at <a class="internal present" href="/wiki/Concepts.html#database_url">Database URL</a>.</p>
+
+<p>Database instances must be closed once finished to release precious resources. To assure it the most common usage is to enclose all the database operations inside a try/finally block:
+</p><div class="highlight"><pre>  <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="s">"local:/temp/test"</span><span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="k">try</span> <span class="o">{</span>
+    <span class="c1">// YOUR CODE</span>
+  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+If you are using a remote storage (url starts with <strong>"remote:"</strong>) assure the server is up &amp; running and include the <strong>orientdb-client.jar</strong> file in your classpath.
+
+<h4>Multi-threading</h4>
+
+<p>The ODatabaseDocumentTx class is non thread-safe. For this reason use different ODatabaseDocumentTx instances by multiple threads. They will share the same Storage instance (with the same URL) and the same level-2 cache. For more information look at <a class="internal present" href="/wiki/Java-Multi-Threading.html">Multi-Threading with Java</a>.</p>
+
+<h4>Create a new database</h4>
+
+<h5>In local filesystem</h5>
+
+<div class="highlight"><pre>  <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span> <span class="o">(</span><span class="s">"local:/tmp/databases/petshop"</span><span class="o">).</span><span class="na">create</span><span class="o">();</span>
+</pre></div>
+
+<h5>On a remote server</h5>
+
+<p>To create a database in a remote server you need the user/password of the remote OrientDB Server instance. By default the "root" user is created. Check this in the file config/orientdb-server-config.xml, where you will also find the password.
+</p><div class="highlight"><pre>  <span class="k">new</span> <span class="nf">OServerAdmin</span><span class="o">(</span><span class="s">"remote:petshop"</span><span class="o">).</span><span class="na">connect</span><span class="o">(</span><span class="s">"root"</span><span class="o">,</span> <span class="s">"kjhsdjfsdh128438ejhj"</span><span class="o">).</span><span class="na">createDatabase</span><span class="o">(</span><span class="s">"local"</span><span class="o">).</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+
+<h4>Open a database</h4>
+
+<div class="highlight"><pre>  <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span> <span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">).</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+</pre></div>
+The database instance will share the connection versus the storage. if it's a "local" storage, then all the database instances will be synchronized on it. If it's a "remote" storage then the network connection will be shared among all the database instances.
+
+<h5>Use the connection Pool</h5>
+
+<p>One of most common use cases is to reuse the database, avoiding to create it every time. It's also the typical scenario of the Web applications. Instead of creating a new ODatabaseDocumentTx instance all the times, get an available instance from the pool:
+</p><div class="highlight"><pre>  <span class="c1">// OPEN THE DATABASE</span>
+  <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="n">ODatabaseDocumentPool</span><span class="o">.</span><span class="na">global</span><span class="o">().</span><span class="na">acquire</span><span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  <span class="k">try</span> <span class="o">{</span>
+    <span class="c1">// YOUR CODE</span>
+    <span class="o">...</span>
+  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+Remember to always close the database instance using the <code>close()</code> database method like a classic non-pooled database. In this case the database will be not closed for real, but the instance will be released to the pool, ready to be reused by future requests. The best is to use a try/finally block to avoid cases where the database instance remains open, just like the example above.
+
+<h5>Global pool</h5>
+
+<p>By default OrientDB provide a global pool declared with maximum 20 instances. Use it with: <code>ODatabaseDocumentPool.global()</code>.</p>
+
+<h5>Use your pool</h5>
+
+<p>To create your own pool build it and call the <code>setup(min, max)</code> method to define minimum and maximum managed instances. Remember to close it when the pool is not more used. Example:
+</p><div class="highlight"><pre>  <span class="c1">// CREATE A NEW POOL WITH 1-10 INSTANCES</span>
+  <span class="n">ODatabaseDocumentPool</span> <span class="n">pool</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentPool</span><span class="o">();</span>
+  <span class="n">pool</span><span class="o">.</span><span class="na">setup</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">10</span><span class="o">);</span>
+  <span class="o">...</span>
+  <span class="n">pool</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+
+<h3>Schema</h3>
+
+<p>OrientDB can work in schema-full (like RDBMS), schema-less (like many NoSQL Document databases) and in schema-hybrid mode. For more information about the Schema look at the <a class="internal present" href="/wiki/Schema.html">Schema</a> page.</p>
+
+<p>To use the schema with documents create the ODocument instance using the <code>ODocument(String className)</code> constructor passing the class name. If the class hasn't been declared, it's created automatically with no fields. This can't work during transaction because schema changes can't be applied in transactional context.</p>
+
+<h3>Security</h3>
+
+<p>Few NoSQL solutions supports security. OrientDB does it. To know more about it look at <a class="internal present" href="/wiki/Security.html">Security</a>.</p>
+
+<p>To manage the security get the Security Manager and use it to work with users and roles. Example:
+</p><div class="highlight"><pre>  <span class="n">OSecurity</span> <span class="n">sm</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSecurity</span><span class="o">();</span>
+  <span class="n">OUser</span> <span class="n">user</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="na">createUser</span><span class="o">(</span><span class="s">"god"</span><span class="o">,</span> <span class="s">"god"</span><span class="o">,</span> <span class="k">new</span> <span class="n">String</span><span class="o">[]</span> <span class="o">{</span> <span class="s">"admin"</span> <span class="o">}</span> <span class="o">);</span>
+</pre></div>
+To get the reference to the current user use:
+<div class="highlight"><pre>  <span class="n">OUser</span> <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getUser</span><span class="o">();</span>
+</pre></div>
+
+<h3>Create a new document</h3>
+
+<p>ODocument instances can be saved by calling the save() method against the object itself. Note that the behaviour depends on the running transaction, if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.
+</p><div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">animal</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="s">"Animal"</span><span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Gaudi"</span> <span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"location"</span><span class="o">,</span> <span class="s">"Madrid"</span> <span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<h3>Retrieve documents</h3>
+
+<h4>Browse all the documents in a cluster</h4>
+
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">ODocument</span> <span class="n">doc</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseCluster</span><span class="o">(</span><span class="s">"CityCars"</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="n">doc</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"model"</span><span class="o">)</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Browse all the records of a class</h4>
+
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">ODocument</span> <span class="n">animal</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="s">"Animal"</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"name"</span> <span class="o">)</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Count records of a class</h4>
+
+<div class="highlight"><pre>  <span class="kt">long</span> <span class="n">cars</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">countClass</span><span class="o">(</span><span class="s">"Car"</span><span class="o">);</span>
+</pre></div>
+v= Count records of a cluster ==
+<div class="highlight"><pre>  <span class="kt">long</span> <span class="n">cityCars</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">countCluster</span><span class="o">(</span><span class="s">"CityCar"</span><span class="o">);</span>
+</pre></div>
+
+<h4>Execute a query</h4>
+
+<p>Orient supports two kinds of queries: native and SQL.</p>
+
+<h5>Native query</h5>
+
+<p>Native queries are written in Java code. They are pretty fast since the JVM compiles it as for the rest of application. Bear in mind that field names are case-sensitive. For the class names, case sensitivity doesn't hold so you can write them in any case.</p>
+
+<p>Unfortunately at current release Native Queries don't support all the operators of SQL queries and don't use Indexes when present.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">List</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="k">new</span> <span class="n">ONativeSynchQuery</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">,</span> <span class="n">OQueryContextNativeSchema</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;&gt;</span>
+     <span class="o">(</span><span class="n">database</span><span class="o">,</span> <span class="s">"Person"</span><span class="o">,</span> <span class="k">new</span> <span class="n">OQueryContextNativeSchema</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;())</span> <span class="o">{</span>
+  			<span class="nd">@Override</span>
+  			<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">filter</span><span class="o">(</span><span class="n">OQueryContextNativeSchema</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">iRecord</span><span class="o">)</span> <span class="o">{</span>
+  				<span class="k">return</span> <span class="n">iRecord</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"city"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">).</span><span class="na">eq</span><span class="o">(</span><span class="s">"Rome"</span><span class="o">).</span><span class="na">and</span><span class="o">().</span>
+                                    <span class="n">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">).</span><span class="na">like</span><span class="o">(</span><span class="s">"G%"</span><span class="o">).</span><span class="na">go</span><span class="o">();</span>
+  			<span class="o">};</span>
+  		<span class="o">});</span>
+</pre></div>
+
+<h5>SQL query</h5>
+
+<p>Although OrientDB is part of the NoSQL database community, it supports a subset of SQL that allows it to process links to documents and graphs.</p>
+
+<p>To know more about the SQL syntax supported go to: <a class="internal present" href="/wiki/SQL-Query.html">SQL-Query</a>.</p>
+
+<p>Example of a SQL query:
+</p><div class="highlight"><pre>  <span class="n">List</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">query</span><span class="o">(</span>
+    <span class="k">new</span> <span class="n">OSQLSynchQuery</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;(</span><span class="s">"select * from Animal where ID = 10 and name like 'G%'"</span><span class="o">));</span>
+</pre></div>
+
+<h5>= Prepared query =</h5>
+
+<p>Prepared query are quite similar to the Prepared Statement of JDBC. Prepared queries are pre-parsed so on multiple execution of the same query are faster than classic SQL queries. Furthermore the pre-parsing doesn't allow SQL Injection.</p>
+
+<p>Prepared query uses two kinds of markers to substitute parameters on execution:
+</p><div class="highlight"><pre>  <span class="o">?</span> <span class="n">is</span> <span class="n">positional</span> <span class="n">parameter</span>
+  <span class="o">:&lt;</span><span class="n">par</span><span class="o">&gt;</span> <span class="n">is</span> <span class="n">named</span> <span class="n">parameter</span>
+</pre></div>
+
+<p>Example of positional parameters:
+</p><div class="highlight"><pre>  <span class="n">OSQLSynchQuery</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OSQLSynchQuery</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;(</span><span class="s">"select from Profile where name = ? and surname = ?"</span><span class="o">);</span>
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">command</span><span class="o">(</span><span class="n">query</span><span class="o">).</span><span class="na">execute</span><span class="o">(</span><span class="s">"Barack"</span><span class="o">,</span> <span class="s">"Obama"</span><span class="o">);</span>
+</pre></div>
+Example of named parameters:
+<div class="highlight"><pre>  <span class="n">OSQLSynchQuery</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OSQLSynchQuery</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;(</span><span class="s">"select from Profile where name = :name and </span>
+<span class="s">    surname = :surname"</span><span class="o">);</span>
+  <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">params</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span><span class="n">Object</span><span class="o">&gt;();</span>
+  <span class="n">params</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Barack"</span><span class="o">);</span>
+  <span class="n">params</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"surname"</span><span class="o">,</span> <span class="s">"Obama"</span><span class="o">);</span>
+  
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">command</span><span class="o">(</span><span class="n">query</span><span class="o">).</span><span class="na">execute</span><span class="o">(</span><span class="n">params</span><span class="o">);</span>
+</pre></div>
+
+<h5>== Right usage of the graph ==</h5>
+
+<p>OrientDB is a graph database. This means that traversing is very efficient. You can use this feature to optimize queries. A common technique is the <a class="internal present" href="/wiki/Pivoting-With-Query.html">Pivoting</a>.</p>
+
+<h5>= SQL Commands =</h5>
+
+<p>To execute SQL commands use the <code>command()</code> method passing a OCommandSQL object:
+</p><div class="highlight"><pre>  <span class="kt">int</span> <span class="n">recordsUpdated</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">command</span><span class="o">(</span>
+    <span class="k">new</span> <span class="nf">OCommandSQL</span><span class="o">(</span><span class="s">"update Animal set sold = false"</span><span class="o">)).</span><span class="na">execute</span><span class="o">();</span>
+</pre></div>
+See all the <a class="internal present" href="/wiki/SQL.html">SQL Commands</a>.
+
+<h4>Traverse records</h4>
+
+<p>Traversing is the operation to cross documents by links (relationships). OrientDB is a graph database so this operation is much much more efficient than executing a JOIN in the relational databases. To kwow more about traversing look at the <a class="internal present" href="/wiki/Java-Traverse.html">Java traverse API</a>.</p>
+
+<p>The example below traverses, for each movies, all the connected records up to the 5th depth level.
+</p><div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">OIdentifiable</span> <span class="n">id</span> <span class="o">:</span> <span class="k">new</span> <span class="n">OTraverse</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"in"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"out"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">target</span><span class="o">(</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="s">"Movie"</span><span class="o">).</span><span class="na">iterator</span><span class="o">()</span> <span class="o">)</span>
+                <span class="o">.</span><span class="na">predicate</span><span class="o">(</span><span class="k">new</span> <span class="n">OCommandPredicate</span><span class="o">()</span> <span class="o">{</span>
+  
+      <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">evaluate</span><span class="o">(</span><span class="n">ORecord</span><span class="o">&lt;?&gt;</span> <span class="n">iRecord</span><span class="o">,</span> <span class="n">OCommandContext</span> <span class="n">iContext</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">((</span><span class="n">Integer</span><span class="o">)</span> <span class="n">iContext</span><span class="o">.</span><span class="na">getVariable</span><span class="o">(</span><span class="s">"depth"</span><span class="o">))</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="o">;</span>
+      <span class="o">}</span>
+    <span class="o">}))</span> <span class="o">{</span>
+  
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h3>Update a document</h3>
+
+<p>Any persistent document can be updated using the Java API then calling the db.save() method, or by calling save() method against the document to synchronize the changes to the repository. Behaviour depends on the transaction begun if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.
+</p><div class="highlight"><pre>  <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"location"</span><span class="o">,</span> <span class="s">"Nairobi"</span> <span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+OrientDB will update only the fields really changed.
+
+<p>Example of how to increase the price of all the animals by 5%:
+</p><div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">ODocument</span> <span class="n">animal</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="s">"Animal"</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"price"</span><span class="o">,</span> <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"price"</span> <span class="o">)</span> <span class="o">*</span> <span class="mi">105</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">);</span>
+    <span class="n">animal</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h3>Delete a document</h3>
+
+<p>To delete a document call the delete() method against the document instance loaded. Behaviour depends by the transaction begun if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.
+</p><div class="highlight"><pre>  <span class="n">animal</span><span class="o">.</span><span class="na">delete</span><span class="o">();</span>
+</pre></div>
+Example of deletion of all the documents of class "Animal".
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">ODocument</span> <span class="n">animal</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="s">"Animal"</span><span class="o">))</span>
+    <span class="n">animal</span><span class="o">.</span><span class="na">delete</span><span class="o">();</span>
+</pre></div>
+
+<h3>Transactions</h3>
+
+<p>Transactions are a practical way to group a set of operations all together. OrientDB supports <a href="http://en.wikipedia.org/wiki/ACID">ACID</a> transactions so or all the operations succeed or no one. The database remains always consistent. For more information look at <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.</p>
+
+<p>Transactions are managed at database level. No nested transactions are supported. A database instance can have only one transaction running. The database's methods to handle transactions are:</p>
+
+<ul>
+<li>
+<strong><code>begin()</code></strong> to start a new transaction. If a transaction was already running, it's rollbacked and a new one is begun</li>
+<li>
+<strong><code>commit()</code></strong> makes changes persistent. If an error occurs during commit the transaction is rollbacked and a OTransactionException exception is raised</li>
+<li>
+<strong><code>rollback()</code></strong> abort a transaction. All the changes will be lost</li>
+</ul><h4>Optimistic approach</h4>
+
+<p>Current release only supports the <a class="internal present" href="/wiki/Transactions.html#optimistic_transaction">OPTIMISTIC transaction</a> where no lock is kept and all is checked at commit time. This improves concurrency but could throw a <code>OConcurrentModificationException</code> exception in case involved records were modified by concurrent clients/threads. In this case the client code can reload updated records and repeat the transaction.</p>
+
+<p>Optimistic transaction keeps all the changes in memory at client-side level, so if you're a remote storage no messages are sent to the server until commit where all the changes will be transferred in block. This reduce network latency, speed-up the execution and increase the concurrency level. This is a big difference with the Relational DBMS where, during a transaction, changes are early sent to the server.</p>
+
+<h4>Usage</h4>
+
+<p>Transactions are committed only when the <code>commit()</code> method is called and no errors occur at commit time. The most common usage of transactions is to enclose all the database operations inside a try/finally block. On database closing ("finally" block) if a pending transaction is running it will be rollbacked qutomatically. Look at this example:
+</p><div class="highlight"><pre>  <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="n">url</span><span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="k">try</span> <span class="o">{</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">begin</span><span class="o">();</span>
+    <span class="c1">// YOUR CODE</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h3>Index API</h3>
+
+<p>Even though you can use <a class="internal present" href="/wiki/Indexes.html">Indexes</a> through SQL the best and most efficient way is using the Java API.</p>
+
+<p>The main class to work against indexes is the <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/index/OIndexManager.java">IndexManager</a>. To get the implementation of the <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/index/OIndexManager.java">IndexManager</a> use:
+</p><div class="highlight"><pre>  <span class="n">OIndexManager</span> <span class="n">idxManager</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getIndexManager</span><span class="o">();</span>
+</pre></div>
+The Index Manager allows to manage the index life-cycle such as creation, deletion and retrieving of an index instance. The most common usage is against a single index. Get the reference to the index by using:
+<div class="highlight"><pre>  <span class="n">OIndex</span><span class="o">&lt;?&gt;</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getIndexManager</span><span class="o">().</span><span class="na">getIndex</span><span class="o">(</span><span class="s">"Profile.name"</span><span class="o">);</span>
+</pre></div>
+Where "Profile.name" is the index name. Note that by default OrientDB assigns the name as <code>&lt;class&gt;.&lt;property&gt;</code> for automatic indexes created against a class's property.
+
+<p>The <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/index/OIndex.java">OIndex</a> interface it's similar to a Java Map and provides methods to get, put, remove and count items. Examples of retrieving records using a UNIQUE index against the name and a NOTUNIQUE index against the gender:
+</p><div class="highlight"><pre>  <span class="n">OIndex</span><span class="o">&lt;?&gt;</span> <span class="n">nameIdx</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getIndexManager</span><span class="o">().</span><span class="na">getIndex</span><span class="o">(</span><span class="s">"Profile.name"</span><span class="o">);</span>
+  
+  <span class="c1">// THIS IS A UNIQUE INDEX, SO IT RETRIEVES A OIdentifiable</span>
+  <span class="n">OIdentifiable</span> <span class="n">luke</span> <span class="o">=</span> <span class="n">nameIdx</span><span class="o">.</span><span class="na">get</span><span class="o">(</span> <span class="s">"Luke"</span> <span class="o">);</span>
+  <span class="k">if</span><span class="o">(</span> <span class="n">luke</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">)</span>
+    <span class="n">printRecord</span><span class="o">(</span> <span class="o">(</span><span class="n">ODocument</span><span class="o">)</span> <span class="n">luke</span><span class="o">.</span><span class="na">getRecord</span><span class="o">()</span> <span class="o">);</span>
+  
+  <span class="n">OIndex</span><span class="o">&lt;?&gt;</span> <span class="n">genderIdx</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getIndexManager</span><span class="o">().</span><span class="na">getIndex</span><span class="o">(</span><span class="s">"Profile.gender"</span><span class="o">);</span>
+  
+  <span class="c1">// THIS IS A NOTUNIQUE INDEX, SO IT RETRIEVES A Set&lt;OIdentifiable&gt;</span>
+  <span class="n">Set</span><span class="o">&lt;</span><span class="n">OIdentifiable</span><span class="o">&gt;</span> <span class="n">males</span> <span class="o">=</span> <span class="n">genderIdx</span><span class="o">.</span><span class="na">get</span><span class="o">(</span> <span class="s">"male"</span> <span class="o">);</span>
+  <span class="k">for</span><span class="o">(</span> <span class="n">OIdentifiable</span> <span class="n">male</span> <span class="o">:</span> <span class="n">males</span> <span class="o">)</span>
+    <span class="n">printRecord</span><span class="o">(</span> <span class="o">(</span><span class="n">ODocument</span><span class="o">)</span> <span class="n">male</span><span class="o">.</span><span class="na">getRecord</span><span class="o">()</span> <span class="o">);</span>
+</pre></div>
+While automatic indexes are managed automatically by OrientDB hooks, the manual indexes can be used to store any value. To create a new entry use the <code>put()</code>:
+<div class="highlight"><pre>  <span class="n">OIndex</span><span class="o">&lt;?&gt;</span> <span class="n">addressbook</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getIndexManager</span><span class="o">().</span><span class="na">getIndex</span><span class="o">(</span><span class="s">"addressbook"</span><span class="o">);</span>
+  
+  <span class="n">addressbook</span><span class="o">.</span><span class="na">put</span><span class="o">(</span> <span class="s">"Luke"</span><span class="o">,</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="s">"Contact"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Luke"</span> <span class="o">);</span>
+</pre></div>
+
+<h3>Resources</h3>
+
+<ul>
+<li>Javadoc: <a href="http://www.orientechnologies.com/releases/latest/javadoc/index.html">JavaDoc</a>
+</li>
+<li>
+<a href="OrientDB_Studio">OrientDB Studio Web tool</a>.</li>
+</ul>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

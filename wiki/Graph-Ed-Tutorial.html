@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Graph Ed Tutorial |  OrientDB</title>
+  <title>Graph Ed Tutorial</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Graph-Ed-Tutorial">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Graph Ed Tutorial
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p><a href="/g:plusone">/g:plusone</a></p>
+
+
+
+<h3>Introduction</h3>
+
+<p>The Graph Edition, also called "Graph(Ed)", contains <a href="http://www.orientechnologies.com/orient-db.htm">OrientDB</a> server integrated with latest release of the <a href="http://www.tinkerpop.com">TinkerPop</a> Open Source technology stack:</p>
+
+<ul>
+<li>
+<a href="http://wiki.github.com/tinkerpop/blueprints">Blueprints</a> provides a collection of interfaces and implementations to common, complex data structures. In short, Blueprints provides a one stop shop for implemented interfaces to help developers create software without being tied to particular underlying data management systems.</li>
+<li>
+<a href="http://wiki.github.com/tinkerpop/gremlin">Gremlin</a> is a Turing-complete, graph-based programming language designed for key/value-pair multi-relational graphs. Gremlin makes use of an XPath-like syntax to support complex graph traversals. This language has application in the areas of graph query, analysis, and manipulation.</li>
+<li>
+<a href="http://pipes.tinkerpop.com">Pipes</a> is a graph-based data flow framework for Java 1.6+. A process graph is composed of a set of process vertices connected to one another by a set of communication edges. Pipes supports the splitting, merging, and transformation of data from input to output.</li>
+</ul><p>No more pains when work with <a href="http://www.tinkerpop.com">TinkerPop</a> stuff on top of OrientDB. This integration allows (finally!) to use both the power of OrientDB SQL engine and <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> language. You can finally have the best of both worlds!</p>
+
+<h3>Download</h3>
+
+<p>Download the last version at the <a href="http://code.google.com/p/orient/downloads/list">Download Page</a> and select the file called <strong><code>orientdb-graphed</code></strong>.zip<em>, example: *orientdb-graphed-1.0rc3</em>.</p>
+
+<h3>Installation</h3>
+
+<p>To install it, just extract the contents of ZIP archive into a folder on your PC.</p>
+
+<h4>Requirements</h4>
+
+<h5>Operating System</h5>
+
+<p>OrientDB runs on every operating system that has an implementation of Java Virtual Machine (JVM). These include:</p>
+
+<ul>
+<li>All Linux distributions</li>
+<li>Mac OS X</li>
+<li>Microsoft Windows from 95/NT onward</li>
+<li>Sun Solaris</li>
+<li>HP-UX</li>
+<li>IBM AIX
+### Java Runtime Environment</li>
+</ul><p>OrientDB requires Java SE 6 to be installed in order to deploy the Server component. Client applications can be written using Java SE 5.</p>
+
+<p>You can check which version of Java SE you have installed by typing "java -version" in a command shell (or a command prompt for Windows users):
+</p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">java</span> <span class="o">-</span><span class="n">version</span>
+  
+  <span class="n">java</span> <span class="n">version</span> <span class="s">"1.6.0_20"</span>
+  <span class="n">Java</span><span class="o">(</span><span class="n">TM</span><span class="o">)</span> <span class="n">SE</span> <span class="n">Runtime</span> <span class="n">Environment</span> <span class="o">(</span><span class="n">build</span> <span class="mf">1.6</span><span class="o">.</span><span class="mi">0</span><span class="n">_20</span><span class="o">-</span><span class="n">b02</span><span class="o">)</span>
+  <span class="n">Java</span> <span class="nf">HotSpot</span><span class="o">(</span><span class="n">TM</span><span class="o">)</span> <span class="n">Client</span> <span class="n">VM</span> <span class="o">(</span><span class="n">build</span> <span class="mf">16.3</span><span class="o">-</span><span class="n">b01</span><span class="o">,</span> <span class="n">mixed</span> <span class="n">mode</span><span class="o">,</span> <span class="n">sharing</span><span class="o">)</span>
+</pre></div>
+
+<p>To know more follow the <a class="internal present" href="/wiki/Installation.html">Installation</a> of OrientDB server.</p>
+
+<h3>Run!</h3>
+
+<h4>Starting the server</h4>
+
+<p>To start OrientDB server, go to the bin folder and run script <strong>server.sh</strong> for Unix-like operating system, or <strong>server.bat</strong> for Windows. You may have to set the execute permission on the script file before running it.
+</p><div class="highlight"><pre>            <span class="o">.</span>
+           <span class="o">.</span><span class="err">`</span>        <span class="err">`</span>
+           <span class="o">,</span>      <span class="err">`</span><span class="o">:.</span>
+          <span class="err">`</span><span class="o">,</span><span class="err">`</span>    <span class="o">,:</span><span class="err">`</span>
+          <span class="o">.,.</span>   <span class="o">:,,</span>
+          <span class="o">.,,</span>  <span class="o">,,,</span>
+     <span class="o">.</span>    <span class="o">.,.:::::</span>  <span class="err">````</span>
+     <span class="o">,</span><span class="err">`</span>   <span class="o">.::,,,,::.,,,,,,</span><span class="err">`</span><span class="o">;;</span>                      <span class="o">.:</span>
+     <span class="err">`</span><span class="o">,.</span>  <span class="o">::,,,,,,,:.,,.</span><span class="err">`</span>  <span class="err">`</span>                       <span class="o">.:</span>
+      <span class="o">,,:,:,,,,,,,,::.</span>   <span class="err">`</span>        <span class="err">`</span>         <span class="err">``</span>     <span class="o">.:</span>
+       <span class="o">,,:.,,,,,,,,,:</span> <span class="err">`</span><span class="o">::,</span> <span class="o">,,</span>   <span class="o">::,::</span><span class="err">`</span>   <span class="o">:</span> <span class="o">:,::</span><span class="err">`</span>  <span class="o">::::</span>
+        <span class="o">,:,,,,,,,,,,::,:</span>   <span class="o">,,</span>  <span class="o">:.</span>    <span class="o">:</span>   <span class="o">::</span>    <span class="o">:</span>   <span class="o">.:</span>
+         <span class="o">:,,,,,,,,,,:,::</span>   <span class="o">,,</span>  <span class="o">:</span>      <span class="o">:</span>  <span class="o">:</span>     <span class="o">:</span>   <span class="o">.:</span>
+   <span class="err">`</span>     <span class="o">:,,,,,,,,,,:,::,</span>  <span class="o">,,</span> <span class="o">.::::::::</span>  <span class="o">:</span>     <span class="o">:</span>   <span class="o">.:</span>
+   <span class="err">`</span><span class="o">,...,,:,,,,,,,,,:</span> <span class="o">.:,.</span> <span class="o">,,</span> <span class="o">,,</span>         <span class="o">:</span>     <span class="o">:</span>   <span class="o">.:</span>
+     <span class="o">.,,,,::,,,,,,,:</span>  <span class="err">`</span><span class="o">:</span> <span class="o">,</span> <span class="o">,,</span>  <span class="o">:</span>     <span class="err">`</span>   <span class="o">:</span>     <span class="o">:</span>   <span class="o">.:</span>
+       <span class="o">...,::,,,,::..</span> <span class="err">`</span><span class="o">:</span>  <span class="o">.,,</span>  <span class="o">:,</span>    <span class="o">:</span>   <span class="o">:</span>     <span class="o">:</span>   <span class="o">.:</span>
+            <span class="o">,::::,,,.</span> <span class="err">`</span><span class="o">:</span>   <span class="o">,,</span>   <span class="o">:::::</span>    <span class="o">:</span>     <span class="o">:</span>   <span class="o">.:</span>
+            <span class="o">,,:</span><span class="err">`</span> <span class="err">`</span><span class="o">,,.</span>
+           <span class="o">,,,</span>    <span class="o">.,</span><span class="err">`</span>
+          <span class="o">,,.</span>     <span class="err">`</span><span class="o">,</span>                  <span class="n">GRAPH</span><span class="o">-</span><span class="n">DB</span> <span class="n">Server</span>
+        <span class="err">``</span>        <span class="err">`</span><span class="o">.</span>
+                  <span class="err">``</span>
+                  <span class="err">`</span>
+  
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">05</span><span class="o">:</span><span class="mi">720</span> <span class="n">INFO</span> <span class="o">[</span><span class="n">OServer</span><span class="o">]</span> <span class="n">OrientDB</span> <span class="n">Server</span> <span class="n">v1</span><span class="o">.</span><span class="mi">0</span><span class="n">rc3</span> <span class="n">is</span> <span class="n">starting</span> <span class="n">up</span><span class="o">...</span>
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">06</span><span class="o">:</span><span class="mi">011</span> <span class="n">INFO</span> <span class="o">[</span><span class="n">OServer</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">Loaded</span> <span class="n">memory</span> <span class="n">database</span> <span class="err">'</span><span class="n">temp</span><span class="err">'</span>
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">06</span><span class="o">:</span><span class="mi">093</span> <span class="n">INFO</span> <span class="o">[</span><span class="n">OServerNetworkListener</span><span class="o">]</span> <span class="n">Listening</span> <span class="n">distributed</span> <span class="n">connections</span> <span class="n">on</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">:</span><span class="mi">2424</span>
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">06</span><span class="o">:</span><span class="mi">095</span> <span class="n">INFO</span> <span class="o">[</span><span class="n">OServerNetworkListener</span><span class="o">]</span> <span class="n">Listening</span> <span class="n">http</span> <span class="n">connections</span> <span class="n">on</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">:</span><span class="mi">2480</span>
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">06</span><span class="o">:</span><span class="mi">104</span> <span class="n">INFO</span> <span class="o">[</span><span class="n">OGraphServerHandler</span><span class="o">]</span> <span class="n">Installing</span> <span class="n">GREMLIN</span> <span class="n">language</span> <span class="n">v</span><span class="o">.</span><span class="mf">1.2</span><span class="o">-</span><span class="n">SNAPSHOT</span>
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">06</span><span class="o">:</span><span class="mi">111</span> <span class="n">INFO</span> <span class="o">[</span><span class="n">ODistributedServerManager</span><span class="o">]</span> <span class="n">Generating</span> <span class="n">Server</span> <span class="n">security</span> <span class="n">key</span> <span class="n">and</span> <span class="n">save</span> <span class="n">it</span> <span class="n">in</span> <span class="n">configuration</span><span class="o">...</span>
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">07</span><span class="o">:</span><span class="mi">653</span> <span class="n">INFO</span> <span class="o">[</span><span class="n">OServer</span><span class="o">]</span> <span class="n">OrientDB</span> <span class="n">Server</span> <span class="n">v1</span><span class="o">.</span><span class="mi">0</span><span class="n">rc3</span> <span class="n">is</span> <span class="n">active</span><span class="o">.</span>
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">653</span> <span class="n">WARN</span> <span class="o">[</span><span class="n">ODistributedServerManager</span><span class="o">]</span> <span class="n">Current</span> <span class="n">node</span> <span class="n">is</span> <span class="n">the</span> <span class="k">new</span> <span class="n">cluster</span> <span class="n">Leader</span> <span class="n">of</span> <span class="n">distributed</span> <span class="n">nodes</span>
+  <span class="mi">2011</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">15</span> <span class="mi">04</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">10</span><span class="o">:</span><span class="mi">655</span> <span class="n">INFO</span> <span class="o">[</span><span class="n">ODistributedServerDiscoveryListener</span><span class="o">]</span> <span class="n">Listening</span> <span class="k">for</span> <span class="n">distributed</span> <span class="n">nodes</span> <span class="n">on</span> <span class="n">IP</span> <span class="n">multicast</span> <span class="o">/</span><span class="mf">235.1</span><span class="o">.</span><span class="mf">1.1</span><span class="o">:</span><span class="mi">2424</span>
+</pre></div>
+
+<h4>Running the console</h4>
+
+<p>Once OrientDB is installed on your system, you can open the console by double-clicking on <strong>console</strong> script or by executing it from a command shell. The output should be like this:
+</p><div class="highlight"><pre>  <span class="n">OrientDB</span> <span class="n">console</span> <span class="n">v</span><span class="o">.</span><span class="mf">1.0</span><span class="n">rc3</span> <span class="n">www</span><span class="o">.</span><span class="na">orientechnologies</span><span class="o">.</span><span class="na">com</span>
+  <span class="n">Type</span> <span class="err">'</span><span class="n">help</span><span class="err">'</span> <span class="n">to</span> <span class="n">display</span> <span class="n">all</span> <span class="n">the</span> <span class="n">commands</span> <span class="n">supported</span><span class="o">.</span>
+  
+  <span class="n">Installing</span> <span class="n">extensions</span> <span class="k">for</span> <span class="n">GREMLIN</span> <span class="n">language</span> <span class="n">v</span><span class="o">.</span><span class="mf">1.2</span><span class="o">-</span><span class="n">SNAPSHOT</span>
+  
+  <span class="o">&gt;</span>
+</pre></div>
+Type <strong>?</strong> to show all the commands supported by the console. For more information about them, go to <a class="internal present" href="/wiki/Console-Commands.html">Console Commands</a>. By typing <strong>?</strong> command, output will be the following:
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="o">?</span>
+  <span class="n">AVAILABLE</span> <span class="nl">COMMANDS:</span>
+  
+  <span class="o">*</span> <span class="n">create</span> <span class="n">database</span>     <span class="n">Create</span> <span class="n">a</span> <span class="k">new</span> <span class="n">database</span>
+  <span class="o">...</span>
+  <span class="o">*</span> <span class="n">help</span>                <span class="n">Print</span> <span class="k">this</span> <span class="n">help</span>
+  <span class="o">*</span> <span class="n">exit</span>                <span class="n">Close</span> <span class="n">the</span> <span class="n">console</span>
+</pre></div>
+
+<h4>Connect to the tinkerpop database</h4>
+
+<p>You can now open the "tinkerpop" database shipped with the OrientDB Graph Edition by using the <a class="internal present" href="/wiki/Console-Command-Connect.html">connect</a> command:
+</p><div class="highlight"><pre>  <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">tinkerpop</span> <span class="n">admin</span> <span class="n">admin</span>
+</pre></div>
+This will open the database located on the server just started using the administrator account. To know more about security look at <a class="internal present" href="/wiki/Security.html">Security</a>.
+
+<p>OrientDB can run also in embedded mode. In this case turn off the server and open it using the "local" protocol, but remember that OrientDB Studio can't be used if no server is running.</p>
+
+<p>The "local" protocol is much faster because doesn't involve the network connection:</p>
+
+<div class="highlight"><pre>  <span class="n">connect</span> <span class="nl">local:</span><span class="o">../</span><span class="n">databases</span><span class="o">/</span><span class="n">tinkerpop</span> <span class="n">admin</span> <span class="n">admin</span>
+</pre></div>
+
+<p>For more information about the databases and the proper formats of URLs go <a class="internal present" href="/wiki/Concepts.html#database">here</a>. The output of the previous command should be the following:
+</p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">tinkerpop</span> <span class="n">admin</span> <span class="n">admin</span>
+  <span class="n">Connecting</span> <span class="n">to</span> <span class="n">database</span> <span class="o">[</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">tinkerpop</span><span class="o">]</span> <span class="n">with</span> <span class="n">user</span> <span class="err">'</span><span class="n">admin</span><span class="err">'</span><span class="o">...</span><span class="na">OK</span>
+</pre></div>
+Once connected, you may view the information about the database by typing <a class="internal present" href="/wiki/Console-Command-Info.html">info</a> command:
+<div class="highlight"><pre><span class="o">&gt;</span> <span class="n">info</span>
+<span class="n">Current</span> <span class="nl">database:</span> <span class="n">tinkerpop</span> <span class="o">(</span><span class="n">url</span><span class="o">=</span><span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">tinkerpop</span><span class="o">)</span>
+
+<span class="nl">CLUSTERS:</span>
+<span class="o">----------------------------------------------+------+---------------------+-----------+</span>
+ <span class="n">NAME</span>                                         <span class="o">|</span>  <span class="n">ID</span>  <span class="o">|</span> <span class="n">TYPE</span>                <span class="o">|</span> <span class="n">RECORDS</span>   <span class="o">|</span>
+<span class="o">----------------------------------------------+------+---------------------+-----------+</span>
+ <span class="n">internal</span>                                     <span class="o">|</span>     <span class="mi">0</span><span class="o">|</span> <span class="n">Physical</span>            <span class="o">|</span>         <span class="mi">3</span> <span class="o">|</span>
+ <span class="n">index</span>                                        <span class="o">|</span>     <span class="mi">1</span><span class="o">|</span> <span class="n">Physical</span>            <span class="o">|</span>        <span class="mi">16</span> <span class="o">|</span>
+ <span class="k">default</span>                                      <span class="o">|</span>     <span class="mi">2</span><span class="o">|</span> <span class="n">Physical</span>            <span class="o">|</span>         <span class="mi">0</span> <span class="o">|</span>
+ <span class="n">orole</span>                                        <span class="o">|</span>     <span class="mi">3</span><span class="o">|</span> <span class="n">Physical</span>            <span class="o">|</span>         <span class="mi">3</span> <span class="o">|</span>
+ <span class="n">ouser</span>                                        <span class="o">|</span>     <span class="mi">4</span><span class="o">|</span> <span class="n">Physical</span>            <span class="o">|</span>         <span class="mi">3</span> <span class="o">|</span>
+ <span class="n">ographvertex</span>                                 <span class="o">|</span>     <span class="mi">5</span><span class="o">|</span> <span class="n">Physical</span>            <span class="o">|</span>       <span class="mi">809</span> <span class="o">|</span>
+ <span class="n">ographedge</span>                                   <span class="o">|</span>     <span class="mi">6</span><span class="o">|</span> <span class="n">Physical</span>            <span class="o">|</span>      <span class="mi">8049</span> <span class="o">|</span>
+<span class="o">----------------------------------------------+------+---------------------+-----------+</span>
+ <span class="n">TOTAL</span>                                                                            <span class="mi">8883</span> <span class="o">|</span>
+<span class="o">---------------------------------------------------------------------------------------+</span>
+
+<span class="nl">CLASSES:</span>
+<span class="o">----------------------------------------------+------+---------------------+-----------+</span>
+ <span class="n">NAME</span>                                         <span class="o">|</span>  <span class="n">ID</span>  <span class="o">|</span> <span class="n">CLUSTERS</span>            <span class="o">|</span> <span class="n">RECORDS</span>   <span class="o">|</span>
+<span class="o">----------------------------------------------+------+---------------------+-----------+</span>
+ <span class="n">OGraphVertex</span>                                 <span class="o">|</span>    <span class="mi">2</span> <span class="o">|</span> <span class="mi">5</span>                   <span class="o">|</span>       <span class="mi">809</span> <span class="o">|</span>
+ <span class="n">ORole</span>                                        <span class="o">|</span>    <span class="mi">0</span> <span class="o">|</span> <span class="mi">3</span>                   <span class="o">|</span>         <span class="mi">3</span> <span class="o">|</span>
+ <span class="n">OGraphEdge</span>                                   <span class="o">|</span>    <span class="mi">4</span> <span class="o">|</span> <span class="mi">6</span>                   <span class="o">|</span>      <span class="mi">8049</span> <span class="o">|</span>
+ <span class="n">OUser</span>                                        <span class="o">|</span>    <span class="mi">1</span> <span class="o">|</span> <span class="mi">4</span>                   <span class="o">|</span>         <span class="mi">3</span> <span class="o">|</span>
+<span class="o">----------------------------------------------+------+---------------------+-----------+</span>
+ <span class="n">TOTAL</span>                                                                           <span class="mi">17722</span> <span class="o">|</span>
+<span class="o">---------------------------------------------------------------------------------------+</span>
+
+<span class="nl">INDEXES:</span>
+<span class="o">----------------------------------------------+------------+----+-----------+</span>
+ <span class="n">NAME</span>                                         <span class="o">|</span> <span class="n">TYPE</span>       <span class="o">|</span><span class="n">AUTO</span><span class="o">|</span> <span class="n">RECORDS</span>   <span class="o">|</span>
+<span class="o">----------------------------------------------+------------+----+-----------+</span>
+ <span class="n">edges</span>                                        <span class="o">|</span> <span class="n">NOTUNIQUE</span>  <span class="o">|</span> <span class="n">Y</span>  <span class="o">|</span>        <span class="mi">89</span> <span class="o">|</span>
+ <span class="n">vertices</span>                                     <span class="o">|</span> <span class="n">NOTUNIQUE</span>  <span class="o">|</span> <span class="n">Y</span>  <span class="o">|</span>       <span class="mi">977</span> <span class="o">|</span>
+ <span class="n">dictionary</span>                                   <span class="o">|</span> <span class="n">DICTIONARY</span> <span class="o">|</span> <span class="n">N</span>  <span class="o">|</span>         <span class="mi">0</span> <span class="o">|</span>
+<span class="o">----------------------------------------------+------------+----+-----------+</span>
+ <span class="n">TOTAL</span> <span class="o">=</span> <span class="mi">3</span>                                                             <span class="mi">1066</span> <span class="o">|</span>
+<span class="o">----------------------------------------------------------------------------+</span>
+</pre></div>
+
+<p>A lot of stuff! This database has been loaded with the input file taken from <a href="http://www.tinkerpop.com">TinkerPop</a> project <a href="https://raw.github.com/tinkerpop/blueprints/master/blueprints-test/src/main/resources/com/tinkerpop/blueprints/pgm/util/graphml/graph-example-2.xml">graph-example-2.xml</a>.</p>
+
+<p>The more relevant things are that we've 809 Vertices and 8049 Edges so it's a good training to get acquainted with GraphDBs.</p>
+
+<h4>Execute the first GREMLIN script</h4>
+
+<p>To execute <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> scripts you can use the gremlin console (gremlin.sh/gremlin.bat) or OrientDB console by prefixing "gremlin" at the statement. Example to retrieve the first 10 vertices:
+</p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">gremlin</span> <span class="n">g</span><span class="o">.</span><span class="na">V</span><span class="o">[</span><span class="mi">0</span><span class="o">..</span><span class="mi">9</span><span class="o">]</span>
+  
+  <span class="o">[</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">2</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">3</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">4</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">5</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">7</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">8</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">9</span><span class="o">]]</span>
+  
+  <span class="n">Script</span> <span class="n">executed</span> <span class="n">in</span> <span class="mi">0</span><span class="o">,</span><span class="mi">049000</span> <span class="n">sec</span><span class="o">(</span><span class="n">s</span><span class="o">).</span>
+</pre></div>
+
+<p>Want to know more about <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a>? Follow this tutorial by <a href="http://markorodriguez.com/">Marko Rodriguez</a>:</p>
+
+
+
+<h3>OrientDB Studio</h3>
+
+<h4>Login</h4>
+
+<p>Open a Web Browser and point it to <strong><code>http://localhost:2480</code></strong>. At login page select "tinkerpop" as database and "admin" as user and "admin" as password:</p>
+
+<p>[Once logged in the first page is the database description. You'll find  809 records in <em>OGraphVertex</em> class and 8,049 records in <em>OGraphEdge</em> class.</p>
+
+<p><a href="http://www.orientechnologies.com/images/graphed-tutorial-login.png%5D">http://www.orientechnologies.com/images/graphed-tutorial-db.png</a></p>
+
+<h4>Query</h4>
+
+<p>Click on the <strong>OGraphVertex</strong> class and then press the "**Query**" button.</p>
+
+<p>[These are all the vertices present in the current database in form of raw records. You can edit directly the fields of any records, press ENTER button, and the record/vertex/edge will be saved in a flash. </p>
+
+<h4>Graph display</h4>
+
+<p>Now select the record #5:7 (the first column of the result set always contains the <a href="http://www.orientechnologies.com/images/graphed-tutorial-query.png%5D">http://code.google.com/p/orient/wiki/Concepts#RecordID Record Id</a>) and press the "**Graph**" button. This function displays the selected record as a graph. This is the output:</p>
+
+<p>[## GREMLIN() SQL function</p>
+
+<p>Now go back again into the "*Query*" tab to try the power of the integration between 32734a8257b52fc14bef4c76f180888d and OrientDB SQL engine. Type this text as query text:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="nf">GREMLIN</span><span class="o">(</span> <span class="err">'</span><span class="n">current</span><span class="o">.</span><span class="na">out</span><span class="o">[</span><span class="mi">0</span><span class="o">..</span><span class="mi">3</span><span class="o">]</span><span class="err">'</span> <span class="o">)</span> <span class="n">from</span> <span class="n">V</span> <span class="n">limit</span> <span class="mi">2</span>
+</pre></div>
+
+<p>"*V*" it's an implicit alias for <em>OGraphVertex</em> class and "*E*" for <em>OGraphEdge</em>. This simplify queries against graph elements. "*current*" variable in the 32734a8257b52fc14bef4c76f180888d script stands for the current record retrieved by the SQL query. This is the output:</p>
+
+<p><a href="http://www.orientechnologies.com/images/graphed-tutorial-graph.png%5D">http://www.orientechnologies.com/images/graphed-tutorial-query2.png</a></p>
+
+<h4>Command</h4>
+
+<p>If you want to use raw <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> click on the "**Command**" tab, select <strong>GREMLIN</strong> as language and type this text:
+</p><div class="highlight"><pre>  <span class="n">g</span><span class="o">.</span><span class="na">V</span><span class="o">[</span><span class="mi">0</span><span class="o">..</span><span class="mi">9</span><span class="o">]</span>
+</pre></div>
+
+<p>That means "From the current Graph (**g** variable), get all the vertices (**V**) but return only the first 10.</p>
+
+<p>[<a href="http://www.orientechnologies.com/images/graphed-tutorial-command.png">http://www.orientechnologies.com/images/graphed-tutorial-command.png</a>]</p>
+
+<p>In this case raw <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> engine will be called.</p>
+
+<h3>Java API</h3>
+
+<h4>GREMLIN() function</h4>
+
+<p>This function enriches the OrientDB's SQL language to execute a <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> statement for projections.</p>
+
+<p>Example: retrieve the first 3 out edges of the first 2 vertexes:</p>
+
+<div class="highlight"><pre>  List<span class="nt">&lt;ODocument&gt;</span> resultset = db.query(new OSQLSynchQuery("SELECT GREMLIN( 'current.out[0..3]' ) as value from V limit 2"));
+</pre></div>
+The <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> result will be contained inside the "value" field of the document retrieved.
+<div class="highlight"><pre>  <span class="n">resultset</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">field</span><span class="o">(</span> <span class="s">"value"</span> <span class="o">);</span>
+</pre></div>
+
+<h4>GREMLIN command</h4>
+
+<p>The OCommandGremlin is a new class to execute <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> script. The usage is the same of SQL commands:</p>
+
+<div class="highlight"><pre>  <span class="n">db</span><span class="o">.</span><span class="na">command</span><span class="o">(</span><span class="k">new</span> <span class="n">OCommandGremlin</span><span class="o">(</span><span class="s">"g.V[0..10]"</span><span class="o">)).</span><span class="na">execute</span><span class="o">();</span>
+</pre></div>
+
+<p>Where "**g**" is the variable that represents the current database.</p>
+
+<h3>Gephi</h3>
+
+<p>For advanced analysis against graphs use the <a class="internal present" href="/wiki/Gephi.html">Gephi</a> visual tool.</p>
+
+<h3>Conclusion</h3>
+
+<p>To continue learning OrientDB Graph Edition look at these links:</p>
+
+<ul>
+<li><a class="internal present" href="/wiki/Gremlin.html">Gremlin usage</a></li>
+<li><a class="internal present" href="/wiki/Console-Commands.html">Get acquainted with the console</a></li>
+</ul>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Gremlin |  OrientDB</title>
+  <title>Gremlin</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Gremlin">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Gremlin
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p><a href="http://gremlindocs.com">Gremlin</a> is a language specialized to work with <a href="https://github.com/tinkerpop/gremlin/wiki/Defining-a-Property-Graph">Property Graphs</a>. <a href="http://gremlindocs.com">Gremlin</a> is part of <a href="http://www.tinkerpop.com">TinkerPop</a> Open Source products. For more information:</p>
+
+<ul>
+<li><a href="http://gremlindocs.com">Gremlin Documentation</a></li>
+<li><a href="https://github.com/tinkerpop/gremlin/wiki">Gremlin WiKi</a></li>
+<li><a href="https://github.com/tinkerpop/blueprints/wiki/OrientDB-Implementation">OrientDB adapter to use it inside Gremlin</a></li>
+<li><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">OrientDB implementation of TinkerPop Blueprints</a></li>
+</ul><p>To know more about <a href="http://gremlindocs.com">Gremlin</a> and <a href="http://www.tinkerpop.com">TinkerPop</a>'s products subscribe to the <a href="http://groups.google.com/forum/#!forum/gremlin-users">Gremlin Group</a>.</p>
+
+<h3>Get Started</h3>
+
+<p>Launch the <strong>gremlin.sh</strong> (or gremlin.bat on Windows OS) console script located in <strong>bin</strong> directory:
+</p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">gremlin</span><span class="o">.</span><span class="na">bat</span>
+  
+           <span class="err">\</span><span class="o">,,,/</span>
+           <span class="o">(</span><span class="n">o</span> <span class="n">o</span><span class="o">)</span>
+  <span class="o">-----</span><span class="n">oOOo</span><span class="o">-(</span><span class="n">_</span><span class="o">)-</span><span class="n">oOOo</span><span class="o">-----</span>
+</pre></div>
+
+<h3>Open the graph database</h3>
+
+<p>Before to play with <a href="http://gremlindocs.com">Gremlin</a> you need a valid <strong><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html#work_with_graphdb">OrientGraph</a></strong> instance that points to a OrientDB database. To know all the database types look at <a class="internal present" href="/wiki/Concepts.html#storage">Storage types</a>.</p>
+
+<p>When you're working with a local or memory database if the database not exists it's created automatically. Using the remote connection you need to create the database on the target server before to use it. This is due to security restrictions.</p>
+
+<p>Once created the <strong><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html#work_with_graphdb">OrientGraph</a></strong> instance with a proper URL is necessary to assign it to a variable. <a href="http://gremlindocs.com">Gremlin</a> is written in Groovy, so it supports all the Groovy syntax and both can be mixed to create very powerful scripts!</p>
+
+<p>Example with a local database (see below for more information about it):
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"local:/home/gremlin/db/demo"</span><span class="o">);</span>
+  <span class="o">==&gt;</span><span class="n">orientgraph</span><span class="o">[</span><span class="nl">local:</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gremlin</span><span class="o">/</span><span class="n">db</span><span class="o">/</span><span class="n">demo</span><span class="o">]</span>
+</pre></div>
+
+<p>Some useful links:</p>
+
+<ul>
+<li><a href="https://github.com/tinkerpop/gremlin/wiki/Gremlin-Methods">All Gremlin methods</a></li>
+<li><a href="https://github.com/tinkerpop/gremlin/wiki/Gremlin-Steps">All available steps</a></li>
+</ul><h4>Working with local database</h4>
+
+<p>This is the most used mode. The console opens and locks the database for exclusive use. Doesn't require to start a OrientDB Server.
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"local:/home/gremlin/db/demo"</span><span class="o">);</span>
+  <span class="o">==&gt;</span><span class="n">orientgraph</span><span class="o">[</span><span class="nl">local:</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gremlin</span><span class="o">/</span><span class="n">db</span><span class="o">/</span><span class="n">demo</span><span class="o">]</span>
+</pre></div>
+
+<h4>Working with remote database</h4>
+
+<p>Open a database on a remote server. Assure the server is up and running. To start the server just launch <strong>server.sh</strong> (or server.bat on Windows OS) script. For more information look at <a class="internal present" href="/wiki/DB-Server.html">OrientDB Server</a>
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"remote:localhost/demo"</span><span class="o">);</span>
+  <span class="o">==&gt;</span><span class="n">orientgraph</span><span class="o">[</span><span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">demo</span><span class="o">]</span>
+</pre></div>
+
+<h4>Working with in-memory database</h4>
+
+<p>In this mode the database is volatile and all the changes will be not persistent. Use this in cluster configuration (the database life is assured by the cluster itself) or just for test.
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"memory:demo"</span><span class="o">);</span>
+  <span class="o">==&gt;</span><span class="n">orientgraph</span><span class="o">[</span><span class="nl">memory:</span><span class="n">demo</span><span class="o">]</span>
+</pre></div>
+
+<h4>Use the security</h4>
+
+<p>OrientDB supports the security by creating multiple users and roles to associate privileges. To know more look at <a class="internal present" href="/wiki/Security.html">Security</a>. To open the graph database with a different user than default pass user and password as additional parameters:</p>
+
+<div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"memory:demo"</span><span class="o">,</span> <span class="s">"reader"</span><span class="o">,</span> <span class="s">"reader"</span><span class="o">);</span>
+  <span class="o">==&gt;</span><span class="n">orientgraph</span><span class="o">[</span><span class="nl">memory:</span><span class="n">demo</span><span class="o">]</span>
+</pre></div>
+
+<h3>Create a new Vertex</h3>
+
+<p>To create a new vertex use the <strong>addVertex()</strong> method. The vertex will be created and the unique id will be displayed as return value.
+</p><div class="highlight"><pre>  <span class="n">g</span><span class="o">.</span><span class="na">addVertex</span><span class="o">();</span>
+  <span class="o">==&gt;</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">]</span>
+</pre></div>
+
+<h3>Create an edge =</h3>
+
+<p>To create a new edge between two vertices use the <strong>addEdge(v1, v2, label)</strong> method. The edge will be created with the label specified.</p>
+
+<p>In the example below 2 vertices are created and assigned to a variable (Gremlin is based on Groovy), then an edge is created between them.
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="na">addVertex</span><span class="o">();</span>
+  <span class="o">==&gt;</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">]</span>
+  
+  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="na">addVertex</span><span class="o">();</span>
+  <span class="o">==&gt;</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">]</span>
+  
+  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">e</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="na">addEdge</span><span class="o">(</span><span class="n">v1</span><span class="o">,</span> <span class="n">v2</span><span class="o">,</span> <span class="err">'</span><span class="n">friend</span><span class="err">'</span><span class="o">);</span>
+  <span class="o">==&gt;</span><span class="n">e</span><span class="o">[</span><span class="err">#</span><span class="mi">6</span><span class="o">:</span><span class="mi">0</span><span class="o">][</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">-</span><span class="n">friend</span><span class="o">-&gt;</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">]</span>
+</pre></div>
+
+<h3>Retrieve a vertex</h3>
+
+<p>To retrieve a vertex by its ID, use the <strong>v(id)</strong> method passing the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordId</a> as argument (with or without the prefix '#'). This example retrieves the first vertex created in the upon example.
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="err">'</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="err">'</span><span class="o">)</span>
+  <span class="o">==&gt;</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">]</span>
+</pre></div>
+
+<h4>Get all the vertices</h4>
+
+<p>To retrieve all the vertices in the opened graph use <strong>.V</strong> (V in upper-case):
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span><span class="o">.</span><span class="na">V</span>
+  <span class="o">==&gt;</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">]</span>
+  <span class="o">==&gt;</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">]</span>
+</pre></div>
+
+<h3>Retrieve an edge</h3>
+
+<p>Retrieving an edge it's very similar to [use the <em>e(id)</em> method passing the <a href="Retrieve_a_vertex%5D,">Concepts#RecordId RecordId</a> as argument (with or without the prefix '#'). This example retrieves the first edge created in the upon example.
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span><span class="o">.</span><span class="na">e</span><span class="o">(</span><span class="err">'</span><span class="mi">6</span><span class="o">:</span><span class="mi">0</span><span class="err">'</span><span class="o">)</span>
+  <span class="o">==&gt;</span><span class="n">e</span><span class="o">[</span><span class="err">#</span><span class="mi">6</span><span class="o">:</span><span class="mi">0</span><span class="o">][</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">-</span><span class="n">friend</span><span class="o">-&gt;</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">]</span>
+</pre></div>
+
+<h4>Get all the edges</h4>
+
+<p>To retrieve all the edges in the opened graph use <strong>.E</strong> (E in upper-case):
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span><span class="o">.</span><span class="na">E</span>
+  <span class="o">==&gt;</span><span class="n">e</span><span class="o">[</span><span class="err">#</span><span class="mi">6</span><span class="o">:</span><span class="mi">0</span><span class="o">][</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">-</span><span class="n">friend</span><span class="o">-&gt;</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">]</span>
+</pre></div>
+
+<h3>Traversal</h3>
+
+<p>The power of Gremlin is on traversal. Once you have a graph loaded in your database you can traverse it in many ways.</p>
+
+<h4>Basic Traversal</h4>
+
+<p>To display all the outgoing edges of the first vertex just created postpone the <strong>.outE</strong> at the vertex. Example:
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">v1</span><span class="o">.</span><span class="na">outE</span>
+  <span class="o">==&gt;</span><span class="n">e</span><span class="o">[</span><span class="err">#</span><span class="mi">6</span><span class="o">:</span><span class="mi">0</span><span class="o">][</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">-</span><span class="n">friend</span><span class="o">-&gt;</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">]</span>
+</pre></div>
+
+<p>And to display all the incoming edges of the second vertex created in the previous examples postpone the <strong>.inE</strong> at the vertex. Example:
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">v2</span><span class="o">.</span><span class="na">inE</span>
+  <span class="o">==&gt;</span><span class="n">e</span><span class="o">[</span><span class="err">#</span><span class="mi">6</span><span class="o">:</span><span class="mi">0</span><span class="o">][</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">-</span><span class="n">friend</span><span class="o">-&gt;</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">]</span>
+</pre></div>
+
+<p>In this case the edge is the same because it's the outgoing of 5:0 and the goes up to 5:1 where is the incoming edge.</p>
+
+<p>For more information look at the <a href="https://github.com/tinkerpop/gremlin/wiki/Basic-Graph-Traversals">Basic Traversal with Gremlin</a>.</p>
+
+<h4>Filter results</h4>
+
+<p>This examples returns all the outgoing edges of all the vertices with label equals to 'friend'.
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span><span class="o">.</span><span class="na">V</span><span class="o">.</span><span class="na">outE</span><span class="o">(</span><span class="err">'</span><span class="n">friend</span><span class="err">'</span><span class="o">)</span>
+  <span class="o">==&gt;</span><span class="n">e</span><span class="o">[</span><span class="err">#</span><span class="mi">6</span><span class="o">:</span><span class="mi">0</span><span class="o">][</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">-</span><span class="n">friend</span><span class="o">-&gt;</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">]</span>
+</pre></div>
+
+<h3>Close the database =</h3>
+
+<p>To close a graph use the <strong>shutdown()</strong> method:
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span><span class="o">.</span><span class="na">shutdown</span><span class="o">()</span>
+  <span class="o">==&gt;</span><span class="kc">null</span>
+</pre></div>
+This is not strictly necessary because OrientDB always closes the database when the <a href="http://gremlindocs.com">Gremlin</a> console quits.
+
+<h3>Create complex paths</h3>
+
+<p><a href="http://gremlindocs.com">Gremlin</a> allows to concatenate expressions to create more complex traversal in a single line:
+</p><div class="highlight"><pre>  <span class="n">v1</span><span class="o">.</span><span class="na">outE</span><span class="o">.</span><span class="na">inV</span>
+</pre></div>
+
+<p>Of course this could be much more complex. Below an examples with the graph taken from the official documentation:
+</p><div class="highlight"><pre>  <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="err">'</span><span class="nl">memory:</span><span class="n">test</span><span class="err">'</span><span class="o">)</span>
+  
+  <span class="c1">// calculate basic collaborative filtering for vertex 1</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="o">[:]</span>
+  <span class="n">g</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="na">out</span><span class="o">(</span><span class="err">'</span><span class="n">likes</span><span class="err">'</span><span class="o">).</span><span class="na">in</span><span class="o">(</span><span class="err">'</span><span class="n">likes</span><span class="err">'</span><span class="o">).</span><span class="na">out</span><span class="o">(</span><span class="err">'</span><span class="n">likes</span><span class="err">'</span><span class="o">).</span><span class="na">groupCount</span><span class="o">(</span><span class="n">m</span><span class="o">)</span>
+  <span class="n">m</span><span class="o">.</span><span class="na">sort</span><span class="o">{</span><span class="n">a</span><span class="o">,</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">.</span><span class="na">value</span> <span class="o">&lt;=&gt;</span> <span class="n">b</span><span class="o">.</span><span class="na">value</span><span class="o">}</span>
+  
+  <span class="c1">// calculate the primary eigenvector (eigenvector centrality) of a graph</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="o">[:];</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+  <span class="n">g</span><span class="o">.</span><span class="na">V</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">groupCount</span><span class="o">(</span><span class="n">m</span><span class="o">).</span><span class="na">loop</span><span class="o">(</span><span class="mi">2</span><span class="o">){</span><span class="n">c</span><span class="o">++</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="o">}</span>
+  <span class="n">m</span><span class="o">.</span><span class="na">sort</span><span class="o">{</span><span class="n">a</span><span class="o">,</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">.</span><span class="na">value</span> <span class="o">&lt;=&gt;</span> <span class="n">b</span><span class="o">.</span><span class="na">value</span><span class="o">}</span>
+</pre></div>
+
+<h3>Passing input parameters</h3>
+
+<p>Some <a href="http://gremlindocs.com">Gremlin</a> expressions require declaration of input parameters to be
+run. This is the case, for example, of bound variables, as described
+in <a href="https://github.com/tinkerpop/gremlin/wiki/Using-Gremlin-through-Java">JSR223 Gremlin Script Engine</a>. OrientDB has enabled a mechanism to
+pass variables to a <a href="http://gremlindocs.com">Gremlin</a> pipeline declared in a command as
+described below:</p>
+
+<div class="highlight"><pre>  Map<span class="nt">&lt;String</span><span class="err">,</span> <span class="err">Object</span><span class="nt">&gt;</span> params = new HashMap<span class="nt">&lt;String</span><span class="err">,</span> <span class="err">Object</span><span class="nt">&gt;</span>();
+  params.put("map1", new HashMap());
+  params.put("map2", new HashMap());
+  db.command(new OCommandSQL("select gremlin('
+  current.as('id').outE.label.groupCount(map1).optional('id').sideEffect{map2=it.map();map2+=map1;}
+  ')")).execute(params);
+</pre></div>
+
+<h3>Declaring output</h3>
+
+<p>In the simplest case, the output of the last step (<a href="https://github.com/tinkerpop/gremlin/wiki/Gremlin-Steps">https://github.com/tinkerpop/gremlin/wiki/Gremlin-Steps</a>) in the Gremlin pipeline
+corresponds to the output of the overall Gremlin expression. However,
+it is possible to instruct the Gremlin engine to consider any of the
+input variables as output. This can be declared as:</p>
+
+<div class="highlight"><pre>  Map<span class="nt">&lt;String</span><span class="err">,</span> <span class="err">Object</span><span class="nt">&gt;</span> params = new HashMap<span class="nt">&lt;String</span><span class="err">,</span> <span class="err">Object</span><span class="nt">&gt;</span>();
+  params.put("map1", new HashMap());
+  params.put("map2", new HashMap());
+  params.put("output", "map2");
+  db.command(new OCommandSQL("select gremlin('
+  current.as('id').outE.label.groupCount(map1).optional('id').sideEffect{map2=it.map();map2+=map1;}
+  ')")).execute(params);
+</pre></div>
+There are more possibilities to define the output in <a href="http://gremlindocs.com">Gremlin</a> pipelines
+so this mechanism is expected to be extended in the future. Please,
+contact OrientDB mailing list to discuss customized outputs.
+
+<h3>Conclusions</h3>
+
+<p>Now you learned how to use <a href="http://gremlindocs.com">Gremlin</a> on top of OrientDB the best place to go in deep with this powerful language is the <a href="https://github.com/tinkerpop/gremlin/wiki">Gremlin WiKi</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

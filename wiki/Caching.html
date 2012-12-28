@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Caching |  OrientDB</title>
+  <title>Caching</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Caching">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Caching
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB has several caching mechanisms that act at different levels. Look at this picture:</p>
+
+<p><img src="http://www.orientechnologies.com/images/caching.png"></p>
+
+<ul>
+<li>
+<strong>Level-1 cache</strong> is one per database instance (and per thread in multi-thread environment)</li>
+<li>
+<strong>Level-2 cache</strong> is one per storage. This means that is shared by all database instances</li>
+<li>
+<strong><a class="internal present" href="/wiki/Concepts.html#storage">Storage</a></strong>, depending by the implementation could cache. This is the case for the <em>Local Storage</em> (disk based) that caches file reads to reduce I/O requests</li>
+<li>
+<strong>OS File</strong> Operative System caches I/O when using Memory Mapping techniques</li>
+</ul><h3>How cache works?</h3>
+
+<p><img src="http://www.orientechnologies.com/images/cache-flow.png"></p>
+
+<p>When the client application asks for a record OrientDB checks:</p>
+
+<ul>
+<li>if a <strong>transaction</strong> is begun searches it inside the transaction changed records and returns it if found</li>
+<li>if the <strong>Level-1</strong> cache is enabled and contains the requested record then return it</li>
+<li>if the <strong>Level-2</strong> cache is enabled and contains the requested record then move the record inside the Level-1 cache (if enabled) and return it. In this case the record will be inside Level-1 cache until the database is closed when all the not dirty records will be re-moved to the Level-2 cache to be used by other database instances</li>
+<li>at this point the record is not in cache, then ask it to the <strong>Storage</strong> (disk, memory or remote)</li>
+</ul><h3>Concurrency</h3>
+
+<p>In concurrent environment caching could throw problems when you need the freshest version of a record:</p>
+
+<ul>
+<li>if you have only one JVM and one thread Caches can't be unaligned so always leave them on to improve performance</li>
+<li>if you have only one JVM but multiple threads each thread owns a database instance with its Level-1 cache. Different Level-1 caches could contain different version of the same record. For this reason if you always need the last version of a record you can:</li>
+<li>completely <a href="#Disable_Level-1_cache">Disable Level-1 cache</a>
+</li>
+<li>or unpin the record you don't want reside in cache using the <a href="#Manual_control">Manual control</a>
+</li>
+<li>or, in Java, reload the record by using the API <code>record.reload()</code>
+</li>
+<li>if you have multiple JVMs also Level-2 cache could be unaligned. For this reason if you always need the last version of a record you can:</li>
+<li>completely <a href="#Disable_Level-1_cache">Disable Level-1 cache</a> and <a href="#Disable_Level-2_cache">Disable Level-2 cache</a>
+</li>
+<li>or unpin the record you don't want reside in cache using the <a href="#Manual_control">Manual control</a>
+</li>
+<li>or, in Java, reload the record by using the API <code>record.reload()</code>
+</li>
+</ul><h3>Manual control</h3>
+
+<p>You can manually control which records are cached. By default all records are cachable but by calling the <code>ORecord.unpin()</code> method you avoid the record to be parked in any cache.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="c1">// SAVE AND AUTO-CACHE IT FOLLOWING THE CONFIGURED STRATEGY</span>
+  <span class="k">new</span> <span class="nf">ODocument</span><span class="o">(</span><span class="s">"Country"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Austria"</span><span class="o">).</span><span class="na">save</span><span class="o">();</span>
+  
+  <span class="c1">// SAVE AND LEAVE IT IN CACHE</span>
+  <span class="k">new</span> <span class="nf">ODocument</span><span class="o">(</span><span class="s">"Country"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Germany"</span><span class="o">).</span><span class="na">save</span><span class="o">().</span><span class="na">pin</span><span class="o">();</span>
+  
+  <span class="c1">// SAVE AND FORGET IT</span>
+  <span class="k">new</span> <span class="nf">ODocument</span><span class="o">(</span><span class="s">"Country"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Italy"</span><span class="o">).</span><span class="na">save</span><span class="o">().</span><span class="na">unpin</span><span class="o">();</span>
+</pre></div>
+
+<h3>Record cache</h3>
+
+<h4>Level 1</h4>
+
+<p>Level-1 cache acts at database level. Each database instance has a Level-1 cache enabled by default. This cache keeps the used records.</p>
+
+<h4>Empty Level-1 cache</h4>
+
+<p>To remove all the records in Level-1 cache you can invoke the <code>invalidate()</code> method:
+</p><div class="highlight"><pre>  <span class="n">db</span><span class="o">.</span><span class="na">getLevel1Cache</span><span class="o">().</span><span class="na">invalidate</span><span class="o">();</span>
+</pre></div>
+
+<h5>Disable Level-1 cache</h5>
+
+<p>To disable it use the system property <code>cache.level1.enabled</code> by setting it at startup:
+</p><div class="highlight"><pre>  <span class="n">java</span> <span class="o">...</span> <span class="o">-</span><span class="n">Dcache</span><span class="o">.</span><span class="na">level1</span><span class="o">.</span><span class="na">enabled</span><span class="o">=</span><span class="kc">false</span> <span class="o">...</span>
+</pre></div>
+or via code before to open the database:
+<div class="highlight"><pre>  <span class="n">OGlobalConfiguration</span><span class="o">.</span><span class="na">CACHE_LEVEL1_ENABLED</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+</pre></div>
+
+<h5>Change size</h5>
+
+<p>Level-1 cache size is in terms of record entries. Default size is set to -1 that means no limit, but when the free Memory Heap is low then cache entries are freed automatically.</p>
+
+<p>To change the default size use the system property <code>cache.level1.size</code> by setting it at startup:
+</p><div class="highlight"><pre>  <span class="n">java</span> <span class="o">...</span> <span class="o">-</span><span class="n">Dcache</span><span class="o">.</span><span class="na">level1</span><span class="o">.</span><span class="na">size</span><span class="o">=</span><span class="mi">100</span> <span class="o">...</span>
+</pre></div>
+or via code before to open the database:
+<div class="highlight"><pre>  <span class="n">OGlobalConfiguration</span><span class="o">.</span><span class="na">CACHE_LEVEL1_SIZE</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+</pre></div>
+
+<h4>Level 2</h4>
+
+<p>Level-2 cache acts at storage level and it's shared by all the database instances. Level-2 cache is enabled by default. This cache keeps the used records of all the database instances.</p>
+
+<h5>Strategy</h5>
+
+<p>The Level2 cache strategy means what it does when a record is retrieved. It can be:</p>
+
+<ul>
+<li>0 = <strong>pop</strong> the record, the default</li>
+<li>1 = <strong>copy</strong> the record</li>
+</ul><p>So by default the record is moved (pop) from Level2 cache to Level1 cache till the database close. In the case of "copy" (value=1) the record remains in Level2 cache for further concurrent threads. On high concurrency environment the "copy" strategy could improve performance at the cost of copy in terms of CPU + RAM.</p>
+
+<p>To change default strategy act globally changing the global parameter. Look at <a class="internal present" href="/wiki/Performance-Tuning.html#parameters">all the parameters</a> for more information.</p>
+
+<p>You can also set it per database cache via Java API calling:
+</p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">getLevel2Cache</span><span class="o">().</span><span class="na">setStrategy</span><span class="o">(</span><span class="n">STRATEGY</span><span class="o">.</span><span class="na">COPY_RECORD</span><span class="o">);</span>
+</pre></div>
+
+<h5>Disable Level-2 cache</h5>
+
+<p>To disable it use the system property <code>cache.level2.enabled</code> by setting it at startup:
+</p><div class="highlight"><pre>  <span class="n">java</span> <span class="o">...</span> <span class="o">-</span><span class="n">Dcache</span><span class="o">.</span><span class="na">level2</span><span class="o">.</span><span class="na">enabled</span><span class="o">=</span><span class="kc">false</span> <span class="o">...</span>
+</pre></div>
+or via code before to open the database:
+<div class="highlight"><pre>  <span class="n">OGlobalConfiguration</span><span class="o">.</span><span class="na">CACHE_LEVEL2_ENABLED</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+</pre></div>
+
+<h5>Change size</h5>
+
+<p>Level-2 cache size is in terms of record entries. Default size is set to -1 that means no limit, but when the free Memory Heap is low then cache entries are freed automatically.</p>
+
+<p>To change the default size use the system property <code>cache.level2.size</code> by setting it at startup:
+</p><div class="highlight"><pre>  <span class="n">java</span> <span class="o">...</span> <span class="o">-</span><span class="n">Dcache</span><span class="o">.</span><span class="na">level2</span><span class="o">.</span><span class="na">size</span><span class="o">=</span><span class="mi">100</span> <span class="o">...</span>
+</pre></div>
+or via code before to open the database:
+<div class="highlight"><pre>  <span class="n">OGlobalConfiguration</span><span class="o">.</span><span class="na">CACHE_LEVEL2_SIZE</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="mi">100</span><span class="o">);</span>
+</pre></div>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Schema |  OrientDB</title>
+  <title>Schema</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Schema">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Schema
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>Although OrientDB can work in schema-less mode, sometimes you need to enforce your data model using a schema. OrientDB supports schema-full or schema-hybrid solutions where the second one means to set such constraints only for certain fields and leave the user to add custom fields to the records. This mode is at class level, so you can have the "Employee" class as schema-full and "EmployeeInformation" class as schema-less.</p>
+
+<ul>
+<li>
+<strong>Schema-Full</strong>: enable the strict-mode at class level and set all the fields as mandatory</li>
+<li>
+<strong>Schema-Less</strong>: create classes with no properties. Default mode is non strict-mode so records can have arbitrary fields</li>
+<li>
+<strong>Schema-Hybrid</strong>, called also <strong>Schema-Mixed</strong> is the most used: create classes and define some fields but leave the record to define own custom fields</li>
+</ul><p>NOTE: <em>Changes to the schema are not transactional, so execute them outside a transaction.</em></p>
+
+<p>To gain access to the schema APIs you need in the Schema instance of the database you're using.</p>
+
+<div class="highlight"><pre>  <span class="n">OSchema</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">();</span>
+</pre></div>
+
+<h3>Class</h3>
+
+<p>A Class is a concept taken from the Object Oriented paradigm. In OrientDB defines a type of record. It's the closest concept to a Relational DBMS Table. Class can be schema-less, schema-full or mixed.</p>
+
+<p>A class can inherit from another shaping a tree of classes. [means that the sub-class extends the parent one inheriting all the attributes as they was own.</p>
+
+<p>Each class has its clusters that can be logical (by default) or physical. A class must have at least one cluster defined (as its default cluster), but can support multiple ones. In this case By default OrientDB will write new records in the default cluster, but reads will always involve all the defined clusters.</p>
+
+<p>When you create a new class by default a new physical cluster is created with the same name of the class in lower-case.</p>
+
+<h4>Create a persistent class</h4>
+
+<p>Each class contains one or more properties. This mode is similar to the classic Relational DBMS approach where you define tables before storing records.</p>
+
+<p>Example of creation of Account class. By default a new <a class="internal present" href="/wiki/Concepts.html#physical_clusterphysicalcluster">#Inheritance]</a> will be created to keep the class instances:
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">account</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">);</span>
+</pre></div>
+
+<h4>Get a persistent class</h4>
+
+<p>To retrieve a persistent class use the <code>getClass(String)</code> method. If the class not exists NULL is returned.
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">account</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">getClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">);</span>
+</pre></div>
+
+<h4>Drop a persistent class</h4>
+
+<p>To drop a persistent class use the <code>OSchema.dropClass(String)</code> method.
+</p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">dropClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">);</span>
+</pre></div>
+
+<p>The records of the removed class will be not deleted unless you explicitly delete them before to drop the class. Example:
+</p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">command</span><span class="o">(</span> <span class="k">new</span> <span class="n">OCommandSQL</span><span class="o">(</span><span class="s">"DELETE FROM Account"</span><span class="o">)</span> <span class="o">).</span><span class="na">execute</span><span class="o">();</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">dropClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">);</span>
+</pre></div>
+
+<h4>Constraints</h4>
+
+<p>To work in schema-full mode set the strict mode at class level by calling the <code>setStrictMode(true)</code> method. In this case record of that class can't have not-defined properties.</p>
+
+<h3>Property</h3>
+
+<p>Properties are the fields of the class. In this guide Property is synonym of Field.</p>
+
+<h4>Create the Class property</h4>
+
+<p>Once the class has been created, you can define fields (properties). Below an example:
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">account</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"birthDate"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
+</pre></div>
+Please note that each field must belong to one of <a class="internal present" href="/wiki/Types.html">supported types</a>.
+
+<h4>Drop the Class property</h4>
+
+<p>To drop a persistent class property use the <code>OClass.dropProperty(String)</code> method.
+</p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">getClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">).</span><span class="na">dropProperty</span><span class="o">(</span><span class="s">"name"</span><span class="o">);</span>
+</pre></div>
+
+<p>The dropped property will not be removed from records unless you explicitly delete them using the <a class="internal present" href="/wiki/SQL-Update.html">SQL UPDATE + REMOVE statement</a>. Example:
+</p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">getClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">).</span><span class="na">dropProperty</span><span class="o">(</span><span class="s">"name"</span><span class="o">);</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">command</span><span class="o">(</span><span class="k">new</span> <span class="n">OCommandSQL</span><span class="o">(</span><span class="s">"UPDATE Account REMOVE name"</span><span class="o">)).</span><span class="na">execute</span><span class="o">();</span>
+</pre></div>
+
+<h4>Define relationships</h4>
+
+<p>OrientDB supports two types of relationships: <strong>referenced</strong> and <strong>embedded</strong>.</p>
+
+<h5>Referenced relationships</h5>
+
+<p>OrientDB uses a direct <strong>link</strong> to the referenced record(s) without the need of costly JOINs of the Relational world. Example:
+</p><div class="highlight"><pre>                    <span class="n">customer</span>
+    <span class="n">Record</span> <span class="n">A</span>     <span class="o">-------------&gt;</span>    <span class="n">Record</span> <span class="n">B</span>
+  <span class="n">CLASS</span><span class="o">=</span><span class="n">Invoice</span>                 <span class="n">CLASS</span><span class="o">=</span><span class="n">Customer</span>
+    <span class="n">RID</span><span class="o">=</span><span class="mi">5</span><span class="o">:</span><span class="mi">23</span>                       <span class="n">RID</span><span class="o">=</span><span class="mi">10</span><span class="o">:</span><span class="mi">2</span>
+</pre></div>
+<strong>Record A</strong> will contain the <em>reference</em> to the <strong>Record B</strong> in the property called "customer". Note that both records are reachable by any other records since they have a <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>.
+
+<h5>= 1-1 and N-1 referenced relationships =</h5>
+
+<p>1-1 and N-1 referenced relationships are expressed using the <strong>LINK</strong> type.
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">customer</span><span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Customer"</span><span class="o">);</span>
+  <span class="n">customer</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">STRING</span><span class="o">);</span>
+  
+  <span class="n">OClass</span> <span class="n">invoice</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Invoice"</span><span class="o">);</span>
+  <span class="n">invoice</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">);</span>
+  <span class="n">invoice</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"date"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
+  <span class="n">invoice</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"customer"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">LINK</span><span class="o">,</span> <span class="n">customer</span><span class="o">);</span>
+</pre></div>
+In this case records of class "Invoice" will link to a record of class "Customer" using the field "customer".
+
+<h5>= 1-N and N-M referenced relationships =</h5>
+
+<p>1-N and N-M referenced relationships are expressed using the collection of links such as:</p>
+
+<ul>
+<li>
+<strong>LINKLIST</strong> as an ordered list of links</li>
+<li>
+<strong>LINKSET</strong> as an unordered set of links. It doesn't accept duplicates</li>
+<li>
+<strong>LINKMAP</strong> as an ordered map of links with <strong>String</strong> key. It doesn't accept duplicated keys</li>
+</ul><p>Example of a 1-N relationship between the classes Order and OrderItem:
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">orderItem</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"OrderItem"</span><span class="o">);</span>
+  <span class="n">orderItem</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">);</span>
+  <span class="n">orderItem</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"animal"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">LINK</span><span class="o">,</span> <span class="n">animal</span><span class="o">);</span>
+  
+  <span class="n">OClass</span> <span class="n">order</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Order"</span><span class="o">);</span>
+  <span class="n">order</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">);</span>
+  <span class="n">order</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"date"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
+  <span class="n">order</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"items"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">LINKLIST</span><span class="o">,</span> <span class="n">orderItem</span><span class="o">);</span>
+  
+  <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<h5>Embedded relationships</h5>
+
+<p>Embedded records, instead, are contained inside the record that embeds them. It's a kind of relationship stronger than the <a href="#Referenced_relationships">reference</a>. The embedded record will not have a own <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a> since it can't be directly referenced by other records. It's only accessible via the container record. If the container record is deleted, then the embedded record will be deleted too. Example:
+</p><div class="highlight"><pre>                    <span class="n">address</span>
+    <span class="n">Record</span> <span class="n">A</span>     <span class="o">&lt;&gt;----------&gt;</span>   <span class="n">Record</span> <span class="n">B</span>
+  <span class="n">CLASS</span><span class="o">=</span><span class="n">Account</span>               <span class="n">CLASS</span><span class="o">=</span><span class="n">Address</span>
+    <span class="n">RID</span><span class="o">=</span><span class="mi">5</span><span class="o">:</span><span class="mi">23</span>                     <span class="n">NO</span> <span class="n">RID</span><span class="o">!</span>
+</pre></div>
+<strong>Record A</strong> will contain the entire <strong>Record B</strong> in the property called "address". <strong>Record B</strong> can be reached only by traversing the container record.
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">account</span> <span class="n">WHERE</span> <span class="n">address</span><span class="o">.</span><span class="na">city</span> <span class="o">=</span> <span class="err">'</span><span class="n">Rome</span><span class="err">'</span>
+</pre></div>
+
+<h5>= 1-1 and N-1 referenced relationships =</h5>
+
+<p>1-1 and N-1 referenced relationships are expressed using the <strong>EMBEDDED</strong> type.
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">address</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Address"</span><span class="o">);</span>
+  
+  <span class="n">OClass</span> <span class="n">account</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"birthDate"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"address"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">EMBEDDED</span><span class="o">,</span> <span class="n">address</span><span class="o">);</span>
+</pre></div>
+In this case, records of class "Account" will embed a record of class "Address".
+
+<h5>= 1-N and N-M referenced relationships =</h5>
+
+<p>1-N and N-M referenced relationships are expressed using the collection of links such as:</p>
+
+<ul>
+<li>
+<strong>EMBEDDEDLIST</strong>, as an ordered list of records</li>
+<li>
+<strong>EMBEDDEDSET</strong>, as an unordered set of records. It doesn't accepts duplicates</li>
+<li>
+<strong>EMBEDDEDMAP</strong>, as an ordered map of records as value with key a <strong>String</strong>. It doesn't accepts duplicated keys</li>
+</ul><p>Example of a 1-N relationship between the class Order and OrderItem:
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">orderItem</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"OrderItem"</span><span class="o">);</span>
+  <span class="n">orderItem</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">);</span>
+  <span class="n">orderItem</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"animal"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">LINK</span><span class="o">,</span> <span class="n">animal</span><span class="o">);</span>
+  
+  <span class="n">OClass</span> <span class="n">order</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Order"</span><span class="o">);</span>
+  <span class="n">order</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">INTEGER</span><span class="o">);</span>
+  <span class="n">order</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"date"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
+  <span class="n">order</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"items"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">EMBEDDEDLIST</span><span class="o">,</span> <span class="n">orderItem</span><span class="o">);</span>
+  
+  <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<h4>Constraints</h4>
+
+<p>OrientDB supports a number of constrains for each field:</p>
+
+<ul>
+<li>
+<strong>Minimum value</strong>, accepts a string because works also for date ranges <code>setMin()</code>
+</li>
+<li>
+<strong>Maximum value</strong>, accepts a string because works also for date ranges <code>setMax()</code>
+</li>
+<li>
+<strong>Mandatory</strong>, it must be specified <code>setMandatory()</code>
+</li>
+<li>
+<strong>Readonly</strong>, it may not be updated after record is created <code>setReadonly()</code>
+</li>
+<li>
+<strong>Not Null</strong>, can't be NULL <code>setNotNull()</code>
+</li>
+<li>
+<strong>Unique</strong>, doesn't allow duplicates and speedup searches.</li>
+<li>
+<strong>Regexp</strong>, it must satisfy the <a href="http://en.wikipedia.org/wiki/Regular_expression">Regular expression</a>.</li>
+</ul><div class="highlight"><pre>  <span class="n">profile</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"nick"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">STRING</span><span class="o">).</span><span class="na">setMin</span><span class="o">(</span><span class="s">"3"</span><span class="o">).</span><span class="na">setMax</span><span class="o">(</span><span class="s">"30"</span><span class="o">).</span><span class="na">setMandatory</span><span class="o">(</span><span class="kc">true</span><span class="o">).</span><span class="na">setNotNull</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+  <span class="n">profile</span><span class="o">.</span><span class="na">createIndex</span><span class="o">(</span><span class="s">"nickIdx"</span><span class="o">,</span> <span class="n">OClass</span><span class="o">.</span><span class="na">INDEX_TYPE</span><span class="o">.</span><span class="na">UNIQUE</span><span class="o">,</span> <span class="s">"nick"</span><span class="o">);</span> <span class="c1">// Creates unique constraint</span>
+  
+  <span class="n">profile</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">STRING</span><span class="o">).</span><span class="na">setMin</span><span class="o">(</span><span class="s">"3"</span><span class="o">).</span><span class="na">setMax</span><span class="o">(</span><span class="s">"30"</span><span class="o">);</span>
+  <span class="n">profile</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"surname"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">STRING</span><span class="o">).</span><span class="na">setMin</span><span class="o">(</span><span class="s">"3"</span><span class="o">).</span><span class="na">setMax</span><span class="o">(</span><span class="s">"30"</span><span class="o">);</span>
+  <span class="n">profile</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"registeredOn"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">DATE</span><span class="o">).</span><span class="na">setMin</span><span class="o">(</span><span class="s">"2010-01-01 00:00:00"</span><span class="o">);</span>
+  <span class="n">profile</span><span class="o">.</span><span class="na">createProperty</span><span class="o">(</span><span class="s">"lastAccessOn"</span><span class="o">,</span> <span class="n">OType</span><span class="o">.</span><span class="na">DATE</span><span class="o">).</span><span class="na">setMin</span><span class="o">(</span><span class="s">"2010-01-01 00:00:00"</span><span class="o">);</span>
+</pre></div>
+
+<h5>Indexes as constrains</h5>
+
+<p>To let to a property value to be UNIQUE use the UNIQUE index as constraint:
+</p><div class="highlight"><pre>  <span class="n">profile</span><span class="o">.</span><span class="na">createIndex</span><span class="o">(</span><span class="s">"EmployeeId"</span><span class="o">,</span> <span class="n">OClass</span><span class="o">.</span><span class="na">INDEX_TYPE</span><span class="o">.</span><span class="na">UNIQUE</span><span class="o">,</span> <span class="s">"id"</span><span class="o">);</span>
+</pre></div>
+To let to a group of properties to be UNIQUE create a composite index made of multiple fields:
+Creation of composite index:
+<div class="highlight"><pre>  <span class="n">profile</span><span class="o">.</span><span class="na">createIndex</span><span class="o">(</span><span class="s">"compositeIdx"</span><span class="o">,</span> <span class="n">OClass</span><span class="o">.</span><span class="na">INDEX_TYPE</span><span class="o">.</span><span class="na">NOTUNIQUE</span><span class="o">,</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"surname"</span><span class="o">);</span>
+</pre></div>
+
+<p>For more information about indexes look at <a class="internal present" href="/wiki/Indexes.html">Index guide</a>.</p>
+
+<h3>Full example</h3>
+
+<p>Have a look at the unit tests that creates the Schema: </p>
+
+<p><a href="http://code.google.com/p/orient/source/browse/trunk/tests/src/test/java/com/orientechnologies/orient/test/database/auto/SchemaTest.java">http://code.google.com/p/orient/source/browse/trunk/tests/src/test/java/com/orientechnologies/orient/test/database/auto/SchemaTest.java</a></p>
+
+<p><a href="http://code.google.com/p/orient/source/browse/trunk/tests/src/test/java/com/orientechnologies/orient/test/database/auto/ClassIndexTest.java">http://code.google.com/p/orient/source/browse/trunk/tests/src/test/java/com/orientechnologies/orient/test/database/auto/ClassIndexTest.java</a></p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Logging |  OrientDB</title>
+  <title>Logging</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Logging">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Logging
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB uses the Java Logging framework bundled with the Java Virtual Machine.</p>
+
+<p>Supported levels are those contained in the JRE class <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/Level.html">java.util.logging.Level</a>:</p>
+
+<ul>
+<li>SEVERE (highest value)</li>
+<li>WARNING</li>
+<li>INFO</li>
+<li>CONFIG</li>
+<li>FINE</li>
+<li>FINER</li>
+<li>FINEST (lowest value)</li>
+</ul><p>By default 2 loggers are installed:</p>
+
+<ul>
+<li>
+<strong>console</strong>, as the output of the shell/command prompt that starts the application/server. Can be changed by setting the variable <code>log.console.level</code>
+</li>
+<li>
+<strong>file</strong>, as the output to the log files. Can be changed by setting the <code>log.file.level</code>
+</li>
+</ul><h3>Configuration file</h3>
+
+<p>The logging strategies and policies can be configured using a file following the Java syntax: <a href="http://www.javapractices.com/topic/TopicAction.do?Id=143">Java Logging configuration</a>.</p>
+
+<p>Example taken from <strong>orientdb-server-log.properties</strong>:
+</p><div class="highlight"><pre>  <span class="err">#</span> <span class="n">Specify</span> <span class="n">the</span> <span class="n">handlers</span> <span class="n">to</span> <span class="n">create</span> <span class="n">in</span> <span class="n">the</span> <span class="n">root</span> <span class="n">logger</span>
+  <span class="err">#</span> <span class="o">(</span><span class="n">all</span> <span class="n">loggers</span> <span class="n">are</span> <span class="n">children</span> <span class="n">of</span> <span class="n">the</span> <span class="n">root</span> <span class="n">logger</span><span class="o">)</span>
+  <span class="err">#</span> <span class="n">The</span> <span class="n">following</span> <span class="n">creates</span> <span class="n">two</span> <span class="n">handlers</span>
+  <span class="n">handlers</span> <span class="o">=</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">ConsoleHandler</span><span class="o">,</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">FileHandler</span>
+  
+  <span class="err">#</span> <span class="n">Set</span> <span class="n">the</span> <span class="k">default</span> <span class="n">logging</span> <span class="n">level</span> <span class="k">for</span> <span class="n">the</span> <span class="n">root</span> <span class="n">logger</span>
+  <span class="o">.</span><span class="na">level</span> <span class="o">=</span> <span class="n">ALL</span>
+  
+  <span class="err">#</span> <span class="n">Set</span> <span class="n">the</span> <span class="k">default</span> <span class="n">logging</span> <span class="n">level</span> <span class="k">for</span> <span class="k">new</span> <span class="n">ConsoleHandler</span> <span class="n">instances</span>
+  <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">ConsoleHandler</span><span class="o">.</span><span class="na">level</span> <span class="o">=</span> <span class="n">INFO</span>
+  <span class="err">#</span> <span class="n">Set</span> <span class="n">the</span> <span class="k">default</span> <span class="n">formatter</span> <span class="k">for</span> <span class="k">new</span> <span class="n">ConsoleHandler</span> <span class="n">instances</span>
+  <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">ConsoleHandler</span><span class="o">.</span><span class="na">formatter</span> <span class="o">=</span> <span class="n">com</span><span class="o">.</span><span class="na">orientechnologies</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">OLogFormatter</span>
+  
+  <span class="err">#</span> <span class="n">Set</span> <span class="n">the</span> <span class="k">default</span> <span class="n">logging</span> <span class="n">level</span> <span class="k">for</span> <span class="k">new</span> <span class="n">FileHandler</span> <span class="n">instances</span>
+  <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">FileHandler</span><span class="o">.</span><span class="na">level</span> <span class="o">=</span> <span class="n">INFO</span>
+  <span class="err">#</span> <span class="n">Naming</span> <span class="n">style</span> <span class="k">for</span> <span class="n">the</span> <span class="n">output</span> <span class="n">file</span>
+  <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">FileHandler</span><span class="o">.</span><span class="na">pattern</span><span class="o">=../</span><span class="n">log</span><span class="o">/</span><span class="n">orient</span><span class="o">-</span><span class="n">server</span><span class="o">.</span><span class="na">log</span>
+  <span class="err">#</span> <span class="n">Set</span> <span class="n">the</span> <span class="k">default</span> <span class="n">formatter</span> <span class="k">for</span> <span class="k">new</span> <span class="n">FileHandler</span> <span class="n">instances</span>
+  <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">FileHandler</span><span class="o">.</span><span class="na">formatter</span> <span class="o">=</span> <span class="n">com</span><span class="o">.</span><span class="na">orientechnologies</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">OLogFormatter</span>
+  <span class="err">#</span> <span class="n">Limiting</span> <span class="n">size</span> <span class="n">of</span> <span class="n">output</span> <span class="n">file</span> <span class="n">in</span> <span class="nl">bytes:</span>
+  <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">FileHandler</span><span class="o">.</span><span class="na">limit</span><span class="o">=</span><span class="mi">10000000</span>
+  <span class="err">#</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">output</span> <span class="n">files</span> <span class="n">to</span> <span class="n">cycle</span> <span class="n">through</span><span class="o">,</span> <span class="n">by</span> <span class="n">appending</span> <span class="n">an</span>
+  <span class="err">#</span> <span class="n">integer</span> <span class="n">to</span> <span class="n">the</span> <span class="n">base</span> <span class="n">file</span> <span class="nl">name:</span>
+  <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">FileHandler</span><span class="o">.</span><span class="na">count</span><span class="o">=</span><span class="mi">10</span>
+</pre></div>
+
+<p>To tell to the JVM where the properties file is placed you need to set the <em>"java.util.logging.config.file"</em> system property to it. Example:</p>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">java</span> <span class="o">-</span><span class="n">Djava</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">config</span><span class="o">.</span><span class="na">file</span><span class="o">=</span><span class="n">mylog</span><span class="o">.</span><span class="na">properties</span> <span class="o">...</span>
+</pre></div>
+
+<h3>Set the logging level</h3>
+
+<p>To change the logging level without modify the logging configuration just set the <em>"log.console.level"</em> and <em>"log.file.level"</em> system variables to the requested levels.</p>
+
+<h4>In the server configuration</h4>
+
+<p>Open the file <strong>orientdb-server-config.xml</strong> and add or update these lines at the end of the file inside the <code>&lt;properties&gt;</code> section:
+</p><div class="highlight"><pre>    <span class="nt">&lt;entry</span> <span class="na">value=</span><span class="s">"fine"</span> <span class="na">name=</span><span class="s">"log.console.level"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">value=</span><span class="s">"fine"</span> <span class="na">name=</span><span class="s">"log.file.level"</span> <span class="nt">/&gt;</span>
+</pre></div>
+
+<h3>= At startup</h3>
+
+<p>Set the system property <em>"log.console.level"</em> and <em>"log.file.level"</em> to the levels you want using the -D parameter of java.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">java</span> <span class="o">-</span><span class="n">Dlog</span><span class="o">.</span><span class="na">console</span><span class="o">.</span><span class="na">level</span><span class="o">=</span><span class="n">FINE</span> <span class="o">...</span>
+</pre></div>
+
+<h5>At run-time</h5>
+
+<p>The system variable can be setted at startup using the <code>System.setProperty()</code> API. Example:
+</p><div class="highlight"><pre>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">){</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"log.console.level"</span><span class="o">,</span> <span class="s">"FINE"</span><span class="o">);</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h4>Install Log formatter</h4>
+
+<p>OrientDB Server uses own LogFormatter. To use the same by your application call:
+</p><div class="highlight"><pre>  <span class="n">OLogManager</span><span class="o">.</span><span class="na">installCustomFormatter</span><span class="o">();</span>
+</pre></div>
+
+<p>Before 1.0rc2 the custom LogFormatter was installed automatically.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

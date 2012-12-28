@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>SQL Traverse |  OrientDB</title>
+  <title>SQL Traverse</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_SQL-Traverse">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        SQL Traverse
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/SQL.html" class="nr1">Sql</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Traverse is a special command that retrieves the connected records crossing the relationships. This command works not only with graph API but at document level. This means you can traverse relationships between invoice and customers without the need to model the domain using the Graph API.</p>
+
+<p>To know more look at <a class="internal present" href="/wiki/Java-Traverse.html">Java-Traverse</a> page.</p>
+
+<h3>Syntax</h3>
+
+<div class="highlight"><pre>  TRAVERSE [FROM <span class="nt">&lt;target&gt;</span> [LET <span class="nt">&lt;Assignment&gt;</span>*](<span class="err">&lt;</span>[class.]field&gt;|*|any()|all()]) [<span class="nt">&lt;condition&gt;</span>*](WHILE)  [<span class="nt">&lt;max-records&gt;</span>](LIMIT)
+</pre></div>
+
+<ul>
+<li>
+<strong><a href="#Fields">fields</a></strong> are the list of fields you want to traverse.</li>
+<li>
+<strong><a href="#Target">target</a></strong> can be a class, one or more clusters, a single <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>, a set of <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s or another command like another TRAVERSE (as recursion) or a <a class="internal present" href="/wiki/SQL-Query.html">SELECT</a>
+</li>
+<li>
+<strong><a class="internal present" href="/wiki/SQL-Query.html#let_block">LET</a></strong> is the part that bind context variables to be used in projections, conditions or sub-queries</li>
+<li>
+<strong><a class="internal present" href="/wiki/SQL-Where.html">while</a></strong> condition to continue the traversing while it's true. Usually it's used to limit the traversing depth by using <code>$depth &lt; &lt;x&gt;</code> where x is the maximum level of depth you want to reach. <strong>$depth</strong> is the first context variable that reports the depth level during traversal. <em>NOTE: the old 'where' keyword is deprecated</em>
+</li>
+<li>
+<strong>max-records</strong> sets the maximum result the command can return</li>
+</ul><h4>Fields</h4>
+
+<p>Are the list of fields you want to traverse. If <code>*</code>, any() or all() are specified then all the fields are traversed. This could be costly so to optimize the traverse use the pertinent fields. You can also specify fields at class level. <a class="internal present" href="/wiki/Inheritance.html">Polymorphism</a> is supported, so by specifying Person.city and Customer class extends Person, you will traverse Customer instances too.</p>
+
+<p>Field names are case-sensitive, classes not.</p>
+
+<h4>Target</h4>
+
+<p>Target can be:</p>
+
+<ul>
+<li>
+<strong>Class</strong> is the class name to browse all the record to be traversed. You can avoid to specify <strong>class:</strong> as prefix</li>
+<li>
+<strong>Cluster</strong> with the prefix 'cluster:' is the cluster name where to execute the query</li>
+<li>A set of <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s inside square brackets to specify one or a small set of records. This is useful to navigate graphs starting from some root nodes</li>
+<li>A root record specifying its <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>
+</li>
+</ul><h4>Context</h4>
+
+<p>Traverse command uses the following variables in the context:</p>
+
+<ul>
+<li>
+<strong>$parent</strong>, to access to the parent's context if any. This is useful when the Traverse is called in a sub-query</li>
+<li>
+<strong>$current</strong>, current record iterated. To access to the upper level record in nested queries use $parent.$current</li>
+<li>
+<strong>$depth</strong>, as the current depth of nesting</li>
+<li>
+<strong>$depth</strong>, as the current depth of nesting</li>
+<li>
+<strong>$path</strong>, as the string representation of the current path. Example <code>#6:0.in.#5:0#.out</code>. You can also display it with -&gt; <code>select $path from (traverse ** from V)</code>
+</li>
+<li>**$stack*, as the List of operation in the stack. Use it to access to the history of the traversal. It's a List&gt; where process implementations are:</li>
+<li>
+<strong>OTraverseRecordSetProcess</strong>, usually the first one it's the base target of traverse</li>
+<li>
+<strong>OTraverseRecordProcess</strong>, represent a traversed record</li>
+<li>
+<strong>OTraverseFieldProcess</strong>, represent a traversal through a record's field</li>
+<li>
+<strong>OTraverseMultiValueProcess</strong>, use on fields that are multivalue: arrays, collections and maps</li>
+<li>
+<strong>$history</strong>, as the set of all the records traversed as a <code>Set&lt;ORID&gt;</code>.</li>
+</ul><h3>Examples</h3>
+
+<h4>Traverse all the fields of a root record</h4>
+
+<p>Assuming #10:1234 is the <a class="internal present" href="/wiki/Concepts.html#rid">RID</a> of the record to start traversing:
+</p><div class="highlight"><pre>  <span class="n">traverse</span> <span class="o">*</span> <span class="n">from</span> <span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">1234</span>
+</pre></div>
+
+<h4>Social Network domain</h4>
+
+<p>In a social-network-like domain a profile is linked to all the friends. Below some commands.</p>
+
+<h5>Specify fields and depth level</h5>
+
+<p>Assuming #10:1234 is the <a class="internal present" href="/wiki/Concepts.html#rid">RID</a> of the record to start traversing get all the friends up to the third level of depth:
+</p><div class="highlight"><pre>  traverse friends from #10:1234 while $depth <span class="err">&lt;</span>= 3
+</pre></div>
+
+<p>In case you want to filter per minimum depth create a predicate in the select. Example like before but excluding the first target vertex (#10:1234):
+</p><div class="highlight"><pre>  select from ( traverse friends from #10:1234 while $depth <span class="err">&lt;</span>= 3 ) where $depth &gt;= 1
+</pre></div>
+
+<p><em>NOTE: You can also define the maximum depth in the SELECT clause but it's much more efficient to set it at the inner TRAVESE statement because the returning record sets are already filtered by depth</em></p>
+
+<h5>Mix with select to have more power</h5>
+
+<p>Traverse command can be combined with <a class="internal present" href="/wiki/SQL-Query.html">SQL SELECT</a> statement to filter the result set. Below the same example above but filtering by Rome as city:
+</p><div class="highlight"><pre>  select from ( traverse friends from #10:1234 while $depth <span class="err">&lt;</span>= 3 ) where city = 'Rome'
+</pre></div>
+
+<p>Another example to extract all the movies of actors that have worked, at least once, in any movie produced by J.J. Abrams:
+</p><div class="highlight"><pre>  <span class="n">select</span> <span class="nf">from</span> <span class="o">(</span>
+    <span class="n">traverse</span> <span class="n">Movie</span><span class="o">.</span><span class="na">actors</span><span class="o">,</span> <span class="n">Actor</span><span class="o">.</span><span class="na">movies</span> <span class="n">from</span> <span class="o">(</span>
+      <span class="n">select</span> <span class="n">from</span> <span class="n">Movie</span> <span class="n">where</span> <span class="n">producer</span> <span class="o">=</span> <span class="s">"J.J. Abrams"</span>
+    <span class="o">)</span> <span class="k">while</span> <span class="n">$depth</span> <span class="o">&lt;=</span> <span class="mi">3</span>
+  <span class="o">)</span> <span class="n">where</span> <span class="nd">@class</span> <span class="o">=</span> <span class="err">'</span><span class="n">Movie</span><span class="err">'</span>
+</pre></div>
+
+<h4>Display the current path</h4>
+
+<p>To return or use the current path in traversal refer to the <strong>$path</strong> variable:
+</p><div class="highlight"><pre>  select $path from ( traverse out from V while $depth <span class="err">&lt;</span>= 10 )
+</pre></div>
+
+<h3>Using TRAVERSE with Graph model and API</h3>
+
+<p>Even if the TRAVERSE command can be used with any domain model, the place where is more used is the <a class="internal present" href="/wiki/Graph-Database.html">Graph-Database</a> model.</p>
+
+<p>Following this model all is based on the concepts of the Vertex (or Node) as the class "V" and the Edge (or Arc, Connection, Link, etc.) as the class "E". So if you want to traverse in a direction you have to use the class name when declare the traversing fields. Below the directions:</p>
+
+<ul>
+<li>
+<strong>OUTGOING</strong>, use <code>V.out, E.in</code> because vertices are connected with the "out" field but the edge exits as "in" field.</li>
+<li>
+<strong>INCOMING</strong>, use <code>V.in, E.out</code> because vertices are connected with the "in" field but the edge enters as "out" field.</li>
+</ul><p>Example of traversing all the outgoing vertices found starting from the vertex with id #10:3434:
+</p><div class="highlight"><pre>  <span class="n">traverse</span> <span class="n">V</span><span class="o">.</span><span class="na">out</span><span class="o">,</span> <span class="n">E</span><span class="o">.</span><span class="na">in</span> <span class="n">from</span> <span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">3434</span>
+</pre></div>
+
+<p>So in a mailing-like domain to find all the messages sent in 1/1/2012 from the user 'Luca' assuming it's stored in the 'User' Vertex class and that messages are contained in the 'Message' Vertex class. Sent messages are stored as "out" connections of Edge class 'SentMessage':</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="nf">from</span> <span class="o">(</span>
+    <span class="n">traverse</span> <span class="n">V</span><span class="o">.</span><span class="na">out</span><span class="o">,</span> <span class="n">E</span><span class="o">.</span><span class="na">in</span> <span class="n">from</span> <span class="o">(</span>
+      <span class="n">select</span> <span class="n">from</span> <span class="n">User</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Luca</span><span class="err">'</span>
+    <span class="o">)</span> <span class="k">while</span> <span class="n">$depth</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="n">and</span> <span class="o">(</span><span class="nd">@class</span> <span class="o">=</span> <span class="err">'</span><span class="n">Message</span><span class="err">'</span> <span class="o">||</span> <span class="o">(</span> <span class="nd">@class</span> <span class="o">=</span> <span class="err">'</span><span class="n">SentMessage</span><span class="err">'</span> <span class="n">and</span> <span class="n">sentOn</span> <span class="o">=</span> <span class="err">'</span><span class="mi">01</span><span class="o">/</span><span class="mi">01</span><span class="o">/</span><span class="mi">2012</span><span class="err">'</span><span class="o">)</span> <span class="o">)</span>
+  <span class="o">)</span> <span class="n">where</span> <span class="nd">@class</span> <span class="o">=</span> <span class="err">'</span><span class="n">Message</span><span class="err">'</span>
+</pre></div>
+
+<h3>Operator TRAVERSE</h3>
+
+<p>Before the introducing of TRAVERSE command OrientDB has the TRAVERSE operator but worked in the opposite way and it was applied in the WHERE condition.</p>
+
+<p>TRAVERSE operator is deprecated. Please use the TRAVERSE command together with SELECT command to have much more power!</p>
+
+<p>The syntax of the old TRAVERSE operator was:
+</p><div class="highlight"><pre>  SELECT FROM <span class="nt">&lt;target&gt;</span> WHERE <span class="nt">&lt;field&gt;</span> TRAVERSE[(<span class="nt">&lt;minDeep&gt;</span> [,<span class="nt">&lt;maxDeep&gt;</span> [,<span class="nt">&lt;fields&gt;</span>]])] (<span class="nt">&lt;conditions&gt;</span>)
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>target</strong> can be one of <a href="#Query_target">listed above</a>
+</li>
+<li>
+<strong>field</strong> can be:</li>
+<li>
+<strong>out</strong>, as the outgoing edges</li>
+<li>
+<strong>in</strong>, as the incoming edges</li>
+<li><strong>any attribute of the vertex</strong></li>
+<li>
+<strong>any()</strong>, means any of the field considering also <strong>in</strong> and <strong>out</strong>
+</li>
+<li>
+<strong>all()</strong>, means all the fields considering also <strong>in</strong> and <strong>out</strong>
+</li>
+<li>
+<strong>minDeep</strong> is the minimum deep level to start to apply the conditions. Usually is 0 for the root vertex or 1 for the just-outgoing vertexes</li>
+<li>
+<strong>maxDeep</strong>, optionally limits the maximum deep level to reach. -1 means infinite. Default is -1</li>
+<li>
+<strong>fields</strong>, optionally tells the field list to traverse. Default is any()</li>
+<li>
+<strong>conditions</strong> are the conditions to check for any traversed vertex. To know more about the query syntax see <a href="http://code.google.com/p/orient/wiki/SQLWhere">SQL syntax</a>
+</li>
+</ul><h4>Examples</h4>
+
+<p>Example of a query that returns all the vertices that have at least one friend (connected with out), up to the 3rd degree, that lives in Rome:</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">Profile</span> <span class="n">where</span> <span class="nf">any</span><span class="o">()</span> <span class="n">traverse</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">3</span><span class="o">)</span> <span class="o">(</span><span class="n">city</span> <span class="o">=</span> <span class="err">'</span><span class="n">Rome</span><span class="err">'</span><span class="o">)</span>
+</pre></div>
+
+<p>This can be rewritten using the most power TRAVERSE command:
+</p><div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">Profile</span>
+  <span class="n">let</span> <span class="n">$temp</span> <span class="o">=</span> <span class="o">(</span>
+    <span class="n">select</span> <span class="nf">from</span> <span class="o">(</span> 
+      <span class="n">traverse</span> <span class="o">*</span> <span class="n">from</span> <span class="n">$current</span> <span class="k">while</span> <span class="n">$depth</span> <span class="o">&lt;=</span> <span class="mi">3</span> 
+    <span class="o">)</span> 
+    <span class="n">where</span> <span class="n">city</span> <span class="o">=</span> <span class="err">'</span><span class="n">Rome</span><span class="err">'</span>
+  <span class="o">)</span>
+  <span class="n">where</span> <span class="n">$temp</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</pre></div>
+
+<h3>Conclusion</h3>
+
+<p>To know more about other SQL commands look at <a class="internal present" href="/wiki/SQL.html">SQL commands</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

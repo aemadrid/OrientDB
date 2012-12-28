@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Console Commands |  OrientDB</title>
+  <title>Console Commands</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Console-Commands">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Console Commands
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+
+
+<p>The OrientDB Console is a Java Application made to work against OrientDB databases and Server instances.</p>
+
+<h4>Interactive mode</h4>
+
+<p>This is the default mode. Just launch the console by executing the script <strong>bin/console.sh</strong> (or <strong>bin/console.bat</strong> in MS Windows systems). Assure to have execution permission on it.</p>
+
+<p>Once started the console is ready to accepts commands.
+</p><div class="highlight"><pre>  <span class="n">OrientDB</span> <span class="n">console</span> <span class="n">v</span><span class="o">.</span><span class="mf">1.1</span><span class="o">.</span><span class="mi">0</span> <span class="o">(</span><span class="n">build</span> <span class="mi">11200</span><span class="o">)</span> <span class="n">www</span><span class="o">.</span><span class="na">orientechnologies</span><span class="o">.</span><span class="na">com</span>
+  <span class="n">Type</span> <span class="err">'</span><span class="n">help</span><span class="err">'</span> <span class="n">to</span> <span class="n">display</span> <span class="n">all</span> <span class="n">the</span> <span class="n">commands</span> <span class="n">supported</span><span class="o">.</span>
+  
+  <span class="n">orientdb</span><span class="o">&gt;</span>
+</pre></div>
+
+<p>To know all the supported commands look to <a href="#Console_Commands">commands</a>.</p>
+
+<h4>Batch mode</h4>
+
+<p>To execute commands in batch mode run the <strong>bin/console.sh</strong> (or <strong>bin/console.bat</strong> in MS Windows systems) script passing all the commands separated with semicolon ";". Example:</p>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">console</span><span class="o">.</span><span class="na">bat</span> <span class="s">"connect remote:localhost/demo;select * from profile"</span>
+</pre></div>
+
+<p>Or call the console script passing the name of the file in text format containing the list of commands to execute. Commands must be separated with semicolon ";". Example:</p>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">console</span><span class="o">.</span><span class="na">bat</span> <span class="n">commands</span><span class="o">.</span><span class="na">txt</span>
+</pre></div>
+
+<h3>Console commands</h3>
+
+<p>To know all the commands supported by the Orient console open it and type <strong>help</strong> or <strong>?</strong>.</p>
+
+<table>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/alter-class.html">Console Command Alter Class</a></td>
+<td>Changes the class schema</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/alter-cluster.html">Console Command Alter Class</a></td>
+<td>Changes the cluster attributes</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/alter-database.html">Console Command Alter Class</a></td>
+<td>Changes the database attributes</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/alter-property.html">Console Command Alter Property</a></td>
+<td>Changes the class's property schema</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Begin.html">begin</a></td>
+<td>Begins a new transaction</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Browse-Class.html">browse class</a></td>
+<td>Browses all the records of a class</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Browse-Cluster.html">browse cluster</a></td>
+<td>Browses all the records of a cluster</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/check-database.html">Console Command Check Database</a></td>
+<td>Checks the database integrity</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Classes.html">classes</a></td>
+<td>Displays all the configured classes</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/cluster-status.html">Console Command Cluster Status</a></td>
+<td>Displays the status of distributed cluster of servers</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Clusters.html">clusters</a></td>
+<td>Displays all the configured clusters</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Commit.html">commit</a></td>
+<td>Commits an active transaction</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/compare-database.html">Console Command Compare Databases</a></td>
+<td>Compare 2 databases</td>
+</tr>
+<tr>
+<td>[compact database](SQLCompactDatabase)</td>
+<td>Compacts the database reducing the free holes</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Config.html">config</a></td>
+<td>Displays the configuration where the opened database is located (local or remote)</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Config-Get.html">config get</a></td>
+<td>Returns a configuration value</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Config-Set.html">config set</a></td>
+<td>Set a configuration value</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Connect.html">connect</a></td>
+<td>Connects to a database</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/copy-database.html">Console Command Copy Database</a></td>
+<td>Copies a database to a remote server</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Create-Cluster.html">create cluster</a></td>
+<td>Creates a new cluster inside a database</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Create-Db.html">create class</a></td>
+<td>Creates a new class</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Create-Cluster.html">create cluster</a></td>
+<td>Creates a new record cluster</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Create-Db.html">create database</a></td>
+<td>Creates a new database</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/create-datasegment.html">Console Command Create Data Segment</a></td>
+<td>Creates a new data-segment</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Create-Edge.html">create edge</a></td>
+<td>Create a new edge connecting two vertices</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Create-Index.html">create index</a></td>
+<td>Create a new index</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Create-Link.html">create link</a></td>
+<td>Create a link reading a RDBMS JOIN</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Create-Vertex.html">create vertex</a></td>
+<td>Create a new vertex</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Declare-Intent.html">declare intent</a></td>
+<td>Declares an intent</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Delete.html">delete</a></td>
+<td>Deletes a record from the database using the SQL syntax. To know more about the <a class="internal present" href="/wiki/SQL-Query.html">SQL syntax go here</a>
+</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Dictionary-Keys.html">dictionary keys</a></td>
+<td>Displays all the keys in the database dictionary</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Dictionary-Get.html">dictionary get</a></td>
+<td>Loookups for a record using the dictionary. If found set it as the current record</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Dictionary-Put.html">dictionary put</a></td>
+<td>Inserts or modify an entry in the database dictionary. The entry is composed by key=String, value=record-id</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Dictionary-Remove.html">dictionary remove</a></td>
+<td>Removes the association in the dictionary</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Disconnect.html">disconnect</a></td>
+<td>Disconnects from the current database</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Display-Record.html">display record</a></td>
+<td>Displays current record's attributes</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/display-raw-record.html">Console Command Display Raw Record</a></td>
+<td>Displays current record's raw format</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Drop-Class.html">drop class</a></td>
+<td>Drop a class</td>
+</tr>
+<tr>
+<td>[drop cluster](SQLDropCluster)</td>
+<td>Drop a cluster</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Drop-Db.html">drop database</a></td>
+<td>Drop a database</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Drop-Index.html">drop index</a></td>
+<td>Drop an index</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Drop-Property.html">drop property</a></td>
+<td>Drop a property from a schema class</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Explain.html">explain</a></td>
+<td>Explain a command by displaying the profiling values while executing it</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Export.html">export database</a></td>
+<td>Exports a database</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Export-Record.html">export record</a></td>
+<td>Exports a record in any of the supported format (i.e. json)</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Find-References.html">find references</a></td>
+<td>Find the references to a record</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/freeze-database.html">Console Freeze Database</a></td>
+<td>Freezes the database locking all the changes. Use this to raw backup. Once frozen it use the <a class="internal absent" href="/wiki/release-database.html">Console Release Database</a> to release it</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Get.html">get</a></td>
+<td>Returns the value of a property</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Grant.html">grant</a></td>
+<td>Grants a permission to a user</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Import.html">import database</a></td>
+<td>Imports a database previously exported</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Indexes.html">Console Command Indexes</a></td>
+<td>Displays information about indexes</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Info.html">info</a></td>
+<td>Displays information about current status</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Info-Class.html">info class</a></td>
+<td>Displays information about a class</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Insert.html">insert</a></td>
+<td>Inserts a new record in the current database using the SQL syntax. To know more about the <a class="internal present" href="/wiki/SQL-Query.html">SQL syntax go here</a>
+</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Javascript-Command.html#via_console">js</a></td>
+<td>Executes a Javascript in the console</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Javascript-Command.html#via_console">jss</a></td>
+<td>Executes a Javascript in the server</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/list-databases.html">Console Command List Databases</a></td>
+<td>List the available databases</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Load-Record.html">load record</a></td>
+<td>Loads a record in memory and set it as the current one</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Profiler.html">Profiler</a></td>
+<td>Controls the <a class="internal present" href="/wiki/Profiler.html">Profiler</a>
+</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Properties.html">properties</a></td>
+<td>Returns all the configured properties</td>
+</tr>
+<tr>
+<td>pwd</td>
+<td>Display current path</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Rebuild-Index.html">rebuild index</a></td>
+<td>Rebuild an index</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/release-database.html">Console Release Database</a></td>
+<td>Releases a <a class="internal absent" href="/wiki/frozed.html">Console Freeze Database</a> database</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Reload-Record.html">reload record</a></td>
+<td>Reloads a record in memory and set it as the current one</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/reload-schema.html">Console Command Reload Schema</a></td>
+<td>Reloads the schema</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Rollback.html">rollback</a></td>
+<td>Rollbacks the active transaction started with <a class="internal present" href="/wiki/Console-Command-Begin.html">begin</a>
+</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Select.html">select</a></td>
+<td>Executes a SQL query against the database and display the results. To know more about the <a class="internal present" href="/wiki/SQL-Query.html">SQL syntax go here</a>
+</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Revoke.html">revoke</a></td>
+<td>Revokes a permission to a user</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Set.html">set</a></td>
+<td>Changes the value of a property</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/sleep.html">Console Command Sleep</a></td>
+<td>Sleep for the time specified. Useful on scripts</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Show-Holes.html">show holes</a></td>
+<td>Displays the database's holes</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/SQL-Traverse.html">traverse</a></td>
+<td>Traverse a graph of records</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/truncate-class.html">Console Command Truncate Class</a></td>
+<td>Remove all the records of a class (by truncating all the underlying configured clusters)</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/truncate-cluster.html">Console Command Truncate Cluster</a></td>
+<td>Remove all the records of a cluster</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/truncate-record.html">Console Command Truncate Record</a></td>
+<td>Truncate a record you can't delete because it's corrupted</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Console-Command-Update.html">update</a></td>
+<td>Updates a record in the current database using the SQL syntax. To know more about the <a class="internal present" href="/wiki/SQL-Query.html">SQL syntax go here</a>
+</td>
+</tr>
+<tr>
+<td>help</td>
+<td>Prints this help</td>
+</tr>
+<tr>
+<td>exit</td>
+<td>Closes the console</td>
+</tr>
+</table><h3>Extend the console with custom command</h3>
+
+<p>Edit the <a href="http://www.google.com/codesearch#Q2eMNvxgD0M/trunk/tools/src/main/java/com/orientechnologies/orient/console/OConsoleDatabaseApp.java&amp;q=oconsoleda%20package:http://orient%5C.googlecode%5C.com">OConsoleDatabaseApp</a> class and add a new method. There's an auto discovering system that put the new method between the available commands. To provide a description of the command use the annotations (look below). The command name must follow the Java code convention where to separate works just use the Camel-case.</p>
+
+<p>So, for example, if you want to create the brand new "move cluster" command:
+</p><div class="highlight"><pre>  <span class="nd">@ConsoleCommand</span><span class="o">(</span><span class="n">description</span> <span class="o">=</span> <span class="s">"Move the physical location of cluster files"</span><span class="o">)</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">moveCluster</span><span class="o">(</span>
+    <span class="nd">@ConsoleParameter</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"cluster-name"</span><span class="o">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"The name or the id of the cluster to remove"</span><span class="o">)</span> <span class="n">String</span> <span class="n">iClusterName</span><span class="o">,</span>
+    <span class="nd">@ConsoleParameter</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"target-path"</span><span class="o">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">"path of the new position where to move the cluster files"</span><span class="o">)</span> <span class="n">String</span> <span class="n">iNewPath</span> <span class="o">)</span> <span class="o">{</span>
+  
+    <span class="n">checkCurrentDatabase</span><span class="o">();</span> <span class="c1">// THE DB MUST BE OPENED</span>
+  
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Moving cluster '"</span> <span class="o">+</span> <span class="n">iClusterName</span> <span class="o">+</span> <span class="s">"' to path "</span> <span class="o">+</span> <span class="n">iNewPath</span> <span class="o">+</span> <span class="s">"..."</span><span class="o">);</span>
+  <span class="o">}</span>
+</pre></div>
+If you type:
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">console</span>
+  <span class="o">&gt;</span> <span class="n">help</span>
+</pre></div>
+Your new command will appear. And now try:
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">move</span> <span class="n">cluster</span> <span class="n">foo</span> <span class="o">/</span><span class="n">temp</span>
+  
+  <span class="n">Moving</span> <span class="n">cluster</span> <span class="err">'</span><span class="n">foo</span><span class="err">'</span> <span class="n">to</span> <span class="n">path</span> <span class="o">/</span><span class="n">temp</span><span class="o">...</span>
+</pre></div>
+
+<p>Don't miss to contribute your command to the OrientDB community! ;-)</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

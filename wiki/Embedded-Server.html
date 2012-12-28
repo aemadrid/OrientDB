@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Embedded Server |  OrientDB</title>
+  <title>Embedded Server</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Embedded-Server">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Embedded Server
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>Embedding an OrientDB Server inside a Java application has several advantages and interesting features:</p>
+
+<ul>
+<li>Java application that runs embedded with the server can bypass the remote connection and use the database directly with <a href="http://code.google.com/p/orient/wiki/Concepts#Database_URL">local mode</a>. local and remote connections against the same database can work in concurrency: OrientDB will synchronize the access.</li>
+<li>You can use the <a href="http://code.google.com/p/orient/wiki/ConsoleCommands">Console</a> to control it</li>
+<li>You can use the <a href="http://code.google.com/p/orient/wiki/OrientDB_Studio">OrientDB Studio</a>
+</li>
+</ul><p>To embed an OrientDB Server inside a Java application you have to create the OServer object and use a valid configuration for it.</p>
+
+<h4>Requirements</h4>
+
+<p>In order to embed the server you need to include the following JARs in the classpath:</p>
+
+<ul>
+<li><code>orientdb-enterprise-**.jar</code></li>
+<li><code>orientdb-server-**.jar</code></li>
+</ul><h4>Include the commands you need</h4>
+
+<p>Even if most of the HTTP commands are auto registered assure to have all the commands you need. For example the static content must be registered. This is fundamental if you want to use OrientDB as Web Server providing static content like the Studio app:
+</p><div class="highlight"><pre>  <span class="nt">&lt;listener</span> <span class="na">protocol=</span><span class="s">"http"</span> <span class="na">port-range=</span><span class="s">"2480-2490"</span> <span class="na">ip-address=</span><span class="s">"0.0.0.0"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;commands&gt;</span>
+      <span class="nt">&lt;command</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.http.command.get.OServerCommandGetStaticContent"</span> <span class="na">pattern=</span><span class="s">"GET|www GET|studio/ GET| GET|*.htm GET|*.html GET|*.xml GET|*.jpeg GET|*.jpg GET|*.png GET|*.gif GET|*.js GET|*.css GET|*.swf GET|*.ico GET|*.txt GET|*.otf GET|*.pjs GET|*.svg"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;parameters&gt;</span>
+          <span class="nt">&lt;entry</span> <span class="na">value=</span><span class="s">"Cache-Control: no-cache, no-store, max-age=0, must-revalidate\r\nPragma: no-cache"</span> <span class="na">name=</span><span class="s">"http.cache:*.htm *.html"</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;entry</span> <span class="na">value=</span><span class="s">"Cache-Control: max-age=120"</span> <span class="na">name=</span><span class="s">"http.cache:default"</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/parameters&gt;</span>
+      <span class="nt">&lt;/command&gt;</span>
+    <span class="nt">&lt;/commands&gt;</span>
+  <span class="nt">&lt;/listener&gt;</span>
+</pre></div>
+
+<h4>Use an embedded configuration</h4>
+
+<div class="highlight"><pre>  <span class="kn">import</span> <span class="nn">com.orientechnologies.orient.server.OServerMain</span><span class="o">;</span>
+  
+  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrientDBEmbeddable</span> <span class="o">{</span>
+  
+   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">OServerMain</span><span class="o">.</span><span class="na">create</span><span class="o">().</span><span class="na">startup</span><span class="o">(</span>
+     <span class="s">"&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;orient-server&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;network&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;protocols&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;protocol name=\"binary\" implementation=\"com.orientechnologies.orient.server.network.protocol.binary.ONetworkProtocolBinary\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;protocol name=\"http\" implementation=\"com.orientechnologies.orient.server.network.protocol.http.ONetworkProtocolHttpDb\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;/protocols&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;listeners&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;listener ip-address=\"0.0.0.0\" port-range=\"2424-2430\" protocol=\"binary\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;listener ip-address=\"0.0.0.0\" port-range=\"2480-2490\" protocol=\"http\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;/listeners&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;/network&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;users&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;user name=\"root\" password=\"ThisIsA_TEST\" resources=\"*\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;/users&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;properties&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;entry name=\"orientdb.www.path\" value=\"C:/work/dev/orientechnologies/orientdb/releases/1.0rc1-SNAPSHOT/www/\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;entry name=\"orientdb.config.file\" value=\"C:/work/dev/orientechnologies/orientdb/releases/1.0rc1-SNAPSHOT/config/orientdb-server-config.xml\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;entry name=\"server.cache.staticResources\" value=\"false\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;entry name=\"log.console.level\" value=\"info\"/&gt;"</span> <span class="o">+</span> <span class="s">"&lt;entry name=\"log.file.level\" value=\"fine\"/&gt;"</span>
+     <span class="o">+</span> <span class="s">"&lt;/properties&gt;"</span> <span class="o">+</span> <span class="s">"&lt;/orient-server&gt;"</span><span class="o">);</span>
+  	<span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h4>Use custom file for configuration</h4>
+
+<p>Use a regular File:
+</p><div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrientDBEmbeddable</span> <span class="o">{</span>
+  
+   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">OServer</span> <span class="n">server</span> <span class="o">=</span> <span class="n">OServerMain</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+    <span class="n">server</span><span class="o">.</span><span class="na">startup</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">"/usr/local/temp/db.config"</span><span class="o">));</span>
+    <span class="n">server</span><span class="o">.</span><span class="na">activate</span><span class="o">();</span>
+   <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>Or an InputStream from the classloader:
+</p><div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrientDBEmbeddable</span> <span class="o">{</span>
+  
+   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">OServer</span> <span class="n">server</span> <span class="o">=</span> <span class="n">OServerMain</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+    <span class="n">server</span><span class="o">.</span><span class="na">startup</span><span class="o">(</span><span class="n">getClass</span><span class="o">().</span><span class="na">getResourceAsStream</span><span class="o">(</span><span class="s">"db.config"</span><span class="o">));</span>
+    <span class="n">server</span><span class="o">.</span><span class="na">activate</span><span class="o">();</span>
+   <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h4>Shutdown</h4>
+
+<p>OrientDB Server creates some threads internally as non-daemon threads, so they runs even if the main application exists. Use the OServer.shutdown() method to shutdown the server in soft way:
+</p><div class="highlight"><pre>  <span class="kn">import</span> <span class="nn">com.orientechnologies.orient.server.OServerMain</span><span class="o">;</span>
+  
+  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrientDBEmbeddable</span> <span class="o">{</span>
+  
+   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="n">OServer</span> <span class="n">server</span> <span class="o">=</span> <span class="n">OServerMain</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+    <span class="n">server</span><span class="o">.</span><span class="na">startup</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">"/usr/local/temp/db.config"</span><span class="o">));</span>
+    <span class="n">server</span><span class="o">.</span><span class="na">activate</span><span class="o">();</span>
+    <span class="o">...</span>
+    <span class="n">server</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+   <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

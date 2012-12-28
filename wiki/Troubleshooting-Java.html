@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Troubleshooting Java |  OrientDB</title>
+  <title>Troubleshooting Java</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Troubleshooting-Java">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Troubleshooting Java
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Troubleshooting.html" class="nr1">Troubleshooting</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>OConcurrentModificationException: Cannot update record #X:Y in storage 'Z' because the version is not the latest. Probably you are updating an old record or it has been modified by another user (db=vA your=vB)</h3>
+
+<p>This exception happens because you're running in a Multi Version Control Check (MVCC) system and another thread/user has updated the record you're saving. To fix this problem you can:</p>
+
+<ul>
+<li>if you're running in a multi-thread application and your JVM is the only client is writing to the database then disabling the Level1 cache could be enough: <a href="http://code.google.com/p/orient/wiki/Caching#Level_1">http://code.google.com/p/orient/wiki/Caching#Level_1</a>
+</li>
+<li>disable MVCC by setting the {db.mvcc} parameter to false: <code>java -Ddb.mvcc=false</code>
+</li>
+<li>If you're using the GraphDB api look at: <a href="http://code.google.com/p/orient/wiki/GraphDatabaseRaw#ConcurrencyGraphDB">concurrency</a>
+</li>
+</ul><p>If you want to leave the MVCC and write code concurrency proof:
+</p><div class="highlight"><pre>  <span class="k">for</span><span class="o">(</span> <span class="kt">int</span> <span class="n">retry</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">retry</span> <span class="o">&lt;</span> <span class="n">maxRetries</span><span class="o">;</span> <span class="o">++</span><span class="n">retry</span> <span class="o">)</span> <span class="o">{</span>
+    <span class="k">try</span><span class="o">{</span>
+      <span class="c1">// APPLY CHANGES</span>
+      <span class="n">document</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="n">name</span><span class="o">,</span> <span class="s">"Luca"</span> <span class="o">);</span>
+  
+      <span class="n">document</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+      <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">catch</span><span class="o">(</span> <span class="n">ONeedRetryException</span> <span class="n">e</span> <span class="o">)</span> <span class="o">{</span>
+      <span class="c1">// RELOAD IT TO GET LAST VERSION</span>
+      <span class="n">document</span><span class="o">.</span><span class="na">reload</span><span class="o">();</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>Where <code>maxRetries</code> is the maximum number of attempt of reloading.</p>
+
+<h3>Run in OSGi context</h3>
+
+<p>(by Raman Gupta)
+OrientDB uses <a href="http://docs.oracle.com/javase/1.4.2/docs/api/javax/imageio/spi/ServiceRegistry.html">ServiceRegistry</a> to load OIndexFactory and some OSGi container couldn't be happy with it.</p>
+
+<p>One solution is to set the TCCL so that the <a href="http://docs.oracle.com/javase/1.4.2/docs/api/javax/imageio/spi/ServiceRegistry.html">ServiceRegistry</a> lookup works inside of osgi:
+</p><div class="highlight"><pre>  <span class="n">ODatabaseObjectTx</span> <span class="n">db</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+  <span class="n">ClassLoader</span> <span class="n">origClassLoader</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getContextClassLoader</span><span class="o">();</span>
+  <span class="k">try</span> <span class="o">{</span>
+    <span class="n">ClassLoader</span> <span class="n">orientClassLoader</span> <span class="o">=</span> <span class="n">OIndexes</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">();</span>
+    <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">setContextClassLoader</span><span class="o">(</span><span class="n">orientClassLoader</span><span class="o">);</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">objectConnectionPool</span><span class="o">.</span><span class="na">acquire</span><span class="o">(</span><span class="n">dbUrl</span><span class="o">,</span> <span class="n">username</span><span class="o">,</span> <span class="n">password</span><span class="o">);</span>
+  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+    <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">setContextClassLoader</span><span class="o">(</span><span class="n">origClassLoader</span><span class="o">);</span>
+  <span class="o">}</span>
+</pre></div>
+Because the <a href="http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html">ServiceLoader</a> uses the thread context classloader, you can configure it to use the classloader of the OrientDB bundle so that it finds the entries in META-INF/services.
+
+<p>Another way is to embed the dependencies in configuration in the Maven pom.xml file under plugin(maven-bundle-plugin)/configuration/instructions:</p>
+
+<div class="highlight"><pre>  <span class="nt">&lt;Embed-Dependency&gt;</span>
+    orientdb-client,
+    orient-commons,
+    orientdb-core,
+    orientdb-enterprise,
+    orientdb-object,
+    javassist
+  <span class="nt">&lt;/Embed-Dependency&gt;</span>
+</pre></div>
+
+<p>Including only the jars you need. Look at <a class="internal present" href="/wiki/Java-API.html#which_library_do_i_use?">Which library do I use?</a></p>
+
+<h3>Database instance has been released to the pool. Get another database instance from the pool with the right username and password</h3>
+
+<p>This is a generic error telling that the database has been found closed while using it. </p>
+
+<p>Check the stack trace to find the reason of it:</p>
+
+<h3>OLazyObjectIterator</h3>
+
+<p>This is the case when you're working with <a class="internal present" href="/wiki/Object-Database.html">Object Database API</a> and a field contains a collection or a map loaded in lazy. On iteration it needs an open database to fetch linked records.</p>
+
+<p>Solutions:</p>
+
+<ul>
+<li>assure to leave the database open while browsing the field</li>
+<li>or early load all the instances (just iterate the items)</li>
+<li>define a fetch-plan to load the entire object tree in one shoot and then work offline. If you need to save the object back to the database then reopen the database and call <code>db.save( object )</code>.</li>
+</ul><h3>Stack Overflow on saving objects</h3>
+
+<p>This could be due to the high deep of the graph, usually when you create many records. To fix it save the records more often.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

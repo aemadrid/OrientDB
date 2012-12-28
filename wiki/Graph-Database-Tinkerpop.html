@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Graph Database Tinkerpop |  OrientDB</title>
+  <title>Graph Database Tinkerpop</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Graph-Database-Tinkerpop">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Graph Database Tinkerpop
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Requirements</h3>
+
+<p>To use the TinkerPop Graph Database interface you must include these jars in your classpath:
+</p><div class="highlight"><pre>  <span class="n">orient</span><span class="o">-</span><span class="n">commons</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">core</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">blueprints</span><span class="o">-</span><span class="n">core</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">blueprints</span><span class="o">-</span><span class="n">orient</span><span class="o">-</span><span class="n">graph</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">pipes</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<p>If you're using the TinkerPop Graph Database interface connected to a remote server (not local/embedded mode) include also:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">-</span><span class="n">client</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">enterprise</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<p>To also use the <a href="http://wiki.github.com/tinkerpop/gremlin">TinkerPop Gremlin</a> language include also:
+</p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">-</span><span class="n">java</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">gremlin</span><span class="o">-</span><span class="n">groovy</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">groovy</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<h3>Introduction</h3>
+
+<p>Even if OrientDB already provides <a class="internal present" href="/wiki/Graph-Database-Raw.html">own APIs</a> to handle graphs in easy way, starting from release 0.9.22 OrientDB provides an implementation of the <a href="http://wiki.github.com/tinkerpop/blueprints">Tinkerpop Blueprints</a> APIs. <a href="http://www.tinkerpop.com">Tinkerpop</a> is a complete stack of projects to handle Graphs:</p>
+
+<ul>
+<li>
+<a href="http://wiki.github.com/tinkerpop/blueprints">Blueprints</a> provides a collection of interfaces and implementations to common, complex data structures. In short, Blueprints provides a one stop shop for implemented interfaces to help developers create software without being tied to particular underlying data management systems.</li>
+<li>
+<a href="http://wiki.github.com/tinkerpop/gremlin">Gremlin</a> is a Turing-complete, graph-based programming language designed for key/value-pair multi-relational graphs. Gremlin makes use of an XPath-like syntax to support complex graph traversals. This language has application in the areas of graph query, analysis, and manipulation.</li>
+<li>
+<a href="http://rexster.tinkerpop.com">Rexster</a> is a RESTful graph shell that exposes any Blueprints graph as a standalone server. Extensions support standard traversal goals such as search, score, rank, and, in concert, recommendation. Rexster makes extensive use of Blueprints, Pipes, and Gremlin. In this way its possible to run Rexster over various graph systems. To configure Rexster to work with OrientDB follow this guide: <a class="internal present" href="/wiki/Rexster.html">configuration</a>.</li>
+<li>
+<a href="http://pipes.tinkerpop.com">Pipes</a> is a graph-based data flow framework for Java 1.6+. A process graph is composed of a set of process vertices connected to one another by a set of communication edges. Pipes supports the splitting, merging, and transformation of data from input to output.</li>
+</ul><h3>Get started</h3>
+
+<p>Download the <a class="internal absent" href="/wiki/Graph%28Ed%29-and-follow-this-tutorial.html">Graph Ed Tutorial</a>.</p>
+
+<p>The kind of database used depends by the <a class="internal present" href="/wiki/Concepts.html#database_url">Database URL</a> used.</p>
+
+<ul>
+<li>
+<strong>Persistent embedded</strong> GraphDB. OrientDB is linked to the application as JAR (No network transfer). Use <strong>local</strong> as prefix. Example "local:/tmp/graph/db"</li>
+<li>
+<strong>Persistent remote</strong> GraphDB. Uses a binary protocol to send and receive data from a remote OrientDB server. Use <strong>remote</strong> as prefix. Example "remote:localhost/db". It requires a OrientDB Server instance is up and running at the specified address (localhost in this case). Remote database can be persistent or in-memory as well.</li>
+<li>
+<strong>In-Memory embedded</strong> GraphDB. Keeps all the data only in memory. Use <strong>memory</strong> as prefix. Example "memory:test"</li>
+</ul><p>OrientDB provides 2 implementations of Graph interface:</p>
+
+<ul>
+<li>
+<strong>Transactional</strong> GraphDB, the default. The class is <strong><a href="https://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/impls/orient/OrientGraph.java">OrientGraph</a></strong>. Every single operation is always executed inside a transaction. If it's not yet started a new transaction is begun. To explicit commit or rollback a transaction use the  <code>stopTransaction()</code>. During a transaction all the changes will be kept in memory until the transaction ends (see below for the usage). When the method <code> stopTransaction(Conclusion.SUCCESS)</code> returns, all the transaction changes are stored to the disk.</li>
+<li>
+<strong>Non-transactional</strong> GraphDB (default). The class is <strong><a href="https://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/impls/orient/OrientBatchGraph.java">OrientBatchGraph</a></strong>. In this case each operation is <em>atomic</em> and data is updated to the disk at each operation. When the method returns the underlying storage is updated. Use this for bulk insert ans massive operations.</li>
+</ul><p>Both classes extends <strong><a href="https://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/impls/orient/OrientBaseGraph.java">OrientBaseGraph</a></strong>.</p>
+
+<h3>Work with GraphDB</h3>
+
+<p>Before to work with a graph you need an instance of <a href="https://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/impls/orient/OrientGraph.java">OrientGraph</a> class. The constructor gets a <a class="internal present" href="/wiki/Concepts.html#database_url">URL</a> that is the location of database. If the database already exists, it will be opened, otherwise will be created.</p>
+
+<p>Remember always to close the graph once done using the <code>.shutdown()</code> method.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">OrientGraph</span> <span class="n">graph</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+  <span class="k">try</span> <span class="o">{</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"local:C:/temp/graph/db"</span><span class="o">);</span>
+    <span class="o">...</span>
+  
+  <span class="o">}</span><span class="k">finally</span><span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span> <span class="n">graph</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">)</span>
+      <span class="n">graph</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h4>Gremlin usage</h4>
+
+<p>If you use GREMLIN language with OrientDB remember to initialize it with:
+</p><div class="highlight"><pre>  <span class="n">OGremlinHelper</span><span class="o">.</span><span class="na">global</span><span class="o">().</span><span class="na">create</span><span class="o">()</span>
+</pre></div>
+
+<h4>Security</h4>
+
+<p>If you want to use the OrientDB security use the constructor that get the <a class="internal present" href="/wiki/Concepts.html#database_url">URL</a>, user and password. To know more about OrientDB security visit <a class="internal present" href="/wiki/Security.html">Security</a>.</p>
+
+<h3>Transactions</h3>
+
+<p>Starting from Blueprints 2.0 the transaction management can't be manual anymore. But you can commit or rollback a running transaction by calling the <code>stopTransaction( Conclusion )</code> with the following conclusions:</p>
+
+<ul>
+<li>SUCCESS, the transaction is committed. Example:  <code>graph.stopTransaction(Conclusion.SUCCESS)</code>
+</li>
+<li>FAILURE, the transaction is rollbacked. Example:  <code>graph.stopTransaction(Conclusion.FAILURE)</code>
+</li>
+</ul><p>Changes inside a transaction will be volatile till the commit, stopTransaction(Conclusion.SUCCESS), or the close of the graph instance.</p>
+
+<p>Full example:
+</p><div class="highlight"><pre>  <span class="k">try</span><span class="o">{</span>
+    <span class="n">Vertex</span> <span class="n">luca</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addVertex</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span> <span class="c1">// 1st OPERATION: IMPLICITLY BEGIN A TRANSACTION</span>
+    <span class="n">luca</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Luca"</span> <span class="o">);</span>
+  
+    <span class="n">Vertex</span> <span class="n">marko</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addVertex</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+    <span class="n">marko</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Marko"</span> <span class="o">);</span>
+  
+    <span class="n">Edge</span> <span class="n">lucaKnowsMarko</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addEdge</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">luca</span><span class="o">,</span> <span class="n">marko</span><span class="o">,</span> <span class="s">"knows"</span><span class="o">);</span>
+  
+    <span class="n">graph</span><span class="o">.</span><span class="na">stopTransaction</span><span class="o">(</span><span class="n">Conclusion</span><span class="o">.</span><span class="na">SUCCESS</span><span class="o">);</span>
+  <span class="o">}</span> <span class="k">catch</span><span class="o">(</span> <span class="n">Exception</span> <span class="n">e</span> <span class="o">)</span> <span class="o">{</span>
+  
+    <span class="n">graph</span><span class="o">.</span><span class="na">stopTransaction</span><span class="o">(</span><span class="n">Conclusion</span><span class="o">.</span><span class="na">FAILURE</span><span class="o">);</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>Surrounding the transaction between a try/catch assure that any errors will rollback the transaction to the previous status for all the involved elements.</p>
+
+<h3>Work with vertexes and edges</h3>
+
+<h4>Create a vertex</h4>
+
+<p>To create a new Vertex in the current Graph call the <code>Vertex OrientGraph.addVertex(Object id)</code> method. Note that the id parameter is ignored since OrientDB implementation assigns a unique-id once the vertex is created. To return it use <code>Vertex.getId()</code>.
+Example:
+</p><div class="highlight"><pre>  <span class="n">Vertex</span> <span class="n">v</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addVertex</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+  <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="s">"Created vertex: "</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="na">getId</span><span class="o">()</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Create an edge</h4>
+
+<p>An edge links two vertexes previously created. To create a new Edge in the current Graph call the <code>Edge OrientGraph.addEdge(Object id, Vertex outVertex, Vertex inVertex, String label )</code> method. Note that the id parameter is ignored since OrientDB implementation assigns a unique-id once the vertex is created. To return it use <code>Edge.getId()</code>. <code>outVertex</code> is the vertex instance where the edge starts and <code>inVertex</code> is the vertex instance where the edge ends. <code>label</code> is the edge's label. Null to not assign it.
+Example:
+</p><div class="highlight"><pre>  <span class="n">Vertex</span> <span class="n">luca</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addVertex</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+  <span class="n">luca</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Luca"</span> <span class="o">);</span>
+  
+  <span class="n">Vertex</span> <span class="n">marko</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addVertex</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+  <span class="n">marko</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Marko"</span> <span class="o">);</span>
+  
+  <span class="n">Edge</span> <span class="n">lucaKnowsMarko</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addEdge</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">luca</span><span class="o">,</span> <span class="n">marko</span><span class="o">,</span> <span class="s">"knows"</span><span class="o">);</span>
+  <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="s">"Created edge: "</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="na">getId</span><span class="o">()</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Remove a vertex</h4>
+
+<p>To remove a vertex from the current Graph call the <code>void OrientGraph.removeVertex(Vertex vertex)</code> method. The vertex will be disconnected from the graph and then removed. Disconnection means that all the vertex's edges will be deleted as well.
+Example:
+</p><div class="highlight"><pre>  <span class="n">graph</span><span class="o">.</span><span class="na">removeVertex</span><span class="o">(</span><span class="n">luca</span><span class="o">);</span>
+</pre></div>
+
+<h4>Remove an edge</h4>
+
+<p>To remove an edge from the current Graph call the <code>void OrientGraph.removeEdge(Edge edge)</code> method. The edge will be removed and the two vertexes will result not connected anymore.
+Example:
+</p><div class="highlight"><pre>  <span class="n">graph</span><span class="o">.</span><span class="na">removeEdge</span><span class="o">(</span><span class="n">lucaKnowsMarko</span><span class="o">);</span>
+</pre></div>
+
+<h4>Set and get properties</h4>
+
+<p>Vertexes and Edges can have multiple properties where the key is a String and the value can be any <a class="internal present" href="/wiki/Types.html">supported OrientDB types</a>.</p>
+
+<ul>
+<li>To set a property use the method <code>void setProperty(String key, Object value)</code>.</li>
+<li>To get a property use the method <code>Object getProperty(String key)</code>.</li>
+<li>To get all the properties use the method <code>Set&lt;String&gt; getPropertyKeys()</code>.</li>
+<li>To remove a property use the method <code>void removeProperty(String key)</code>.</li>
+</ul><p>Example:
+</p><div class="highlight"><pre>  <span class="n">vertex2</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"x"</span><span class="o">,</span> <span class="mf">30.0f</span> <span class="o">);</span>
+  <span class="n">vertex2</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"y"</span><span class="o">,</span> <span class="o">((</span><span class="kt">float</span><span class="o">)</span> <span class="n">vertex1</span><span class="o">.</span><span class="na">getProperty</span><span class="o">(</span> <span class="s">"y"</span> <span class="o">))</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">);</span>
+  
+  <span class="k">for</span><span class="o">(</span> <span class="n">String</span> <span class="n">property</span> <span class="o">:</span> <span class="n">vertex2</span><span class="o">.</span><span class="na">getPropertyKeys</span><span class="o">()</span> <span class="o">){</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Property: "</span> <span class="o">+</span> <span class="n">property</span> <span class="o">+</span> <span class="s">"="</span> <span class="o">+</span> <span class="n">vertex2</span><span class="o">.</span><span class="na">getProperty</span><span class="o">(</span> <span class="n">property</span> <span class="o">)</span> <span class="o">);</span>
+  <span class="o">}</span>
+  
+  <span class="n">vertex1</span><span class="o">.</span><span class="na">removeProperty</span><span class="o">(</span> <span class="s">"y"</span> <span class="o">);</span>
+</pre></div>
+
+<h3>Access to the underlying Graph</h3>
+
+<p>Since TinkerPop Blueprints API is quite raw and doesn't provide ad-hoc methods for very common use cases you could need to access to the underlying ODatabaseGraphTx object to better use the graph-engine under the hood. Commons operations are:</p>
+
+<ul>
+<li>Count incoming and outgoing edges without browsing them all</li>
+<li>Get incoming and outgoing vertexes without browsing the edges</li>
+<li>Execute a query using SQL-like language integrated in the engine</li>
+</ul><p>The <a href="http://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/pgm/impls/orientdb/OrientGraph.java">OrientGraph</a> class provides the method <code>.getRawGraph()</code> to return the underlying native root Graph class: <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/ODatabaseGraphTx.java">ODatabaseGraphTx</a>. Follow the <a class="internal present" href="/wiki/Graph-Database-Native.html">Graph Database Native APIs</a> to know its usage.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>    <span class="kd">final</span> <span class="n">OrientGraph</span> <span class="n">graph</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"local:C:/temp/graph/db"</span><span class="o">);</span>
+    <span class="k">try</span><span class="o">{</span>
+      <span class="n">List</span><span class="o">&lt;</span><span class="n">OGraphVertex</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">getRawGraph</span><span class="o">().</span><span class="na">query</span><span class="o">(</span> <span class="k">new</span> <span class="n">OSQLSynchQuery</span><span class="o">(</span><span class="s">"select from ographvertex where outEdges contains ( in.label = 'knows' )"</span><span class="o">));</span>
+    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+      <span class="n">graph</span><span class="o">.</span><span class="na">shutdown</span><span class="o">();</span>
+    <span class="o">}</span>
+</pre></div>
+
+<h3>Use the Gremlin language</h3>
+
+<ul>
+<li><a class="internal present" href="/wiki/Gremlin.html">How to use the Gremlin language with OrientDB</a></li>
+<li><a href="http://github.com/tinkerpop/gremlin/wiki/Getting-Started">Getting started with Gremlin</a></li>
+<li>
+<a href="https://github.com/tinkerpop/rexster/wiki/Using-Gremlin">Usage of Gremlin through HTTP/RESTful API using the Rexter project</a>.</li>
+</ul><h3>Custom types</h3>
+
+<p>OrientDB supports custom types for vertices and edges in an Object Oriented manner. Even if this isn't supported directly by Blueprints there are some tricks to use them. First of all </p>
+
+<p>Before start using custom types you have to declare this intent via API just after you creates a OrientGraph instance:
+</p><div class="highlight"><pre>  <span class="n">OrientGraph</span> <span class="n">graph</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"local:/temp/db/graph"</span><span class="o">);</span>
+  <span class="n">graph</span><span class="o">.</span><span class="na">getRawGraph</span><span class="o">().</span><span class="na">setUseCustomTypes</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</pre></div>
+
+<p>Since all the custom vertex types extend the OGraphVertex class and all the custom edge types extend the OGraphEdge class, the entire Blueprints stack works like a charm with custom types. When you will access to a vertex doesn't matter if it's a OGraphVertex or any sub-class of it. The same for edges.</p>
+
+<h4>Work with custom types</h4>
+
+<p>To create custom types you need to access to the raw graph database instance:
+</p><div class="highlight"><pre>  <span class="c1">// CREATE THE NEW CUSTOM TYPES: 'Customer' AS VERTEX and 'Sell' AS EDGE</span>
+  <span class="n">graph</span><span class="o">.</span><span class="na">getRawGraph</span><span class="o">().</span><span class="na">createVertexType</span><span class="o">(</span><span class="s">"Product"</span><span class="o">);</span>
+  <span class="n">graph</span><span class="o">.</span><span class="na">getRawGraph</span><span class="o">().</span><span class="na">createVertexType</span><span class="o">(</span><span class="s">"Customer"</span><span class="o">);</span>
+  <span class="n">graph</span><span class="o">.</span><span class="na">getRawGraph</span><span class="o">().</span><span class="na">createEdgeType</span><span class="o">(</span><span class="s">"Sell"</span><span class="o">);</span>
+</pre></div>
+
+<p>Now to create a vertex and an edge of a custom class you have to pass a special string as ID with this format: <code>"class:&lt;class-name&gt;"</code>. Pass this as first argument of addVertex() and addEdge() methods. Example:
+</p><div class="highlight"><pre>  <span class="n">Vertex</span> <span class="n">product</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addVertex</span><span class="o">(</span><span class="s">"class:Product"</span><span class="o">);</span>
+  <span class="n">product</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"brand"</span><span class="o">,</span> <span class="s">"Commodore"</span> <span class="o">);</span>
+  <span class="n">product</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"model"</span><span class="o">,</span> <span class="s">"Amiga"</span> <span class="o">);</span>
+  
+  <span class="n">Vertex</span> <span class="n">customer</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addVertex</span><span class="o">(</span><span class="s">"class:Customer"</span><span class="o">);</span>
+  <span class="n">customer</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Luca"</span> <span class="o">);</span>
+  
+  <span class="n">Edge</span> <span class="n">e</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">addEdge</span><span class="o">(</span><span class="s">"class:Sell"</span><span class="o">,</span> <span class="n">customer</span><span class="o">,</span> <span class="n">product</span> <span class="o">);</span>
+  <span class="n">e</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="s">"price"</span><span class="o">,</span> <span class="mi">400</span><span class="o">);</span>
+</pre></div>
+
+<h3>Tuning</h3>
+
+<p>As reported in <a href="#Access_to_the_underlying_Graph">Access to the underlying Graph</a> you could use the native API to speed up some operations.</p>
+
+<p>Furthermore since TinkerPop Blueprints API doesn't provide a connection pool mechanism you can avoid to close and reopen the underlying database by setting this property.</p>
+
+<div class="highlight"><pre>  <span class="n">OGlobalConfiguration</span><span class="o">.</span><span class="na">STORAGE_KEEP_OPEN</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="n">Boolean</span><span class="o">.</span><span class="na">TRUE</span><span class="o">);</span>
+</pre></div>
+or by launching your application with this parameter:
+<div class="highlight"><pre>  <span class="n">java</span> <span class="o">-</span><span class="n">Dorientdb</span><span class="o">.</span><span class="na">storage</span><span class="o">.</span><span class="na">keepOpen</span><span class="o">=</span><span class="kc">true</span> <span class="o">...</span>
+</pre></div>
+
+<p>This avoids to close and reopen the storage every time. It will be closed automatically when the JVM exits.</p>
+
+<h3>Benchmarks</h3>
+
+<ul>
+<li><a href="http://zion-city.blogspot.com/2010/09/erlang-interface-for-orientdb-and-micro.html">Micro-benchmark on sorting using Erlang</a></li>
+<li><a href="http://zion-city.blogspot.com/2010/09/orientdb-fastest-graphdb-available.html">Micro benchmark in comparison with Neo4J</a></li>
+</ul><p>If you've more information about new benchmarks or you've done your own please share it on the <a href="http://groups.google.com/group/orient-database">OrientDB Group</a></p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

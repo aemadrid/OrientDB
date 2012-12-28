@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>SQL Where |  OrientDB</title>
+  <title>SQL Where</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_SQL-Where">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        SQL Where
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/SQL.html" class="nr1">Sql</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>The Where condition is shared among many SQL commands.</p>
+
+<h3>Syntax</h3>
+
+<p><code>[&lt;item&gt;] &lt;operator&gt; &lt;item&gt;</code></p>
+
+<h3>Items</h3>
+
+<p>And <code>item</code> can be:</p>
+
+<table>
+<tr>
+<td>*What*</td>
+<td>*Description*</td>
+<td>*Example*</td>
+<td>*Available since*</td>
+</tr>
+<tr>
+<td>field</td>
+<td>Document field</td>
+<td>where *price* &gt; 1000000</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td><code>field[&lt;indexes&gt;](&lt;item&gt;])</code></td>
+<td>Document field part. To know more about field part look at the full syntax: <a class="internal present" href="/wiki/Document-Field-Part.html">Document_Field_Part</a>
+</td>
+<td>where **<code>tags[= 'Hi' or *<code>tags[0-3](1]</code>*)</code>** IN ('Hello') and *{{{employees[IS NOT NULL</td>
+<td>1.0rc5</td>
+</tr>
+<tr>
+<td>record attribute</td>
+<td>Record attribute name with @ as prefix</td>
+<td>where *@class* = 'Profile'</td>
+<td>0.9.21</td>
+</tr>
+<tr>
+<td>column</td>
+<td>The number of the column. Useful in Column Database</td>
+<td>where *column(1)* &gt; 300</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>any()</td>
+<td>Represents any field of the Document. The condition is true if ANY of the fields matches the condition</td>
+<td>where *any()* like 'L%'</td>
+<td>0.9.10</td>
+</tr>
+<tr>
+<td>all()</td>
+<td>Represents all the fields of the Document. The condition is true if ALL the fields match the condition</td>
+<td>where *all()* is null</td>
+<td>0.9.10</td>
+</tr>
+<tr>
+<td>[#Functions function](name='Linus']}}}*)</td>
+<td>Any [function](#Functions) between the defined</td>
+<td>where distance(x, y, 52.20472, 0.14056 ) </td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td>[$variable](#Variables)</td>
+<td>Context variable prefixed with $</td>
+<td>where $depth </td>
+<td>1.2.0</td>
+</tr>
+</table><h4>Record attributes</h4>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Example</th>
+<th>Available since</th>
+</tr>
+<tr>
+<td>@this</td>
+<td>returns the record it self</td>
+<td>select **@this.toJSON()** from Account</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td>@rid</td>
+<td>returns the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a> in the form <code>&lt;cluster:position&gt;</code>. It's null for embedded records. *NOTE: using @rid in where condition slow down queries. Much better to use the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a> as target. Example: change this: <code>select from Profile where @rid = #10:44</code> with this: <code>select from #10:44</code> *</td>
+<td>**@rid** = #11:0</td>
+<td>0.9.21</td>
+</tr>
+<tr>
+<td>@class</td>
+<td>returns Class name only for record of type Schema Aware. It's null for the others</td>
+<td>**@class ** = 'Profile'</td>
+<td>0.9.21</td>
+</tr>
+<tr>
+<td>@version</td>
+<td>returns the record version as integer. Version starts from 0. Can't be null</td>
+<td>**@version** &gt; 0</td>
+<td>0.9.21</td>
+</tr>
+<tr>
+<td>@size</td>
+<td>returns the record size in bytes</td>
+<td>**@size** &gt; 1024</td>
+<td>0.9.21</td>
+</tr>
+<tr>
+<td>@type</td>
+<td>returns the record type between: 'document', 'column', 'flat', 'bytes'</td>
+<td>**@type** = 'flat'</td>
+<td>0.9.21</td>
+</tr>
+</table><h3>Operators</h3>
+
+<h4>Conditional Operators</h4>
+
+<table>
+<tr>
+<th>Apply to</th>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
+<th>Available since</th>
+</tr>
+<tr>
+<td>any</td>
+<td>=</td>
+<td>Equals to</td>
+<td>name **=** 'Luke'</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>string</td>
+<td>like</td>
+<td>Similar to equals, but allow the wildcard '%' that means 'any'</td>
+<td>name **like** 'Luk%'</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>any</td>
+<td></td>
+<td>Less than</td>
+<td>age **</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>any</td>
+<td></td>
+<td>Less than or equal to</td>
+<td>age **</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>any</td>
+<td>&gt;</td>
+<td>Greater than</td>
+<td>age **&gt;** 40</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>any</td>
+<td>&gt;=</td>
+<td>Greater than or equal to</td>
+<td>age **&gt;=** 40</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>any</td>
+<td></td>
+<td>Not equals (same of !=)</td>
+<td>age **** 40</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>any</td>
+<td>BETWEEN</td>
+<td>The value is between a range. It's equivalent to <code>&lt;field&gt; &gt;= &lt;from-value&gt; AND &lt;field&gt; &lt;= &lt;to-value&gt;</code>
+</td>
+<td>price BETWEEN 10 and 30</td>
+<td>1.0rc2</td>
+</tr>
+<tr>
+<td>any</td>
+<td>IS</td>
+<td>Used to test if a value is NULL</td>
+<td>children **is** null</td>
+<td>0.9.6</td>
+</tr>
+<tr>
+<td>record, string (as class name)</td>
+<td>INSTANCEOF</td>
+<td>Used to check if the record extends a class</td>
+<td>@this **instanceof** 'Customer' or @class **instanceof** 'Provider'</td>
+<td>1.0rc8</td>
+</tr>
+<tr>
+<td>collection</td>
+<td>IN</td>
+<td>contains any of the elements listed</td>
+<td>values **in** `[</td>
+</tr>
+<tr>
+<td>collection</td>
+<td>CONTAINS</td>
+<td>true if the collection contains at least one element that satisfy the next condition. Condition can be a single item: in this case the behaviour is like the IN operator</td>
+<td>children *contains* (name = 'Luke') - map.values() *contains* (name = 'Luke')</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>collection</td>
+<td>CONTAINSALL</td>
+<td>true if all the elements of the collection satisfy the next condition</td>
+<td>children *containsAll* (name = 'Luke')</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>map</td>
+<td>CONTAINSKEY</td>
+<td>true if the map contains at least one key equals to the requested. You can also use map.keys() CONTAINS in place of it</td>
+<td>connections *containsKey* 'Luke'</td>
+<td>0.9.22</td>
+</tr>
+<tr>
+<td>map</td>
+<td>CONTAINSVALUE</td>
+<td>true if the map contains at least one value equals to the requested. You can also use map.values() CONTAINS in place of it</td>
+<td>connections *containsValue* 10:3</td>
+<td>0.9.22</td>
+</tr>
+<tr>
+<td>string</td>
+<td>CONTAINSTEXT</td>
+<td>used with 89cd72a14eb5493801e99a43c5034685. Current limitation is that it must be the unique condition of a query</td>
+<td>text *containsText* 'jay'</td>
+<td>0.9.22</td>
+</tr>
+<tr>
+<td>string</td>
+<td>MATCHES</td>
+<td>Matches the string using a [http://www.regular-expressions.info/ Regular Expression](3,4,5]`</td>
+<td>0.9.6</td>
+</tr>)<td>text **matches** '\b[</td>
+<tr>
+<td>any</td>
+<td>{{{TRAVERSE[( [, [,]](A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b'</td>
+<td>0.9.22</td>
+</tr>))]}}}<td>*This function was born before the SQL Traverse statement and today it's pretty limited. Look at <a class="internal present" href="/wiki/Java-Traverse.html">Traversing graphs</a> to know more about traversing in better ways.* <br>true if traversing the declared field(s) at the level from <code>&lt;minDepth&gt;</code> to <code>&lt;maxDepth&gt;</code> matches the condition. A minDepth = 0 means the root node, maxDepth = -1 means no limit: traverse all the graph recursively. If <code>&lt;minDepth&gt;</code> and <code>&lt;maxDepth&gt;</code> are not used, then (0, -1) will be taken. If <code>&lt;fields&gt;</code> is not passed, than <code>any()</code> will be used.</td>
+<td>select from profile where any() **traverse(0,7,'followers,followings')** ( address.city.name = 'Rome' )</td>
+<td>0.9.10 and 0.9.24 for <code>&lt;fields&gt;</code> parameter</td>
+</table><h4>Logical Operators</h4>
+
+<table>
+<tr>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
+<th>Available since</th>
+</tr>
+<tr>
+<td>AND</td>
+<td>true if both the conditions are true</td>
+<td>name = 'Luke' **and** surname like 'Sky%'</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>OR</td>
+<td>true if at least one of the condition is true</td>
+<td>name = 'Luke' **or** surname like 'Sky%'</td>
+<td>0.9.1</td>
+</tr>
+<tr>
+<td>NOT</td>
+<td>true if the condition is false</td>
+<td>**not** name = 'Luke'</td>
+<td>Not supported yet</td>
+</tr>
+</table><h4>Mathematics Operators</h4>
+
+<table>
+<tr>
+<th>Apply to</th>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
+<th>Available since</th>
+</tr>
+<tr>
+<td>Numbers</td>
+<td>+</td>
+<td>Plus</td>
+<td>age **+** 34</td>
+<td>1.0rc7</td>
+</tr>
+<tr>
+<td>Numbers</td>
+<td>-</td>
+<td>Minus</td>
+<td>salary **-** 34</td>
+<td>1.0rc7</td>
+</tr>
+<tr>
+<td>Numbers</td>
+<td><code>**</code></td>
+<td>Multiply</td>
+<td>factor **<code>**</code>** 1.3</td>
+<td>1.0rc7</td>
+</tr>
+<tr>
+<td>Numbers</td>
+<td>/</td>
+<td>Divide</td>
+<td>total **/** 12</td>
+<td>1.0rc7</td>
+</tr>
+<tr>
+<td>Numbers</td>
+<td>%</td>
+<td>Mod</td>
+<td>total **%** 3</td>
+<td>1.0rc7</td>
+</tr>
+</table><h4>Field Operators</h4>
+
+<p>These operators apply directly to the fields. They are beyond the SQL standard but you can use it in your queries. You can concatenate N operators in sequence. <em>Note: operators are case-insensitive.</em></p>
+
+<table>
+<tr>
+<th>Apply to</th>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
+<th>Available since</th>
+</tr>
+<tr>
+<td>document, map, list, array</td>
+<td><code>[an item from a multi-value object like a map, a list, an array or a document. For document and maps the item must be a string, for lists and arrays the index as number</code></td>
+<td>select from Profile where contacts<code>[phone](&lt;string&gt;]</code>
+</td>
+<td>Get).left(3) = '+39'</td>
+<td>1.0rc5</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.append('&lt;string&gt;')</code></td>
+<td>Appends a string to another one</td>
+<td>select name.**append(' ')**.**append(surname)** from Profile</td>
+<td>1.0rc1</td>
+</tr>
+<tr>
+<td>string, short, int, long</td>
+<td><code>.asBoolean()</code></td>
+<td>Transforms the field into a Boolean type. If the origin type is a string, then "true" and "false" is checked. If it's a number then 1 means TRUE while 0 means FALSE</td>
+<td>online.**toBoolean()** = true</td>
+<td>0.9.15</td>
+</tr>
+<tr>
+<td>string, long</td>
+<td><code>.asDate()</code></td>
+<td>Transforms the field into a Date type</td>
+<td>time.**toDate()** -&gt; time is stored as long type measuring milliseconds since a particular day</td>
+<td>0.9.14</td>
+</tr>
+<tr>
+<td>string, long</td>
+<td><code>.asDateTime()</code></td>
+<td>Transforms the field into a Date type but parsing also the time information</td>
+<td>time.**toDateTime()**  time is stored as long type measuring milliseconds since a particular day. Returns all the records where time is before the year 2010</td>
+<td>0.9.14</td>
+</tr>
+<tr>
+<td>any</td>
+<td><code>.asFloat()</code></td>
+<td>Transforms the field into a float type</td>
+<td>ray.**toFloat()** &gt; 3.14</td>
+<td>0.9.14</td>
+</tr>
+<tr>
+<td>any</td>
+<td><code>.asInteger()</code></td>
+<td>Transforms the field into an integer type</td>
+<td>value.left(3).**toInteger()** -&gt; Converts the first 3 chars of 'value' field in an integer</td>
+<td>0.9.14</td>
+</tr>
+<tr>
+<td>any</td>
+<td><code>.asString()</code></td>
+<td>Transforms the field into a string type</td>
+<td>salary.**toString()**.indexof('.') &gt; -1 -&gt; True if the salary has decimal</td>
+<td>0.9.14</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.charAt(&lt;pos&gt;)</code></td>
+<td>returns the character of the original string contained in the position 'pos'. 'pos' starts from 0 to string length -1</td>
+<td>name.**charAt( 0 )** = 'L'</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>any</td>
+<td><code>.format('&lt;frmt&gt;')</code></td>
+<td>returns the value formatted using the common "printf" syntax. For the complete reference goto [Java Formatter JavaDoc](http://java.sun.com/j2se/1.5.0/docs/api/java/util/Formatter.html#syntax). (Available since v0.9.5)</td>
+<td>salary.**format("%04d")** -&gt; formats a number with 4 digits filling with 0</td>
+<td>0.9.8</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.indexOf('&lt;string&gt;' [&lt;begin&gt; ](,)) </code></td>
+<td>returns the position of the <code>&lt;string&gt;</code> inside the item. It returns -1 if no occurrences are found</td>
+<td>name.**indexOf( 'street' )** &gt; -1</td>
+<td>0.9.10</td>
+</tr>
+<tr>
+<td>maps</td>
+<td><code>.keys()</code></td>
+<td>Returns the map's keys as a separate set. Useful to use in conjunction with CONTAINS and CONTAINSALL operators</td>
+<td>map.**keys()** CONTAINS 'Luke'</td>
+<td>1.0rc1</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.left(&lt;len&gt;)</code></td>
+<td>returns a substring of the original cutting from the begin and getting 'len' characters.</td>
+<td>name.**left( 4 )** = 'Luke'</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.length()</code></td>
+<td>returns the length of the string. If the string is null 0 will be returned</td>
+<td>name.**length()** &gt; 0</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.prefix('&lt;string&gt;')</code></td>
+<td>Prefixes a string to another one</td>
+<td>select name.**prefix('Mr. ')** from Profile</td>
+<td>1.0rc1</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.right(&lt;len&gt;)</code></td>
+<td>returns a substring of the original cutting from the end of the string 'len' characters.</td>
+<td>name.**right( 2 )** = 'ke'</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>collection</td>
+<td><code>.size()</code></td>
+<td>returns the size of the collection</td>
+<td>children.**size()** &gt; 0</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.subString(&lt;begin&gt; [&lt;len&gt;](,) )</code></td>
+<td>returns a substring of the original cutting from 'begin' and getting 'len' characters. 'begin' starts from 0 to string length -1</td>
+<td>name.**substring( 0,1 )** = 'L'</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.trim()</code></td>
+<td>returns the original string removing white spaces from the begin and the end</td>
+<td>name.**trim()** == 'luke'</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>record</td>
+<td><code>.toJSON()</code></td>
+<td>returns the record in JSON format</td>
+<td>select @this.**toJson()** as json from Profile</td>
+<td>0.9.8</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.toUpperCase()</code></td>
+<td>returns the string in upper case</td>
+<td>name.**toUpperCase()** == 'LUKE'</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>string</td>
+<td><code>.toLowerCase()</code></td>
+<td>returns the string in lower case</td>
+<td>name.**toLowerCase()** == 'luke'</td>
+<td>0.9.7</td>
+</tr>
+<tr>
+<td>maps</td>
+<td><code>.values()</code></td>
+<td>Returns the map's values as a separate collection. Useful to use in conjunction with CONTAINS and CONTAINSALL operators</td>
+<td>map.**values()** CONTAINSALL ( name is not null)</td>
+<td>1.0rc1</td>
+</tr>
+</table><h3>Functions</h3>
+
+<p>Since v.1.3.0 any <a class="internal present" href="/wiki/Functions.html">database function</a> can be called in SQL Select and Traverse statements.</p>
+
+<h4>Bundled functions</h4>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Example</th>
+<th>Available since</th>
+</tr>
+<tr>
+<td>{{{coalesce([the first field/value not null parameter. if no field/value is not null, returns null</td>
+<td>SELECT coalesce(amount, amount2, amount3) from Account</td>
+<td>1.3.0</td>
+</tr>
+<tr>
+<td><code>ifnull(&lt;field|value&gt;, &lt;return_value_if_null&gt; [,&lt;return_value_if_not_null&gt;](,&lt;field|value&gt;]*)</code></td>
+<td>Returns))}}}</td>
+<td>Returns the passed <code>field/value</code> (or optional parameter <code>return_value_if_not_null</code>). If <code>field/value</code> is not null, otherwise it returns <code>return_value_if_null</code>
+</td>
+<td>SELECT ifnull(salary, 0) from Account</td>
+<td>1.3.0</td>
+</tr>
+<tr>
+<td><code>flatten(&lt;field&gt;)</code></td>
+<td>Extracts the collection in the field <code>&lt;field&gt;</code> and use it as result</td>
+<td>select flatten( addresses ) from Account</td>
+<td>1.0rc1</td>
+</tr>
+<tr>
+<td><code>first(&lt;field&gt;)</code></td>
+<td>Retrieves only the first item of multi-value fields (arrays, collections and maps). For non multi-value types just returns the value</td>
+<td>select first( addresses ) from Account</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>count(&lt;field&gt;|**)</code></td>
+<td>Counts the records that match the query condition. If <code>**</code> is not used as a field, then the record will be counted only if the field content is not null</td>
+<td>select count(<code>*</code>) from Account</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>min(&lt;field&gt;)</code></td>
+<td>Returns the minimum value</td>
+<td>select min(salary) from Account</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>max(&lt;field&gt;)</code></td>
+<td>Returns the maximum value</td>
+<td>select max(salary) from Account</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>avg(&lt;field&gt;)</code></td>
+<td>Returns the average value</td>
+<td>select avg(salary) from Account</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>sum(&lt;field&gt;)</code></td>
+<td>Returns the sum of all the values returned</td>
+<td>select average(salary) from Account</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>date([&lt;format&gt;](&lt;date-as-string&gt;,))</code></td>
+<td>Returns a date formatting a string. <code>&lt;date-as-string&gt;</code> is the date in string format, and <code>&lt;format&gt;</code> is the date format following these [rules](http://download.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat.html). If no format is specified, then the default database format is used</td>
+<td><code>select from Account where created </code></td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>sysdate()</code></td>
+<td>Returns the current date time</td>
+<td>select sysdate('dd-MM-yyyy') from Account</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>format(&lt;format&gt;, &lt;arg1&gt; [the values using the [http://pubs.opengroup.org/onlinepubs/9699919799/functions/printf.html printf()](,&lt;argN&gt;]*)</code></td>
+<td>Formats) and [String.format()](http://download.oracle.com/javase/1.5.0/docs/api/java/lang/String.html) conventions. Look [here for more information](http://download.oracle.com/javase/1.5.0/docs/api/java/util/Formatter.html#syntax).</td>
+<td>select format("%d - Mr. %s %s (%s)", id, name, surname, address) from Account</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>dijkstra(&lt;sourceVertex&gt;, &lt;destinationVertex&gt;, &lt;weightEdgeFieldName&gt; [the cheapest path between two vertices using the [http://en.wikipedia.org/wiki/Dijkstra's_algorithm Dijkstra algorithm](,&lt;direction&gt;])</code></td>
+<td>Returns) where the **weightEdgeFieldName** parameter is the field containing the weight. Direction can be OUT (default), IN or BOTH</td>
+<td>select dijkstra($current, #8:10, 'weight') from V</td>
+<td>1.3.0</td>
+</tr>
+<tr>
+<td>{{{shortestPath(,  [the shortest path between two vertices. Direction can be OUT (default), IN or BOTH</td>
+<td>select shortestPath(#8:32, #8:10, 'BOTH')</td>
+<td>1.3.0</td>
+</tr>
+<tr>
+<td><code>distance()</code></td>
+<td>Computes the distance between two points in the globe using the Haversine algorithm. Coordinates must be as degrees</td>
+<td>where distance(x, y,52.20472, 0.14056 ) </td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td><code>distinct(&lt;field&gt;)</code></td>
+<td>Retrieves only unique data entries depending on the field you have specified as argument. The main differences with standard SQL DISTINCT are that in OrientDB is a function with parenthesis and only one field can be specified</td>
+<td>select distinct(name) from City</td>
+<td>1.0rc2</td>
+</tr>
+<tr>
+<td><code>union(&lt;field*&gt;)</code></td>
+<td>Works as aggregate or inline. If only one argument is passed than aggregates, otherwise executes, and returns, a UNION of the collections received as parameters. Works also with no collection values</td>
+<td>select union(friends) from profile | select union(inEdges, outEdges) from OGraphVertex where label = 'test'</td>
+<td>1.0rc2</td>
+</tr>
+<tr>
+<td><code>intersect(&lt;field*&gt;)</code></td>
+<td>Works as aggregate or inline. If only one argument is passed than aggregates, otherwise executes, and returns, the INTERSECTION of the collections received as parameters</td>
+<td>select intersect(friends) from profile where jobTitle = 'programmer' | select intersect(inEdges, outEdges) from OGraphVertex</td>
+<td>1.0rc2</td>
+</tr>
+<tr>
+<td><code>difference(&lt;field*&gt;)</code></td>
+<td>Works as aggregate or inline. If only one argument is passed than aggregates, otherwise executes, and returns, the DIFFERENCE between the collections received as parameters</td>
+<td>select difference(tags) from book | select difference(inEdges, outEdges) from OGraphVertex</td>
+<td>1.0rc2</td>
+</tr>
+<tr>
+<td><code>set(&lt;field&gt;)</code></td>
+<td>Add a value to a set. The first time the set is created. If <code>&lt;value&gt;</code> is a collection, then is merged with the set, otherwise <code>&lt;value&gt;</code> is added to the set</td>
+<td>SELECT name, set(roles.name) as roles FROM OUser</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>list(&lt;field&gt;)</code></td>
+<td>Add a value to a list. The first time the list is created. If <code>&lt;value&gt;</code> is a collection, then is merged with the list, otherwise <code>&lt;value&gt;</code> is added to the list</td>
+<td>SELECT name, list(roles.name) as roles FROM OUser</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>map(&lt;field&gt;|&lt;key&gt;,&lt;value&gt;&gt;)</code></td>
+<td>Add a value to a map. The first time the map is created. If <code>&lt;value&gt;</code> is a map, then is merged with the map, otherwise the pair <code>&lt;key&gt;</code> and <code>&lt;value&gt;</code> is added to the map as new entry</td>
+<td>SELECT map(name, roles.name) FROM OUser</td>
+<td>1.2.0</td>
+</tr>
+</table><h4>Custom functions</h4>
+
+<p>The SQL engine can be extended with custom functions written with a Scripting language or via Java.</p>
+
+<h5>Database's function</h5>
+
+<p>Look at the <a class="internal present" href="/wiki/Functions.html">Functions</a> page.</p>
+
+<h5>Custom functions in Java</h5>
+
+<p>Before to use them in your queries you need to register:</p>
+
+<div class="highlight"><pre>  <span class="c1">// REGISTER 'BIGGER' FUNCTION WITH FIXED 2 PARAMETERS (MIN/MAX=2)</span>
+  <span class="n">OSQLEngine</span><span class="o">.</span><span class="na">getInstance</span><span class="o">().</span><span class="na">registerFunction</span><span class="o">(</span><span class="s">"bigger"</span><span class="o">,</span> <span class="k">new</span> <span class="n">OSQLFunctionAbstract</span><span class="o">(</span><span class="s">"bigger"</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getSyntax</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="s">"bigger(&lt;first&gt;, &lt;second&gt;)"</span><span class="o">;</span>
+    <span class="o">}</span>
+  
+    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">execute</span><span class="o">(</span><span class="n">Object</span><span class="o">[]</span> <span class="n">iParameters</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">iParameters</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">iParameters</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+        <span class="c1">// CHECK BOTH EXPECTED PARAMETERS</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+  
+      <span class="k">if</span> <span class="o">(!(</span><span class="n">iParameters</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="k">instanceof</span> <span class="n">Number</span><span class="o">)</span> <span class="o">||</span> <span class="o">!(</span><span class="n">iParameters</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="k">instanceof</span> <span class="n">Number</span><span class="o">))</span>
+        <span class="c1">// EXCLUDE IT FROM THE RESULT SET</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+  
+      <span class="c1">// USE DOUBLE TO AVOID LOSS OF PRECISION</span>
+      <span class="kd">final</span> <span class="kt">double</span> <span class="n">v1</span> <span class="o">=</span> <span class="o">((</span><span class="n">Number</span><span class="o">)</span> <span class="n">iParameters</span><span class="o">[</span><span class="mi">0</span><span class="o">]).</span><span class="na">doubleValue</span><span class="o">();</span>
+      <span class="kd">final</span> <span class="kt">double</span> <span class="n">v2</span> <span class="o">=</span> <span class="o">((</span><span class="n">Number</span><span class="o">)</span> <span class="n">iParameters</span><span class="o">[</span><span class="mi">1</span><span class="o">]).</span><span class="na">doubleValue</span><span class="o">();</span>
+  
+      <span class="k">return</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">v1</span><span class="o">,</span> <span class="n">v2</span><span class="o">);</span>
+    <span class="o">}</span>
+  
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">aggregateResults</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">});</span>
+</pre></div>
+
+<p>Now you can execute it:</p>
+
+<div class="highlight"><pre>  List<span class="nt">&lt;ODocument&gt;</span> result = database.command(new OSQLSynchQuery<span class="nt">&lt;ODocument&gt;</span>("select from Account where bigger( salary, 10 ) &gt; 10")).execute();
+</pre></div>
+
+<h3>Variables</h3>
+
+<p>OrientDB supports variables managed in the context of the command/query. By default some variables are created. Below the table with the available variables:</p>
+
+<table>
+<tr>
+<td>Name</td>
+<td>Description</td>
+<td>Command(s)</td>
+<td>Since</td>
+</tr>
+<tr>
+<td>$parent</td>
+<td>Get the parent context from a sub-query. Example: select from V let $type = ( traverse * from $parent.$current.children )</td>
+<td>[SQLQuery SELECT](,])}}}</td>
+<td>Returns) and [</td>
+</tr>
+<tr>
+<td>$current</td>
+<td>Current record to use in sub-queries to refer from the parent's variable</td>
+<td>[SQLQuery SELECT](SQLTraverse</td>
+<td>1.2.0</td>
+</tr>) and <a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a><td>1.2.0</td>
+  <tr>
+<td>$depth</td>
+<td>The current depth of nesting</td>
+<td><a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a></td>
+<td>1.1.0</td>
+</tr>
+<tr>
+<td>$path</td>
+<td>The string representation of the current path. Example:  #6:0.in.#5:0#.out. You can also display it with -&gt; select $path from (traverse * from V)</td>
+<td><a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a></td>
+<td>1.1.0</td>
+</tr>
+<tr>
+<td>$stack</td>
+<td>The List of operation in the stack. Use it to access to the history of the traversal</td>
+<td><a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a></td>
+<td>1.1.0</td>
+</tr>
+<tr>
+<td>$history</td>
+<td>The set of all the records traversed as a <code>Set&lt;ORID&gt;</code>
+</td>
+<td><a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a></td>
+<td>1.1.0</td>
+</tr>
+</table><p>To set custom variable use the <a href="http://code.google.com/p/orient/wiki/SQLQuery#LET_block">LET</a> keyword.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

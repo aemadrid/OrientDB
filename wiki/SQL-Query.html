@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>SQL Query |  OrientDB</title>
+  <title>SQL Query</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_SQL-Query">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        SQL Query
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/SQL.html" class="nr1">Sql</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Orient supports the SQL language to execute queries against the engine. Look at the <a class="internal present" href="/wiki/SQL-Where.html#operators">operators</a> and <a class="internal present" href="/wiki/SQL-Where.html#functions">Functions</a>.</p>
+
+<h3>Syntax =</h3>
+
+<div class="highlight"><pre>  SELECT [FROM <span class="nt">&lt;Target&gt;</span> [LET <span class="nt">&lt;Assignment&gt;</span>*](<span class="nt">&lt;Projections&gt;</span>]) [<span class="nt">&lt;Condition&gt;</span>*](WHERE) [BY <span class="nt">&lt;Field&gt;</span>](GROUP) [BY <span class="nt">&lt;Fields&gt;</span>* [ASC|DESC](ORDER)*] [<span class="nt">&lt;SkipRecords&gt;</span>](SKIP) [<span class="nt">&lt;MaxRecords&gt;</span>](LIMIT)
+</pre></div>
+
+<ul>
+<li>
+<strong><a href="#Projections">Projections</a></strong>, optionals, are what you want to extract from the query as result set. Look at <a href="#Projections">Projections</a>. Available since 0.9.25.</li>
+<li>
+<strong>Target</strong> can be a class, a cluster, a single <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> or a set of <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s. <strong>Class</strong> is the class name where to execute the query, while specyfing <strong>cluster</strong> with the 'cluster:' prefix is the cluster name where to execute the query. Use one or more <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s to specify one or a small set of record. Useful to navigate graphs starting from some root nodes</li>
+<li>
+<strong><a class="internal present" href="/wiki/SQL-Where.html">WHERE</a></strong> condition is common to the other SQL commands and it's described apart.</li>
+<li>
+<strong><a href="#LET_block">LET</a></strong> is the part that bind context variables to be used in projections, conditions or sub-queries</li>
+<li>
+<strong>GROUP BY</strong> is the same of the SQL standard syntax specifying the field where to group by. Current release supports only 1 field.</li>
+<li>
+<strong>ORDER BY</strong> is the same of the SQL standard syntax specifying fields with optionally the versus (default is ASCending)</li>
+<li>
+<strong>SKIP</strong> skips <code>&lt;SkipRecords&gt;</code> records from the result set. This is useful in <a class="internal present" href="/wiki/Pagination.html">Pagination</a> together with LIMIT.</li>
+<li>
+<strong>LIMIT</strong> sets the maximum record the query can return to <code>&lt;MaxRecords&gt;</code>. This is useful in <a class="internal present" href="/wiki/Pagination.html">Pagination</a> together with SKIP.</li>
+</ul><p><em>NOTE: Starting from 1.0rc7 the **RANGE</em>* keyword has been removed. To execute range queries use the BETWEEN operator against @rid as explained  in <a class="internal present" href="/wiki/Pagination.html">Pagination</a>.*</p>
+
+<h4>Projections</h4>
+
+<p>In the standard SQL projections are mandatory, but in OrientDB if omitted the entire record is returned, namely the equivalent of "<code>**</code>" keyword, but the record's identity and version are preserved. Example:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">Account</span>
+</pre></div>
+
+<p>By using the wildcard <code>**</code> the fields retrieved will be the same but the RID and version will be lost:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">Account</span>
+</pre></div>
+
+<p>So remember that when use projections a new temporary document is created and the @rid and @version of the original record are lost.</p>
+
+<p>OrientDB has extended projections to allow special operators like {{{[example: 
+a343bce104a2f4af5783f9adf61a93e4</p>
+
+<p>The convention naming for the returned document's fields are:</p>
+
+<ul>
+<li>the field name for plain fields <code>invoice -&gt; invoice</code>
+</li>
+<li>the first field name for chained fields, like <code>invoice.customer.name -&gt; invoice</code>
+</li>
+<li>the name of the function for functions, like <code>max(salary) -&gt; max</code>
+</li>
+</ul><p>If the target field already exists, a progressive number is used as prefix. Example:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="nf">max</span><span class="o">(</span><span class="n">incoming</span><span class="o">),</span> <span class="n">max</span><span class="o">(</span><span class="n">cost</span><span class="o">)</span> <span class="n">FROM</span> <span class="n">Balance</span>
+</pre></div>
+
+<p>Will return a document with the field <code>max</code> and <code>max2</code>.</p>
+
+<p>To override the field name use <code>AS</code>. Example:
+3959a556e2b85ee21a4a5e17664dfa18</p>
+
+<p>By using the dollar (<code>$</code>) as prefix you can access to the context variables. Every time you run a command it accesses to the context to read and write variables. Example to display the path and depth level of the <a href="%5D%7D%7D%7D,">SQLTraverse traversal</a> on all the movies, up to the 5th level of depth:
+</p><div class="highlight"><pre>  SELECT $path, $depth FROM ( TRAVERSE * FROM Movie WHERE $depth <span class="err">&lt;</span>= 5 )
+</pre></div>
+
+<p>Projections are available since 0.9.25.</p>
+
+<h3>Examples</h3>
+
+<p>Get all the records of type 'Person' where the name starts with 'Luk':</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">Person</span> <span class="n">where</span> <span class="n">name</span> <span class="n">like</span> <span class="err">'</span><span class="n">Luk</span><span class="o">%</span><span class="err">'</span>
+</pre></div>
+or
+<div class="highlight"><pre>  <span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">Person</span> <span class="n">where</span> <span class="n">name</span><span class="o">.</span><span class="na">left</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="o">=</span> <span class="err">'</span><span class="n">Luk</span><span class="err">'</span>
+</pre></div>
+
+<p>or</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">Person</span> <span class="n">where</span> <span class="n">name</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">3</span><span class="o">)</span> <span class="o">=</span> <span class="err">'</span><span class="n">Luk</span><span class="err">'</span>
+</pre></div>
+
+<p>Get all the records of type '!AnimalType' where the collection 'races' contains at least one entry where the first character of the name, ignoring the case, is equals to 'e':</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">animaltype</span> <span class="n">where</span> <span class="n">races</span> <span class="n">contains</span> <span class="o">(</span><span class="n">name</span><span class="o">.</span><span class="na">toLowerCase</span><span class="o">().</span><span class="na">subString</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">1</span><span class="o">)</span> <span class="o">=</span> <span class="sc">'e'</span><span class="o">)</span>
+</pre></div>
+
+<p>Get all the records of type '!AnimalType' where the collection 'races' contains at least one entry with name 'European' or 'Asiatic':</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">animaltype</span> <span class="n">where</span> <span class="n">races</span> <span class="n">contains</span> <span class="o">(</span><span class="n">name</span> <span class="n">in</span> <span class="o">[</span><span class="err">'</span><span class="n">European</span><span class="sc">','</span><span class="n">Asiatic</span><span class="err">'</span><span class="o">])</span>
+</pre></div>
+
+<p>Get all the records of type 'Profile' where any field contains the word 'danger':</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">profile</span> <span class="n">where</span> <span class="nf">any</span><span class="o">()</span> <span class="n">like</span> <span class="err">'</span><span class="o">%</span><span class="n">danger</span><span class="o">%</span><span class="err">'</span>
+</pre></div>
+
+<p>Get any record at any level that has the word 'danger':</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">profile</span> <span class="n">where</span> <span class="nf">any</span><span class="o">()</span> <span class="n">traverse</span> <span class="o">(</span> <span class="n">any</span><span class="o">()</span> <span class="n">like</span> <span class="err">'</span><span class="o">%</span><span class="n">danger</span><span class="o">%</span><span class="err">'</span> <span class="o">)</span>
+</pre></div>
+
+<p>Get all the records where up to the 3rd level of connections has some field that contains the word 'danger' ignoring the case:</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">Profile</span> <span class="n">where</span> <span class="nf">any</span><span class="o">()</span> <span class="n">traverse</span><span class="o">(</span> <span class="mi">0</span><span class="o">,</span><span class="mi">3</span> <span class="o">)</span> <span class="o">(</span> <span class="n">any</span><span class="o">().</span><span class="na">toUpperCase</span><span class="o">().</span><span class="na">indexOf</span><span class="o">(</span> <span class="err">'</span><span class="n">danger</span><span class="err">'</span> <span class="o">)}}}</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">)</span>
+</pre></div>
+
+<p>Order the result set by the 'name' in descending order:</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">Profile</span> <span class="n">order</span> <span class="n">by</span> <span class="n">name</span> <span class="n">desc</span>
+</pre></div>
+
+<p>Returns the total of records per city:</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="nf">sum</span><span class="o">(*)</span> <span class="n">from</span> <span class="n">Account</span> <span class="n">group</span> <span class="n">by</span> <span class="n">city</span>
+</pre></div>
+
+<p>Traverse record starting from a root node:</p>
+
+<div class="highlight"><pre><span class="n">select</span> <span class="n">from</span> 11<span class="p">:</span>4 <span class="n">where</span> <span class="n">any</span><span class="p">()</span> <span class="n">traverse</span><span class="p">(</span>0<span class="p">,</span>10<span class="p">)</span> <span class="p">(</span><span class="n">address</span><span class="p">.</span><span class="n">city</span> <span class="p">=</span> <span class="s">'Rome'</span><span class="p">)</span> 
+</pre></div>
+
+<p>Query only a set of records:</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="o">[</span><span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">3</span><span class="o">,</span> <span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">4</span><span class="o">,</span> <span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">5</span><span class="o">]</span>
+</pre></div>
+
+<p>Select only three fields from Profile:</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">nick</span><span class="o">,</span> <span class="n">followings</span><span class="o">,</span> <span class="n">followers</span> <span class="n">from</span> <span class="n">Profile</span>
+</pre></div>
+
+<p>Select the 'name' field in upper-case and the 'country name' of the linked city of the address:</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">name</span><span class="o">.</span><span class="na">toUppercase</span><span class="o">(),</span> <span class="n">address</span><span class="o">.</span><span class="na">city</span><span class="o">.</span><span class="na">country</span><span class="o">.</span><span class="na">name</span> <span class="n">from</span> <span class="n">Profile</span>
+</pre></div>
+
+<h4>LET block</h4>
+
+<p>The LET block contains the list of context variables to assign every time a record is evaluated. These values are destroyed once the query execution ends. Context variables can be used in projections, conditions and sub-queries.</p>
+
+<h4>Assign fields to reuse multiple time</h4>
+
+<p>OrientDB allows to cross relationships but if in a single query you need to evaluate the same branch of nested relationship it's definitely better using a context variable that refer to the full relationship every time.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">Profile</span>
+   <span class="n">WHERE</span> <span class="n">address</span><span class="o">.</span><span class="na">city</span><span class="o">.</span><span class="na">name</span> <span class="n">like</span> <span class="err">'</span><span class="o">%</span><span class="n">Saint</span><span class="o">%</span><span class="err">"'</span> <span class="n">and</span>
+       <span class="o">(</span> <span class="n">address</span><span class="o">.</span><span class="na">city</span><span class="o">.</span><span class="na">country</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Italy</span><span class="err">'</span> <span class="n">or</span> <span class="n">address</span><span class="o">.</span><span class="na">city</span><span class="o">.</span><span class="na">country</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">France</span><span class="err">'</span> <span class="o">)</span>
+</pre></div>
+
+<p>Using LET becomes shorter and faster, because the relationships are traversed only once:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">Profile</span> 
+   <span class="n">LET</span> <span class="n">$city</span> <span class="o">=</span> <span class="n">address</span><span class="o">.</span><span class="na">city</span>
+   <span class="n">WHERE</span> <span class="n">$city</span><span class="o">.</span><span class="na">name</span> <span class="n">like</span> <span class="err">'</span><span class="o">%</span><span class="n">Saint</span><span class="o">%</span><span class="err">"'</span> <span class="n">and</span>
+       <span class="o">(</span> <span class="n">$city</span><span class="o">.</span><span class="na">country</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Italy</span><span class="err">'</span> <span class="n">or</span> <span class="n">$city</span><span class="o">.</span><span class="na">country</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">France</span><span class="err">'</span> <span class="o">)</span>
+</pre></div>
+
+<p>In this case the path till address.city is traversed only once.</p>
+
+<h4>Sub-query</h4>
+
+<p>LET block allows also to assign to a context variable the result of a sub-query. Example:</p>
+
+<div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">Document</span>  
+  <span class="n">let</span> <span class="n">$temp</span> <span class="o">=</span> <span class="o">(</span>
+    <span class="n">select</span> <span class="nd">@rid</span><span class="o">,</span> <span class="n">$depth</span> <span class="n">from</span> <span class="o">(</span> 
+      <span class="n">traverse</span> <span class="n">V</span><span class="o">.</span><span class="na">out</span><span class="o">,</span> <span class="n">E</span><span class="o">.</span><span class="na">in</span> <span class="n">from</span> <span class="n">$parent</span><span class="o">.</span><span class="na">current</span>
+    <span class="o">)</span> 
+    <span class="n">where</span> <span class="nd">@class</span> <span class="o">=</span> <span class="err">'</span><span class="n">Concept</span><span class="err">'</span> <span class="n">and</span> <span class="o">(</span><span class="n">id</span> <span class="o">=</span> <span class="err">'</span><span class="n">first</span> <span class="n">concept</span><span class="err">'</span> <span class="n">or</span> <span class="n">id</span> <span class="o">=</span> <span class="err">'</span><span class="n">second</span> <span class="n">concept</span><span class="err">'</span> <span class="o">)</span> 
+  <span class="o">)</span>
+  <span class="n">where</span> <span class="n">$temp</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</pre></div>
+
+<h4>Usage in projection</h4>
+
+<p>Context variables can be part of result set using them in <a href="#Projections">Projections</a>. The example below displays the city name of the previous example:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">$temp</span><span class="o">.</span><span class="na">name</span> <span class="n">FROM</span> <span class="n">Profile</span> 
+   <span class="n">LET</span> <span class="n">$temp</span> <span class="o">=</span> <span class="n">address</span><span class="o">.</span><span class="na">city</span>
+   <span class="n">WHERE</span> <span class="n">$city</span><span class="o">.</span><span class="na">name</span> <span class="n">like</span> <span class="err">'</span><span class="o">%</span><span class="n">Saint</span><span class="o">%</span><span class="err">"'</span> <span class="n">and</span>
+       <span class="o">(</span> <span class="n">$city</span><span class="o">.</span><span class="na">country</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Italy</span><span class="err">'</span> <span class="n">or</span> <span class="n">$city</span><span class="o">.</span><span class="na">country</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">France</span><span class="err">'</span> <span class="o">)</span>
+</pre></div>
+
+<h3>Conclusion</h3>
+
+<p>To know more about other SQL commands look at <a class="internal present" href="/wiki/SQL.html">SQL commands</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

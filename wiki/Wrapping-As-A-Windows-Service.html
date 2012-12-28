@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Wrapping As A Windows Service |  OrientDB</title>
+  <title>Wrapping As A Windows Service</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Wrapping-As-A-Windows-Service">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Wrapping As A Windows Service
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/DB-Server.html" class="nr1">Db Server</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>OrientDB as a Windows Service_</p>
+
+<p><a href="/g:plusone">/g:plusone</a></p>
+
+<h4><a class="anchor" id="" href="#"></a></h4>
+
+<h3>Introduction</h3>
+
+<p>OrientDB and OrientDB Graph Edition, aka GraphEd, are Java server application. As most server applications, they have to perform several tasks before being able to shut down the Virtual Machine process hence they need a portable way to be notified of the imminent Virtual Machine shutdown.
+At the moment, the only way to properly shut down an OrientDB server instance (not embedded) is to execute the <em>shutdown.bat</em> (or <em>shutdown.sh</em>) script shipped with the OrientDB distribution but it's up to the user to take care of this. This implies that the server instance isn't  stopped correctly when the computer on which it is deployed is shutted down without executing the above script.</p>
+
+<h4>Apache Commons Daemon</h4>
+
+<p><a href="http://commons.apache.org/daemon/">Apache Commons Daemon</a> is a set of applications and API enabling Java server application to run as native non interactive server applications under Unix and Windows. In Unix, server applications running in background are called <em>daemons</em> and are controlled by the operating system with a set of specified <em>signals</em>. Under Windows such programs are called services and are controlled by appropriate calls to specific functions defined in the application binary. Although the ways of dealing with the problem are different, in both cases the operating system can notify a server application of its imminent shutdown, and the underlying application has the ability to perform certain tasks before its process of execution is destroyed.</p>
+
+<h4>Wrapping OrientDB as a <em>Unix daemon</em> or as a <em>Windows service</em> enables the management of this server application lifecycle through the mechanisms provided natively by both Unix and Windows operating systems.</h4>
+
+<h3>Installation</h3>
+
+<p>This tutorial is focused on Windows so you have to download <em>procrun</em>. <a href="http://commons.apache.org/daemon/procrun.html">Procrun</a> is a set of applications that allow Windows users to wrap (mostly) Java applications (e.g. Tomcat) as a Windows service. The service can be set to automatically start when the machine boots and will continue to run with no user logged onto the machine.
+1. Point you browser to the <a href="http://commons.apache.org/daemon/download_daemon.cgi">Apache Commons Daemon download page</a>.
+1. Click on <strong>Browse native binaries download area...</strong>: you will see the index <strong>commons/daemon/binaries/</strong> (even if the title in the page reports <strong>Index of dist/commons</strong>).
+1. Click on <strong>windows</strong>. Now you can see the index of <strong>commons/daemon/binaries/windows</strong>.
+1. Click on <strong>commons-daemon-1.0.7-bin-windows.zip</strong>. The download starts.
+1. Unzip the file in a directory of your choice.
+The content of the archive is depicted below:
+</p><div class="highlight"><pre>  <span class="n">commons</span><span class="o">-</span><span class="n">daemon</span><span class="o">-</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">7</span><span class="o">-</span><span class="n">bin</span><span class="o">-</span><span class="n">windows</span>
+  <span class="o">|</span>
+  <span class="err">\</span><span class="o">---</span><span class="n">amd64</span>
+      <span class="o">|</span>
+      <span class="err">\</span><span class="o">---</span><span class="n">prunsrv</span><span class="o">.</span><span class="na">exe</span>
+  <span class="o">|</span>
+  <span class="err">\</span><span class="o">---</span><span class="n">ia64</span>
+      <span class="o">|</span>
+      <span class="err">\</span><span class="o">---</span><span class="n">prunsrv</span><span class="o">.</span><span class="na">exe</span>
+  <span class="o">|</span>
+  <span class="err">\</span><span class="o">---</span><span class="n">LICENCE</span><span class="o">.</span><span class="na">txt</span>
+  <span class="o">|</span>
+  <span class="err">\</span><span class="o">---</span><span class="n">NOTICE</span><span class="o">.</span><span class="na">txt</span>
+  <span class="o">|</span>
+  <span class="err">\</span><span class="o">---</span><span class="n">prunmgr</span><span class="o">.</span><span class="na">exe</span>
+  <span class="o">|</span>
+  <span class="err">\</span><span class="o">---</span><span class="n">prunsrv</span><span class="o">.</span><span class="na">exe</span>
+  <span class="o">|</span>
+  <span class="err">\</span><span class="o">---</span><span class="n">RELEASE</span><span class="o">-</span><span class="n">NOTES</span><span class="o">.</span><span class="na">txt</span>
+</pre></div>
+<strong>prunmgr</strong> is a GUI application for monitoring and configuring Windows services wrapped with procrun. <strong>prunsrv</strong> is a service application for running applications as services. It can convert any application (not just Java applications) to run as a service. The directory <strong>amd64</strong> contains a version of <strong>prunsrv</strong> for x86-64 machines while the directory <strong>ia64</strong> contains a version of <strong>prunsrv</strong> for Itanium 64 machines.
+
+<p>Once you downloaded the applications, you have to put them in a folder under the OrientDB installation folder.
+1. Go to the OrientDB folder, in the following referred as <em>%ORIENTDB_HOME%</em>
+1. Create a new directory and name it <strong>service</strong></p>
+
+<h4>1. Copy there the appropriate versions of <strong>prunsrv</strong> and <strong>prunmgr</strong> according to the architecture of your machine.</h4>
+
+<h3>Configuration</h3>
+
+<p>In this section, we will show how to wrap OrientDB GraphEd 1.0rc5 as a Windows Service.
+In order to wrap OrientDB as a service, you have to execute a short script that uses the prunsrv application to configure a Windows Service.</p>
+
+<p>Before defining the Windows Service, you have to rename <strong>prunsrv</strong> and <strong>prunmgr</strong> according to the name of the service. Both applications require the name of the service to manage and monitor as parameter but you can avoid it by naming them with the name of the service. In this case, rename them respectively <strong>OrientDBGraph</strong> and <strong>OrientDBGraphw</strong> as <em>OrientDBGraph</em> is the name of the service that you are going to configure with the script below. If you want to use a difference service name, you have to rename both application respectively <strong>myservicename</strong> and <strong>myservicenamew</strong> (for example, if you are wrapping OrientDB and the name of the service is <em>OrientDB</em>, you could rename <em>prunsrv</em> as <em>OrientDB</em> and <em>prunmgr</em> as <em>OrientDBw</em>).
+After that, create the file <strong>%ORIENTDB_HOME%\service\installService.bat</strong> with the content depicted below:
+<code>
+:: OrientDB Windows Service Installation
+@echo off
+rem Remove surrounding quotes from the first parameter
+set str=%~1
+rem Check JVM DLL location parameter
+if "%str%" == "" goto missingJVM
+set JVM_DLL=%str%
+rem Remove surrounding quotes from the second parameter
+set str=%~2
+rem Check OrientDB Home location parameter
+if "%str%" == "" goto missingOrientDBHome
+set ORIENTDB_HOME=%str%</code></p>
+
+<p>rem Install service
+OrientDBGraph.exe //IS --DisplayName="OrientDB GraphEd 1.0rc5" \
+--Description="OrientDB Graph Edition, aka GraphEd, contains OrientDB server integrated with the latest release of the TinkerPop Open Source technology stack supporting property graph data model." \
+--StartClass=com.orientechnologies.orient.server.OServerMain --StopClass=com.orientechnologies.orient.server.OServerShutdownMain --Classpath="%ORIENTDB_HOME%\lib`*`" \
+--JvmOptions "-XX:+UseParallelGC;-XX:+AggressiveOpts;-XX:CompileThreshold=200;-Djava.util.logging.config.file="%ORIENTDB_HOME%\config\orientdb-server-log.properties";-Dorientdb.config.file="%ORIENTDB_HOME%\config\orientdb-server-config.xml";-Dorientdb.<a href="http://www.path=%22%ORIENTDB_HOME%%5Cwww%22;-Dlog.console.level=info;-Dlog.file.level=fine;-Dorientdb.build.number=@BUILD@;-DORIENTDB_HOME=%ORIENTDB_HOME%">www.path="%ORIENTDB_HOME%\www";-Dlog.console.level=info;-Dlog.file.level=fine;-Dorientdb.build.number=@BUILD@;-DORIENTDB_HOME=%ORIENTDB_HOME%</a>" \
+--StartMode=jvm --StartPath="%ORIENTDB_HOME%\bin" --StopMode=jvm --StopPath="%ORIENTDB_HOME%\bin" --Jvm="%JVM_DLL%" --LogPath="%ORIENTDB_HOME%\log" --Startup=auto</p>
+
+<p>EXIT /B</p>
+
+<p>:missingJVM
+echo Insert the JVM DLL location
+goto printUsage</p>
+
+<p>:missingOrientDBHome
+echo Insert the OrientDB Home
+goto printUsage</p>
+
+<p>:printUsage
+echo usage:
+echo     installService JVM_DLL_location OrientDB_Home
+EXIT /B
+</p>
+
+<p>The script requires two input parameters:
+1. The location of jvm.dll, for example <em>C:\Program Files\Java\jdk1.6.0_26\jre\bin\server\jvm.dll</em>
+1. The location of the OrientDB installation folder, for example <em>D:\orientdb-graphed-1.0rc5</em></p>
+
+<p>The service is actually installed when executing <strong>OrientDBGraph.exe</strong> (originally prunsrv) with the appropriate set of command line arguments and parameters.
+The command line argument <strong>//IS</strong> states that the execution of that application will result in a service installation.
+Below there is the table with the command line parameters used in the above script.</p>
+
+<table><tbody>
+<tr>
+<th>Parameter name</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+<tr>
+<td>--DisplayName</td>
+<td>The name displayed in the Windows Services Management Console</td>
+<td>Custom</td>
+</tr>
+<tr>
+<td>--Description</td>
+<td>The description displayed in the Windows Services Management Console</td>
+<td>Custom</td>
+</tr>
+<tr>
+<td>--StartClass</td>
+<td>Class that contains the startup method (= the method to be called to start the application). The default method to be called is the <code>main</code> method</td>
+<td>The class invoked in the */bin/server.bat* script</td>
+</tr>
+<tr>
+<td>--StopClass</td>
+<td>Class that will be used when receiving a Stop service signal. The default method to be called is the <code>main</code> method</td>
+<td>The class invoked in the */bin/shutdown.bat* script</td>
+</tr>
+<tr>
+<td>--Classpath</td>
+<td>Set the Java classpath</td>
+<td>The value of the <code>-cp</code> parameter specified in the _%ORIENTDB_HOME%\bin\server.bat_ script</td>
+</tr>
+<tr>
+<td>--JvmOptions</td>
+<td>List of options to be passed to the JVM separated using either # or ; characters</td>
+<td>The list of options in the form of -D or -X specified in the _%ORIENTDB_HOME%\bin\server.bat_ script and the definition of the ORIENTDB_HOME system property</td>
+</tr>
+<tr>
+<td>--StartMode</td>
+<td>Specify how to start the process. In this case, it will start Java in-process and not as a separate image</td>
+<td>Based on Apache Tomcat configuration</td>
+</tr>
+<tr>
+<td>--StartPath</td>
+<td>Working path for the StartClass</td>
+<td>_%ORIENTDB_HOME%\bin_</td>
+</tr>
+<tr>
+<td>--StopMode</td>
+<td>The same as --StartMode</td>
+<td>Based on Apache Tomcat configuration</td>
+</tr>
+<tr>
+<td>--StopPath</td>
+<td>Working path for the StopClass</td>
+<td>_%ORIENTDB_HOME%\bin_</td>
+</tr>
+<tr>
+<td>--Jvm</td>
+<td>Which *jvm.dll* to use: the default one or the one located in the specified full path</td>
+<td>The first input parameter of this script. Ensure that you insert the location of the Java HotSpot Server VM as a full path. We will use the server version for both start and stop.</td>
+</tr>
+<tr>
+<td>--LogPath</td>
+<td>Path used by prunsrv for logging</td>
+<td>The default location of the Apache Commons Daemon log</td>
+</tr>
+<tr>
+<td>--Startup</td>
+<td>States if the service should start at machine start up or manually</td>
+<td>auto</td>
+</tr>
+</tbody></table><p>For a complete reference to all available parameters and arguments for prunsrv and prunmgr, visit the <a href="http://commons.apache.org/daemon/procrun.html">Procrun page</a>.</p>
+
+<p>In order to install the service:
+1. Open the Windows command shell
+1. Go to <em>%ORIENTDB_HOME%\service</em>, for example typing in the shell
+ {{{</p>
+
+<blockquote>
+<p>cd D:\orientdb-graphed-1.0rc5\service
+ }}}
+1. Execute the <em>installService.bat</em> specifying the <em>jvm.dll</em> location and the OrientDB Home as full paths, for example typing in the shell
+</p>
+<div class="highlight"><pre>  <span class="o">&gt;</span><span class="n">installService</span><span class="o">.</span><span class="na">bat</span> <span class="s">"C:\Program Files\Java\jdk1.6.0_26\jre\bin\server\jvm.dll"</span> <span class="nl">D:</span><span class="err">\</span><span class="n">orientdb</span><span class="o">-</span><span class="n">graphed</span><span class="o">-</span><span class="mf">1.0</span><span class="n">rc5</span>
+</pre></div>
+1. Open the Windows Services Management Console - from the taskbar, click on <em>Start</em>, <em>Control Panel</em>, <em>Administrative Tools</em> and then <em>Service</em> - and check the existance of a service with the same name specified as value of the <code>--DisplayName</code> parameter (in this case <strong>OrientDB GraphEd 1.0rc5</strong>).
+You can also use <em>%ORIENTDB_HOME%\service\OrientDBGraphw.exe</em> to manage and monitor the <em>OrientDBGraph</em> service.
+</blockquote>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

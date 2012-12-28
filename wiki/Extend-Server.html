@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Extend Server |  OrientDB</title>
+  <title>Extend Server</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Extend-Server">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Extend Server
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>The OrientDB Server is a customizable platform to build powerful server component and applications.</p>
+
+<p>Since the OrientDB server contains an integrated Web Server what about creating server side applications without the need to have a J2EE and Servlet container? By extending the server you can benefit of the best performance because you don't have many layers but the database and the application reside on the same JVM without the cost of the network and serialization of requests.</p>
+
+<p>Furthermore you can package your application together with the OrientDB server to distribute just a ZIP file containing the entire Application, Web server and Database.</p>
+
+<p>To customize the OrientDB server you have two powerful tools:</p>
+
+<ul>
+<li><a href="#Handlers">Handlers</a></li>
+<li><a href="#Custom_commands">Custom commands</a></li>
+</ul><p>To debug the server while you develop new feature follow <a class="internal present" href="/wiki/DB-Server.html#debug_the_server">Debug the server</a>.</p>
+
+<h3>Handlers</h3>
+
+<p><strong>Handlers</strong> are plug-ins and starts when OrientDB starts.</p>
+
+<p>To create a new handler create the class and register it in the OrientDB server configuration.</p>
+
+<h4>Create the Handler class</h4>
+
+<p>A Handler must implements the <strong><a href="http://www.google.com/codesearch/p?hl=en#Q2eMNvxgD0M/trunk/server/src/main/java/com/orientechnologies/orient/server/handler/OServerHandler.java&amp;q=OServerHandler%20package:http://orient%5C.googlecode%5C.com&amp;sa=N&amp;cd=1&amp;ct=rc">OServerHandler</a></strong> interface or extends the <strong><a href="http://www.google.com/codesearch/p?hl=en#Q2eMNvxgD0M/trunk/server/src/main/java/com/orientechnologies/orient/server/handler/OServerHandlerAbstract.java&amp;q=OServerHandler%20package:http://orient%5C.googlecode%5C.com&amp;d=10">OServerHandlerAbstract</a></strong> abstract class.</p>
+
+<p>Below an example of a handler that print every 5 seconds a message if the "log" parameters has been configured to be "true":
+</p><div class="highlight"><pre>  <span class="kn">package</span> <span class="n">orientdb</span><span class="o">.</span><span class="na">test</span><span class="o">;</span>
+  
+  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">PrinterHandler</span> <span class="kd">extends</span> <span class="n">OServerHandlerAbstract</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">boolean</span>	<span class="n">log</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">config</span><span class="o">(</span><span class="n">OServer</span> <span class="n">oServer</span><span class="o">,</span> <span class="n">OServerParameterConfiguration</span><span class="o">[]</span> <span class="n">iParams</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">for</span> <span class="o">(</span><span class="n">OServerParameterConfiguration</span> <span class="n">p</span> <span class="o">:</span> <span class="n">iParams</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">p</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">"log"</span><span class="o">))</span>
+          <span class="n">log</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+      <span class="o">}</span>
+  
+      <span class="n">Orient</span><span class="o">.</span><span class="na">getTimer</span><span class="o">().</span><span class="na">schedule</span><span class="o">(</span> <span class="k">new</span> <span class="n">TimerTask</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+          <span class="k">if</span><span class="o">(</span> <span class="n">log</span> <span class="o">)</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"It's the PrinterHandler!"</span><span class="o">);</span>
+        <span class="o">}</span>
+      <span class="o">},</span> <span class="mi">5000</span><span class="o">,</span> <span class="mi">5000</span><span class="o">);</span>
+    <span class="o">}</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="s">"PrinterHandler"</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h4>Register the handler</h4>
+
+<p>Once created register it to the server configuration in <strong>orientdb-server-config.xml</strong> file:</p>
+
+<div class="highlight"><pre>  <span class="nt">&lt;orient-server&gt;</span>
+    <span class="nt">&lt;handlers&gt;</span>
+      <span class="nt">&lt;handler</span> <span class="na">class=</span><span class="s">"orientdb.test.DistributedRecordHook"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;parameters&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"log"</span> <span class="na">value=</span><span class="s">"true"</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;/parameters&gt;</span>
+      <span class="nt">&lt;/handler&gt;</span>
+    <span class="nt">&lt;/handlers&gt;</span>
+    ...
+</pre></div>
+
+<p>Note that you can specify arbitrary parameters in form of name and value. Those parameters can be read by the <strong>config()</strong> method. In this example a parameter "log" is read. Look upon to the example of handler to know how to read parameters specified in configuration.</p>
+
+<h4>Creating a distributed change manager</h4>
+
+<p>As more complete example let's create a distributed record manager by installing hooks to all the server's databases and push these changes to the remote client caches.</p>
+
+<div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DistributedRecordHook</span> <span class="kd">extends</span> <span class="n">OServerHandlerAbstract</span> <span class="kd">implements</span> <span class="n">ORecordHook</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">log</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">config</span><span class="o">(</span><span class="n">OServer</span> <span class="n">oServer</span><span class="o">,</span> <span class="n">OServerParameterConfiguration</span><span class="o">[]</span> <span class="n">iParams</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">for</span> <span class="o">(</span><span class="n">OServerParameterConfiguration</span> <span class="n">p</span> <span class="o">:</span> <span class="n">iParams</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">p</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">"log"</span><span class="o">))</span>
+          <span class="n">log</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onAfterClientRequest</span><span class="o">(</span><span class="kd">final</span> <span class="n">OClientConnection</span> <span class="n">iConnection</span><span class="o">,</span> <span class="kd">final</span> <span class="kt">byte</span> <span class="n">iRequestType</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">iRequestType</span> <span class="o">==</span> <span class="n">OChannelBinaryProtocol</span><span class="o">.</span><span class="na">REQUEST_DB_OPEN</span><span class="o">)</span>
+        <span class="n">iConnection</span><span class="o">.</span><span class="na">database</span><span class="o">.</span><span class="na">registerHook</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+      <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">iRequestType</span> <span class="o">==</span> <span class="n">OChannelBinaryProtocol</span><span class="o">.</span><span class="na">REQUEST_DB_CLOSE</span><span class="o">)</span>
+        <span class="n">iConnection</span><span class="o">.</span><span class="na">database</span><span class="o">.</span><span class="na">unregisterHook</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onTrigger</span><span class="o">(</span><span class="n">TYPE</span> <span class="n">iType</span><span class="o">,</span> <span class="n">ORecord</span><span class="o">&lt;?&gt;</span> <span class="n">iRecord</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">try</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">)</span>
+          <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Broadcasting record: "</span> <span class="o">+</span> <span class="n">iRecord</span> <span class="o">+</span> <span class="s">"..."</span><span class="o">);</span>
+  
+        <span class="n">OClientConnectionManager</span><span class="o">.</span><span class="na">instance</span><span class="o">().</span><span class="na">broadcastRecord2Clients</span><span class="o">((</span><span class="n">ORecordInternal</span><span class="o">&lt;?&gt;)</span> <span class="n">iRecord</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+      <span class="o">}</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="s">"DistributedRecordHook"</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h3>Custom commands</h3>
+
+<p>Custom commands are useful when you want to add behavior or business logic at the server side.</p>
+
+<p>A Server command is a class that implements the <a href="http://code.google.com/p/orient/source/browse/trunk/server/src/main/java/com/orientechnologies/orient/server/network/protocol/http/command/OServerCommand.java">OServerCommand</a> interface or extends one of the following abstract classes:</p>
+
+<ul>
+<li>
+<a href="http://code.google.com/p/orient/source/browse/trunk/server/src/main/java/com/orientechnologies/orient/server/network/protocol/http/command/OServerCommandAuthenticatedDbAbstract.java">OServerCommandAuthenticatedDbAbstract</a> if the command requires an authentication at the database</li>
+<li>
+<a href="http://code.google.com/p/orient/source/browse/trunk/server/src/main/java/com/orientechnologies/orient/server/network/protocol/http/command/OServerCommandAuthenticatedServerAbstract.java">OServerCommandAuthenticatedServerAbstract</a> if the command requires an authentication at the server</li>
+</ul><h4>The Hello World Web</h4>
+
+<p>To learn how to create a custom command, let's begin with a command that just returns "Hello world!".</p>
+
+<p>OrientDB follows the convention that the command name is:</p>
+
+<p><strong><code>OServerCommand&lt;method&gt;&lt;name&gt;</code></strong>
+Where:</p>
+
+<ul>
+<li>
+<strong>method</strong> is the HTTP method and can be: GET, POST, PUT, DELETE</li>
+<li>
+<strong>name</strong> is the command name</li>
+</ul><p>In our case the class name will be "OServerCommandGetHello". We want that the use must be authenticated against the database to execute it as any user. </p>
+
+<p>Furthermore we'd like to receive via configuration if we must display the text in Italic or not, so for this purpose we'll declare a parameter named "italic" of type boolean (true or false).
+</p><div class="highlight"><pre>  <span class="kn">package</span> <span class="n">org</span><span class="o">.</span><span class="na">example</span><span class="o">;</span>
+  
+  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OServerCommandGetHello</span> <span class="kd">extends</span> <span class="n">OServerCommandAuthenticatedDbAbstract</span> <span class="o">{</span>  
+    <span class="c1">// DECLARE THE PARAMETERS</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">italic</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+  
+    <span class="kd">public</span> <span class="nf">OServerCommandGetHello</span> <span class="o">(</span><span class="kd">final</span> <span class="n">OServerCommandConfiguration</span> <span class="n">iConfiguration</span><span class="o">)</span> <span class="o">{</span>
+      <span class="kd">super</span><span class="o">(</span><span class="n">iConfiguration</span><span class="o">.</span><span class="na">pattern</span><span class="o">);</span>
+    
+      <span class="c1">// PARSE PARAMETERS ON STARTUP  </span>
+      <span class="k">for</span> <span class="o">(</span><span class="n">OServerEntryConfiguration</span> <span class="n">par</span> <span class="o">:</span> <span class="n">iConfiguration</span><span class="o">.</span><span class="na">parameters</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">par</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"italic"</span><span class="o">))</span>
+          <span class="n">italic</span> <span class="o">=</span> <span class="n">Boolean</span><span class="o">.</span><span class="na">parseBoolean</span><span class="o">(</span> <span class="n">par</span><span class="o">.</span><span class="na">value</span> <span class="o">);</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">execute</span><span class="o">(</span><span class="kd">final</span> <span class="n">OHttpRequest</span> <span class="n">iRequest</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+      <span class="c1">// CHECK THE SYNTAX. 3 IS THE NUMBER OF MANDATORY PARAMETERS</span>
+      <span class="n">String</span><span class="o">[]</span> <span class="n">urlParts</span> <span class="o">=</span> <span class="n">checkSyntax</span><span class="o">(</span> <span class="n">iRequest</span><span class="o">.</span><span class="na">url</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span>
+                     <span class="s">"Syntax error: hello/&lt;database&gt;/&lt;name&gt;"</span><span class="o">);</span>
+  
+      <span class="c1">// GET THE PARAMETERS</span>
+      <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">urlParts</span><span class="o">[</span><span class="mi">2</span><span class="o">];</span>
+  
+      <span class="c1">// TELLS TO THE SERVER WHAT I'M DOING (IT'S FOR THE PROFILER)</span>
+      <span class="n">iRequest</span><span class="o">.</span><span class="na">data</span><span class="o">.</span><span class="na">commandInfo</span> <span class="o">=</span> <span class="s">"Salutation"</span><span class="o">;</span>
+      <span class="n">iRequest</span><span class="o">.</span><span class="na">data</span><span class="o">.</span><span class="na">commandDetail</span> <span class="o">=</span> <span class="n">result</span><span class="o">;</span>
+  
+      <span class="c1">// CREATE THE RESULT</span>
+      <span class="n">String</span> <span class="n">result</span> <span class="o">=</span> <span class="s">"Hello "</span> <span class="o">+</span> <span class="n">name</span><span class="o">;</span>
+      <span class="k">if</span><span class="o">(</span> <span class="n">italic</span> <span class="o">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s">"&lt;i&gt;"</span> <span class="o">+</span> <span class="n">result</span> <span class="o">+</span> <span class="s">"&lt;/i&gt;"</span><span class="o">;</span>
+  
+      <span class="c1">// SEND BACK THE RESPONSE AS TEXT</span>
+      <span class="n">sendTextContent</span><span class="o">(</span><span class="n">iRequest</span><span class="o">,</span> <span class="n">OHttpUtils</span><span class="o">.</span><span class="na">STATUS_OK_CODE</span><span class="o">,</span> <span class="s">"OK"</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">OHttpUtils</span><span class="o">.</span><span class="na">CONTENT_TEXT_PLAIN</span><span class="o">,</span> <span class="n">result</span><span class="o">);</span>
+  
+      <span class="c1">// RETURN ALWAYS FALSE, UNLESS YOU WANT TO EXECUTE COMMANDS IN CHAIN</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+</pre></div>
+
+<p>Once created the command you need to register them through the <strong>orientdb-server-config.xml</strong> file. Put a new tag <code>&lt;command&gt;</code> under the tag <code>commands</code> of <code>&lt;listener&gt;</code> with attribute <code>protocol="http"</code>:
+</p><div class="highlight"><pre>    <span class="o">...</span>
+    <span class="o">&lt;</span><span class="n">listener</span> <span class="n">protocol</span><span class="o">=</span><span class="s">"http"</span> <span class="n">port</span><span class="o">-</span><span class="n">range</span><span class="o">=</span><span class="s">"2480-2490"</span> <span class="n">ip</span><span class="o">-</span><span class="n">address</span><span class="o">=</span><span class="s">"0.0.0.0"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">commands</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">command</span> <span class="n">implementation</span><span class="o">=</span><span class="s">"org.example.OServerCommandGetHello"</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"GET|hello/*"</span><span class="o">&gt;</span>
+          <span class="o">&lt;</span><span class="n">parameters</span><span class="o">&gt;</span>
+            <span class="o">&lt;</span><span class="n">entry</span> <span class="n">name</span><span class="o">=</span><span class="s">"italic"</span> <span class="n">value</span><span class="o">=</span><span class="s">"true"</span><span class="o">/&gt;</span>
+          <span class="o">&lt;/</span><span class="n">parameters</span><span class="o">&gt;</span>
+        <span class="o">&lt;/</span><span class="n">command</span><span class="o">&gt;</span>
+      <span class="o">&lt;/</span><span class="n">commands</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">listener</span><span class="o">&gt;</span>
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>implementation</strong> is the full class name of the command</li>
+<li>
+<strong>pattern</strong> is how the command is called in the format: <code>&lt;HTTP-method&gt;|&lt;name&gt;</code>. In this case it's executed on HTTP GET with the URL: <code>/&lt;name&gt;</code>
+</li>
+<li>
+<strong>parameters</strong> specify parameters to pass to the command on startup</li>
+<li>
+<strong>entry</strong> is the parameter pair name/value</li>
+</ul><p>To test it open a browser at this address:
+</p><div class="highlight"><pre>  <span class="nl">http:</span><span class="c1">//localhost/hello/demo/Luca</span>
+</pre></div>
+
+<p>You will see:
+</p><div class="highlight"><pre>  <span class="n">Hello</span> <span class="n">Luca</span>
+</pre></div>
+
+<h4>Complete example</h4>
+
+<p>Below a more complex example taken by official distribution. It is the command that executes queries via HTTP. Note how to get a database instance to execute operation against the database:
+</p><div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">OServerCommandGetQuery</span> <span class="kd">extends</span> <span class="n">OServerCommandAuthenticatedDbAbstract</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span><span class="o">[]</span>	<span class="n">NAMES</span> <span class="o">=</span> <span class="o">{</span> <span class="s">"GET|query/*"</span> <span class="o">};</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">execute</span><span class="o">(</span><span class="kd">final</span> <span class="n">OHttpRequest</span> <span class="n">iRequest</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+      <span class="n">String</span><span class="o">[]</span> <span class="n">urlParts</span> <span class="o">=</span> <span class="n">checkSyntax</span><span class="o">(</span> <span class="n">iRequest</span><span class="o">.</span><span class="na">url</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> 
+                            <span class="s">"Syntax error: query/&lt;database&gt;/sql/&lt;query-text&gt;[/&lt;limit&gt;][/&lt;fetchPlan&gt;].&lt;br/&gt;Limit is optional and is setted to 20 by default. Set expressely to 0 to have no limits."</span><span class="o">);</span>
+  
+      <span class="kt">int</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">urlParts</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="o">?</span> <span class="n">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">urlParts</span><span class="o">[</span><span class="mi">4</span><span class="o">])</span> <span class="o">:</span> <span class="mi">20</span><span class="o">;</span>
+      <span class="n">String</span> <span class="n">fetchPlan</span> <span class="o">=</span> <span class="n">urlParts</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="o">?</span> <span class="n">urlParts</span><span class="o">[</span><span class="mi">5</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+      <span class="n">String</span> <span class="n">text</span> <span class="o">=</span> <span class="n">urlParts</span><span class="o">[</span><span class="mi">3</span><span class="o">];</span>
+  
+      <span class="n">iRequest</span><span class="o">.</span><span class="na">data</span><span class="o">.</span><span class="na">commandInfo</span> <span class="o">=</span> <span class="s">"Query"</span><span class="o">;</span>
+      <span class="n">iRequest</span><span class="o">.</span><span class="na">data</span><span class="o">.</span><span class="na">commandDetail</span> <span class="o">=</span> <span class="n">text</span><span class="o">;</span>
+  
+      <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+  
+      <span class="n">List</span><span class="o">&lt;</span><span class="n">OIdentifiable</span><span class="o">&gt;</span> <span class="n">response</span><span class="o">;</span>
+  
+      <span class="k">try</span> <span class="o">{</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">getProfiledDatabaseInstance</span><span class="o">(</span><span class="n">iRequest</span><span class="o">);</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">OIdentifiable</span><span class="o">&gt;)</span> <span class="n">db</span><span class="o">.</span><span class="na">command</span><span class="o">(</span><span class="k">new</span> <span class="n">OSQLSynchQuery</span><span class="o">&lt;</span><span class="n">ORecordSchemaAware</span><span class="o">&lt;?&gt;&gt;(</span><span class="n">text</span><span class="o">,</span> <span class="n">limit</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">setFetchPlan</span><span class="o">(</span><span class="n">fetchPlan</span><span class="o">)).</span><span class="na">execute</span><span class="o">();</span>
+  
+      <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">db</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span>
+          <span class="n">OSharedDocumentDatabase</span><span class="o">.</span><span class="na">release</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+      <span class="o">}</span>
+  
+      <span class="n">sendRecordsContent</span><span class="o">(</span><span class="n">iRequest</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">fetchPlan</span><span class="o">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+  
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span><span class="o">[]</span> <span class="nf">getNames</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">NAMES</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h3>Include JARS in the classpath</h3>
+
+<p>If your extensions need additional libraries put the additional jar files under the <strong><code>/lib</code></strong> folder of the server installation.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

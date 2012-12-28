@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Javascript API |  OrientDB</title>
+  <title>Javascript API</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Javascript-API">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Javascript API
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>This API wraps the most common use cases in database usage. All parameters required by methods or constructor are Strings. This library works on top of <a href="OrientDB_REST">HTTP RESTful protocol</a>. Available since release 0.9.25.<br><em>Note: Due to cross-domain XMLHttpRequest restriction this API works, for now, only placed in the server deployment. To use it with cross-site look at <a href="#Cross-site_scripting">Cross-site scripting</a>.</em></p>
+
+<p>The full source code is available here: <strong><a href="http://code.google.com/p/orient/source/browse/trunk/server/src/site/js/orientdb-api.js">oriendb-api.js</a></strong>.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">database</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ODatabase</span><span class="p">(</span><span class="s1">'http://localhost:2480/demo'</span><span class="p">);</span>
+  <span class="nx">databaseInfo</span> <span class="o">=</span> <span class="nx">database</span><span class="p">.</span><span class="nx">open</span><span class="p">();</span>
+  <span class="nx">queryResult</span> <span class="o">=</span> <span class="nx">database</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">'select from Address where city.country.name = \'Italy\''</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">queryResult</span><span class="p">[</span><span class="s2">"result"</span><span class="p">].</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+        <span class="nx">commandResult</span> <span class="o">=</span> <span class="nx">database</span><span class="p">.</span><span class="nx">executeCommand</span><span class="p">(</span><span class="s1">'insert into Address (street,type) values (\'Via test 1\',\'Tipo test\')'</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">commandResult</span> <span class="o">=</span> <span class="nx">database</span><span class="p">.</span><span class="nx">executeCommand</span><span class="p">(</span><span class="s1">'update Address set street = \'Via test 1\' where city.country.name = \'Italy\''</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">database</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+</pre></div>
+
+<h3>ODatabase object</h3>
+
+<p>ODatabase object requires server URL and database name:</p>
+
+<p>Syntax: <code>new ODatabase(http://&lt;host&gt;:&lt;port&gt;/&lt;databaseName&gt;)</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">orientServer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ODatabase</span><span class="p">(</span><span class="s1">'http://localhost:2480/demo'</span><span class="p">);</span>
+</pre></div>
+
+<p>Once created database instance is ready to be used. Every method return the operation result when it succeeded, null elsewhere. <br>
+In case of null result the database instance will have the error message obtainable by the <a href="#Errors">getErrorMessage()</a> method.</p>
+
+<h3>Open</h3>
+
+<p>Method that connects to the server, it returns database information in JSON format.<br></p>
+
+<h4>Browser Authentication</h4>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.open()</code><br><em>Note: This implementation asks to the browser to provide user and password.</em></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">orientServer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ODatabase</span><span class="p">(</span><span class="s1">'http://localhost:2480/demo'</span><span class="p">);</span>
+  <span class="nx">databaseInfo</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">open</span><span class="p">();</span>
+</pre></div>
+
+<h4>Javascript Authentication</h4>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.open(username,userpassword)</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">orientServer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ODatabase</span><span class="p">(</span><span class="s1">'http://localhost:2480/demo'</span><span class="p">);</span>
+  <span class="nx">databaseInfo</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">'admin'</span><span class="p">,</span><span class="s1">'admin'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span><span class="nt">"classes"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">"id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"ORole"</span><span class="p">,</span>
+        <span class="nt">"clusters"</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="nt">"defaultCluster"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="nt">"records"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="nt">"properties"</span><span class="p">:</span> <span class="p">[</span>
+          <span class="p">{</span>
+          <span class="nt">"id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"mode"</span><span class="p">,</span>
+          <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"BYTE"</span><span class="p">,</span>
+          <span class="nt">"mandatory"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nt">"notNull"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nt">"min"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nt">"max"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nt">"indexed"</span><span class="p">:</span> <span class="kc">false</span>
+        <span class="p">},</span>
+          <span class="p">{</span>
+          <span class="nt">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"rules"</span><span class="p">,</span>
+          <span class="nt">"linkedType"</span><span class="p">:</span> <span class="s2">"BYTE"</span><span class="p">,</span>
+          <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"EMBEDDEDMAP"</span><span class="p">,</span>
+          <span class="nt">"mandatory"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nt">"notNull"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nt">"min"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nt">"max"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nt">"indexed"</span><span class="p">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">]},</span>
+  <span class="p">],</span>
+  <span class="nt">"dataSegments"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nt">"id"</span><span class="p">:</span> <span class="mi">-1</span><span class="p">,</span> <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"default"</span><span class="p">,</span> <span class="nt">"size"</span><span class="p">:</span> <span class="mi">10485760</span><span class="p">,</span> <span class="nt">"filled"</span><span class="p">:</span> <span class="mi">1380391</span><span class="p">,</span> <span class="nt">"maxSize"</span><span class="p">:</span> <span class="s2">"0"</span><span class="p">,</span> <span class="nt">"files"</span><span class="p">:</span> <span class="s2">"[${STORAGE_PATH}/default.0.oda]"</span><span class="p">}</span>
+    <span class="p">],</span>
+
+  <span class="nt">"clusters"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nt">"id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"internal"</span><span class="p">,</span> <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"PHYSICAL"</span><span class="p">,</span> <span class="nt">"records"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="nt">"size"</span><span class="p">:</span> <span class="mi">1048576</span><span class="p">,</span> <span class="nt">"filled"</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> <span class="nt">"maxSize"</span><span class="p">:</span> <span class="s2">"0"</span><span class="p">,</span> <span class="nt">"files"</span><span class="p">:</span> <span class="s2">"[${STORAGE_PATH}/internal.0.ocl]"</span><span class="p">},</span>
+  <span class="p">],</span>
+
+  <span class="nt">"txSegment"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nt">"totalLogs"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nt">"size"</span><span class="p">:</span> <span class="mi">1000000</span><span class="p">,</span> <span class="nt">"filled"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nt">"maxSize"</span><span class="p">:</span> <span class="s2">"50mb"</span><span class="p">,</span> <span class="nt">"file"</span><span class="p">:</span> <span class="s2">"${STORAGE_PATH}/txlog.otx"</span><span class="p">}</span>
+    <span class="p">],</span> <span class="nt">"users"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span> <span class="nt">"roles"</span><span class="p">:</span> <span class="s2">"[admin]"</span><span class="p">},</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"reader"</span><span class="p">,</span> <span class="nt">"roles"</span><span class="p">:</span> <span class="s2">"[reader]"</span><span class="p">},</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"writer"</span><span class="p">,</span> <span class="nt">"roles"</span><span class="p">:</span> <span class="s2">"[writer]"</span><span class="p">}</span>
+    <span class="p">],</span>
+
+    <span class="nt">"roles"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span> <span class="nt">"mode"</span><span class="p">:</span> <span class="s2">"ALLOW_ALL_BUT"</span><span class="p">,</span>
+        <span class="nt">"rules"</span><span class="p">:</span> <span class="p">[]</span>
+      <span class="p">},</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"reader"</span><span class="p">,</span> <span class="nt">"mode"</span><span class="p">:</span> <span class="s2">"DENY_ALL_BUT"</span><span class="p">,</span>
+        <span class="nt">"rules"</span><span class="p">:</span> <span class="p">[{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.cluster.internal"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.cluster.orole"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.cluster.ouser"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.class.*"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.cluster.*"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.query"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.command"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.hook.record"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">}]</span>
+      <span class="p">},</span>
+  <span class="p">],</span>
+
+    <span class="nt">"config"</span><span class="p">:{</span>
+      <span class="nt">"values"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"dateFormat"</span><span class="p">,</span> <span class="nt">"value"</span><span class="p">:</span> <span class="s2">"yyyy-MM-dd"</span><span class="p">},</span>
+        <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"dateTimeFormat"</span><span class="p">,</span> <span class="nt">"value"</span><span class="p">:</span> <span class="s2">"yyyy-MM-dd hh:mm:ss"</span><span class="p">},</span>
+        <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"localeCountry"</span><span class="p">,</span> <span class="nt">"value"</span><span class="p">:</span> <span class="s2">""</span><span class="p">},</span>
+        <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"localeLanguage"</span><span class="p">,</span> <span class="nt">"value"</span><span class="p">:</span> <span class="s2">"en"</span><span class="p">},</span>
+        <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"definitionVersion"</span><span class="p">,</span> <span class="nt">"value"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+      <span class="p">],</span>
+      <span class="nt">"properties"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h3>Query</h3>
+
+<p>Method that executes the query, it returns query results in JSON format.</p>
+
+<p>Syntax: {{{.query(,[_Note: limit and fetchPlan are optional_<br>
+See <a href="limit%5D,%5BfetchPlan%5D">http://code.google.com/p/orient/wiki/FetchingStrategies Fetching Strategies</a>}}}<br>)</p>
+
+<p>Simple Example:
+</p><div class="highlight"><pre>  <span class="nx">queryResult</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">'select from Address where city.country.name = \'Italy\''</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span> <span class="nt">"result"</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza Navona, 1"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Residence"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:</span> <span class="s2">"#13:0"</span>
+      <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:1"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza di Spagna, 111"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Residence"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:</span> <span class="s2">"#13:0"</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<p>Fetched Example: fetching of all fields except "type"
+</p><div class="highlight"><pre>  <span class="nx">queryResult</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">'select from Address where city.country.name = \'Italy\''</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="s1">'*:-1 type:0'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example 1:
+</p><div class="highlight"><pre>  <span class="p">{</span> <span class="nt">"result"</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza Navona, 1"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:{</span>
+          <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"13:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"City"</span><span class="p">,</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Rome"</span><span class="p">,</span>
+          <span class="nt">"country"</span><span class="p">:{</span>
+            <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"14:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Country"</span><span class="p">,</span>
+            <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Italy"</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:1"</span><span class="p">,</span> <span class="nt">"@version"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza di Spagna, 111"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:{</span>
+          <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"13:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"City"</span><span class="p">,</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Rome"</span><span class="p">,</span>
+          <span class="nt">"country"</span><span class="p">:{</span>
+            <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"14:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Country"</span><span class="p">,</span>
+            <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Italy"</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<p>Fetched Example: fetching of all fields except "city" (Class)
+</p><div class="highlight"><pre>  <span class="nx">queryResult</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">'select from Address where city.country.name = \'Italy\''</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="s1">'*:-1 city:0'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example 2:
+</p><div class="highlight"><pre>  <span class="p">{</span> <span class="nt">"result"</span><span class="p">:</span> <span class="p">[{</span>
+         <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+         <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza Navona, 1"</span><span class="p">,</span>
+         <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Residence"</span>
+       <span class="p">},</span> <span class="p">{</span>
+         <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:1"</span><span class="p">,</span> <span class="nt">"@version"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+         <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza di Spagna, 111"</span><span class="p">,</span>
+         <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Residence"</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<p>Fetched Example: fetching of all fields except "country" of City class
+</p><div class="highlight"><pre>  <span class="nx">queryResult</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">'select from Address where city.country.name = \'Italy\''</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="s1">'*:-1 City.country:0'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example 3:
+</p><div class="highlight"><pre>  <span class="p">{</span> <span class="nt">"result"</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza Navona, 1"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Residence"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:{</span>
+            <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"13:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"City"</span><span class="p">,</span>
+            <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Rome"</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h3>Execute Command</h3>
+
+<p>Method that executes arbitrary commands, it returns command result in text format.</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.executeCommand(&lt;commandText&gt;)</code></p>
+
+<p>Example 1 (insert):
+</p><div class="highlight"><pre>  <span class="nx">commandResult</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">executeCommand</span><span class="p">(</span><span class="s1">'insert into Address (street,type) values (\'Via test 1\',\'Tipo test\')'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example 1 (created record):
+</p><div class="highlight"><pre>  <span class="nx">Address</span><span class="err">@</span><span class="mi">14</span><span class="o">:</span><span class="mi">177</span><span class="p">{</span><span class="nx">street</span><span class="o">:</span><span class="nx">Via</span> <span class="nx">test</span> <span class="mi">1</span><span class="p">,</span><span class="nx">type</span><span class="o">:</span><span class="nx">Tipo</span> <span class="nx">test</span><span class="p">}</span>
+</pre></div>
+
+<p><br>
+Example 2 (delete):
+</p><div class="highlight"><pre>  <span class="nx">commandResult</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">executeCommand</span><span class="p">(</span><span class="s1">'delete from Address where street = \'Via test 1\' and type = \'Tipo test\''</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example 2 (records deleted):
+</p><div class="highlight"><pre>  <span class="mi">5</span>
+</pre></div>
+
+<p><em>Note: Delete example works also with update command</em></p>
+
+<h3>Load</h3>
+
+<p>Method that loads a record from the record ID, it returns the record informations in JSON format.</p>
+
+<p>Syntax: {{{.load(,[_Note: fetchPlan is optional_<br>
+See <a href="fetchPlan%5D">http://code.google.com/p/orient/wiki/FetchingStrategies Fetching Strategies</a>}}}<br>)</p>
+
+<p>Simple Example:
+</p><div class="highlight"><pre>  <span class="nx">queryResult</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="s1">'12:0'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span>
+  <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza Navona, 1"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Residence"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:</span> <span class="s2">"#13:0"</span>
+      <span class="p">}</span>
+</pre></div>
+
+<p>Fetched Example: all fields fetched except "type"
+</p><div class="highlight"><pre>  <span class="nx">queryResult</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="s1">'12:0'</span><span class="p">,</span> <span class="s1">'*:-1 type:0'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example 1:
+</p><div class="highlight"><pre>  <span class="p">{</span>
+  <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"12:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"Piazza Navona, 1"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:{</span>
+           <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"13:0"</span><span class="p">,</span>
+           <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Rome"</span><span class="p">,</span>
+           <span class="nt">"country"</span><span class="p">:{</span>
+           <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"14:0"</span><span class="p">,</span>
+               <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Italy"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+</pre></div>
+
+<h3>Class Info</h3>
+
+<p>Method that retrieves information of a class, it returns the class informations in JSON format.</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.classInfo(&lt;className&gt;)</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">addressInfo</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">classInfo</span><span class="p">(</span><span class="s1">'Address'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span> <span class="nt">"result"</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"14:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"WA 98073-9717"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Headquarter"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:</span> <span class="s2">"#12:1"</span>
+      <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"14:1"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"WA 98073-9717"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Headquarter"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:</span> <span class="s2">"#12:1"</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h3>Browse Cluster</h3>
+
+<p>Method that retrieves information of a cluster, it returns the class informations in JSON format.</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.browseCluster(&lt;className&gt;)</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">addressInfo</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">browseCluster</span><span class="p">(</span><span class="s1">'Address'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span> <span class="nt">"result"</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"14:0"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"WA 98073-9717"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Headquarter"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:</span> <span class="s2">"#12:1"</span>
+      <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">"@rid"</span><span class="p">:</span> <span class="s2">"14:1"</span><span class="p">,</span> <span class="nt">"@class"</span><span class="p">:</span> <span class="s2">"Address"</span><span class="p">,</span>
+        <span class="nt">"street"</span><span class="p">:</span> <span class="s2">"WA 98073-9717"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"Headquarter"</span><span class="p">,</span>
+        <span class="nt">"city"</span><span class="p">:</span> <span class="s2">"#12:1"</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h3>Server Information</h3>
+
+<p>Method that retrieves server informations, it returns the server informations in JSON format.<br><em>Note: Server information needs <a class="internal present" href="/wiki/Security.html#orientdb_server_security">root</a> username and password.</em></p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.serverInfo()</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">serverInfo</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">serverInfo</span><span class="p">();</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span>
+    <span class="nt">"connections"</span><span class="p">:</span> <span class="p">[{</span>
+      <span class="nt">"id"</span><span class="p">:</span> <span class="s2">"64"</span><span class="p">,</span>
+      <span class="nt">"id"</span><span class="p">:</span> <span class="s2">"64"</span><span class="p">,</span>
+      <span class="nt">"remoteAddress"</span><span class="p">:</span> <span class="s2">"127.0.0.1:51459"</span><span class="p">,</span>
+      <span class="nt">"db"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">,</span>
+      <span class="nt">"user"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">,</span>
+      <span class="nt">"protocol"</span><span class="p">:</span> <span class="s2">"HTTP-DB"</span><span class="p">,</span>
+      <span class="nt">"totalRequests"</span><span class="p">:</span> <span class="s2">"1"</span><span class="p">,</span>
+      <span class="nt">"commandInfo"</span><span class="p">:</span> <span class="s2">"Server status"</span><span class="p">,</span>
+      <span class="nt">"commandDetail"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">,</span>
+      <span class="nt">"lastCommandOn"</span><span class="p">:</span> <span class="s2">"2010-12-23 12:53:38"</span><span class="p">,</span>
+      <span class="nt">"lastCommandInfo"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">,</span>
+      <span class="nt">"lastCommandDetail"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">,</span>
+      <span class="nt">"lastExecutionTime"</span><span class="p">:</span> <span class="s2">"0"</span><span class="p">,</span>
+      <span class="nt">"totalWorkingTime"</span><span class="p">:</span> <span class="s2">"0"</span><span class="p">,</span>
+      <span class="nt">"connectedOn"</span><span class="p">:</span> <span class="s2">"2010-12-23 12:53:38"</span>
+      <span class="p">}],</span>
+    <span class="nt">"dbs"</span><span class="p">:</span> <span class="p">[{</span>
+      <span class="nt">"db"</span><span class="p">:</span> <span class="s2">"demo"</span><span class="p">,</span>
+      <span class="nt">"user"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
+      <span class="nt">"open"</span><span class="p">:</span> <span class="s2">"open"</span><span class="p">,</span>
+      <span class="nt">"storage"</span><span class="p">:</span> <span class="s2">"OStorageLocal"</span>
+      <span class="p">}],</span>
+    <span class="nt">"storages"</span><span class="p">:</span> <span class="p">[{</span>
+      <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"temp"</span><span class="p">,</span>
+      <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"OStorageMemory"</span><span class="p">,</span>
+      <span class="nt">"path"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
+      <span class="nt">"activeUsers"</span><span class="p">:</span> <span class="s2">"0"</span>
+      <span class="p">},</span> <span class="p">{</span>
+      <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"demo"</span><span class="p">,</span>
+      <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"OStorageLocal"</span><span class="p">,</span>
+      <span class="nt">"path"</span><span class="p">:</span> <span class="s2">"/home/molino/Projects/Orient/releases/0.9.25-SNAPSHOT/db/databases/demo"</span><span class="p">,</span>
+      <span class="nt">"activeUsers"</span><span class="p">:</span> <span class="s2">"1"</span>
+      <span class="p">}],</span>
+      <span class="nt">"properties"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"server.cache.staticResources"</span><span class="p">,</span> <span class="nt">"value"</span><span class="p">:</span> <span class="s2">"false"</span>
+        <span class="p">},</span>
+        <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"log.console.level"</span><span class="p">,</span> <span class="nt">"value"</span><span class="p">:</span> <span class="s2">"info"</span>
+        <span class="p">},</span>
+        <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"log.file.level"</span><span class="p">,</span> <span class="nt">"value"</span><span class="p">:</span> <span class="s2">"fine"</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h3>Schema</h3>
+
+<p>Method that retrieves database Schema, it returns an array of classes (JSON parsed Object).</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.schema()</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">schemaInfo</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">schema</span><span class="p">();</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span><span class="nt">"classes"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">"id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"ORole"</span><span class="p">,</span>
+        <span class="nt">"clusters"</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="nt">"defaultCluster"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="nt">"records"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="nt">"properties"</span><span class="p">:</span> <span class="p">[</span>
+          <span class="p">{</span>
+          <span class="nt">"id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"mode"</span><span class="p">,</span>
+          <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"BYTE"</span><span class="p">,</span>
+          <span class="nt">"mandatory"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nt">"notNull"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nt">"min"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nt">"max"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nt">"indexed"</span><span class="p">:</span> <span class="kc">false</span>
+        <span class="p">},</span>
+          <span class="p">{</span>
+          <span class="nt">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"rules"</span><span class="p">,</span>
+          <span class="nt">"linkedType"</span><span class="p">:</span> <span class="s2">"BYTE"</span><span class="p">,</span>
+          <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"EMBEDDEDMAP"</span><span class="p">,</span>
+          <span class="nt">"mandatory"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nt">"notNull"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+          <span class="nt">"min"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nt">"max"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nt">"indexed"</span><span class="p">:</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">]},</span>
+  <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h3>getClass</h3>
+
+<p>Return a schema class from the schema.</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.getClass(&lt;className&gt;)</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">customerClass</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">getClass</span><span class="p">(</span><span class="s1">'Customer'</span><span class="p">);</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span>
+    <span class="nt">"id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Customer"</span><span class="p">,</span>
+    <span class="nt">"clusters"</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+    <span class="nt">"defaultCluster"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="nt">"records"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nt">"properties"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">"id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"name"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"STRING"</span><span class="p">,</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="nt">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"surname"</span><span class="p">,</span>
+        <span class="nt">"type"</span><span class="p">:</span> <span class="s2">"STRING"</span><span class="p">,</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h3>Security</h3>
+
+<h4>Roles</h4>
+
+<p>Method that retrieves database Security Roles, it returns an array of Roles (JSON parsed Object).</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.securityRoles()</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">roles</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">securityRoles</span><span class="p">();</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span> <span class="nt">"roles"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span> <span class="nt">"mode"</span><span class="p">:</span> <span class="s2">"ALLOW_ALL_BUT"</span><span class="p">,</span>
+        <span class="nt">"rules"</span><span class="p">:</span> <span class="p">[]</span>
+      <span class="p">},</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"reader"</span><span class="p">,</span> <span class="nt">"mode"</span><span class="p">:</span> <span class="s2">"DENY_ALL_BUT"</span><span class="p">,</span>
+        <span class="nt">"rules"</span><span class="p">:</span> <span class="p">[{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.cluster.internal"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.cluster.orole"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.cluster.ouser"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.class.*"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.cluster.*"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.query"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.command"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">},</span> <span class="p">{</span>
+          <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"database.hook.record"</span><span class="p">,</span> <span class="nt">"create"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"read"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nt">"update"</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nt">"delete"</span><span class="p">:</span> <span class="kc">false</span>
+          <span class="p">}]</span>
+  <span class="p">}</span>
+  <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h4>Users</h4>
+
+<p>Method that retrieves database Security Users, it returns an array of Users (JSON parsed Object).</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.securityUsers()</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">users</span> <span class="o">=</span> <span class="nx">orientServer</span><span class="p">.</span><span class="nx">securityUsers</span><span class="p">();</span>
+</pre></div>
+
+<p>Return Example:
+</p><div class="highlight"><pre>  <span class="p">{</span> <span class="nt">"users"</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span> <span class="nt">"roles"</span><span class="p">:</span> <span class="s2">"[admin]"</span><span class="p">},</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"reader"</span><span class="p">,</span> <span class="nt">"roles"</span><span class="p">:</span> <span class="s2">"[reader]"</span><span class="p">},</span>
+      <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"writer"</span><span class="p">,</span> <span class="nt">"roles"</span><span class="p">:</span> <span class="s2">"[writer]"</span><span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+</pre></div>
+
+<h3>Close</h3>
+
+<p>Method that disconnects from the server.</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.close()</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">orientServer</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+</pre></div>
+
+<h3>Change server URL</h3>
+
+<p>Method that changes server URL in the database instance.<br>
+You'll need to call the <a href="#Open">open</a> method to reconnect to the new server.</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.setDatabaseUrl(&lt;newDatabaseUrl&gt;)</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">orientServer</span><span class="p">.</span><span class="nx">setDatabaseUrl</span><span class="p">(</span><span class="s1">'http://localhost:3040'</span><span class="p">)</span>
+</pre></div>
+
+<h3>Change database name</h3>
+
+<p>Method that changes database name in the database instance.<br>
+You'll need to call the <a href="#Open">open</a> method to reconnect to the new database.</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.setDatabaseName(&lt;newDatabaseName&gt;)</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="nx">orientServer</span><span class="p">.</span><span class="nx">setDatabaseName</span><span class="p">(</span><span class="s1">'demo2'</span><span class="p">);</span>
+</pre></div>
+
+<h3>Setting return type</h3>
+
+<p>This API allows you to chose the return type, Javascript Object or JSON plain text. Default return is Javascript Object.</p>
+
+<p><strong>Important</strong>: the javascript object is not always the evaluation of JSON plain text: for each document (identified by its Record ID) the JSON file contains only one expanded object, all other references are just its Record ID as String, so the API will reconstruct the real structure by re-linking all references to the matching javascript object.</p>
+
+<p>Syntax: <code>orientServer.setEvalResponse(&lt;boolean&gt;)</code></p>
+
+<p>Examples:
+</p><div class="highlight"><pre>  <span class="nx">orientServer</span><span class="p">.</span><span class="nx">setEvalResponse</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</pre></div>
+Return types will be Javascript Objects.
+
+<div class="highlight"><pre>  <span class="nx">orientServer</span><span class="p">.</span><span class="nx">setEvalResponse</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+</pre></div>
+Return types will be JSON plain text.
+
+<h3>Cross-site scripting</h3>
+
+<p>To invoke OrientDB cross-site you can use the <a class="internal absent" href="/wiki/Query.html">Query</a> command in GET and the JSONP protocol. Example:
+</p><div class="highlight"><pre>  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span> <span class="nx">src</span><span class="o">=</span><span class="s1">'http://127.0.0.1:2480/query/database/sql/select+from+XXXX?jsoncallback=var datajson='</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
+</pre></div>
+
+<p>This will put the result of the query <strong><em><code>select from XXXX&lt;/code&gt;</code></em></strong> into the <strong><em>&lt;code&gt;datajson</em></strong> variable.</p>
+
+<h3>Errors</h3>
+
+<p>In case of errors the error message will be stored inside the database instance, retrievable by getErrorMessage() method.</p>
+
+<p>Syntax: <code>&lt;databaseInstance&gt;.getErrorMessage()</code></p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="nx">orientServer</span><span class="p">.</span><span class="nx">getErrorMessage</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">){</span>
+         <span class="c1">//write error message</span>
+  <span class="p">}</span>
+</pre></div>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

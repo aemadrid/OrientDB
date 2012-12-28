@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Inheritance |  OrientDB</title>
+  <title>Inheritance</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Inheritance">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Inheritance
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>Starting from 0.9.19 the "Object Database" implementation supports natively the inheritance between classes taken by the <a href="http://en.wikipedia.org/wiki/Inheritance_%28object-oriented_programming%29">Object Orientation paradigm</a>.</p>
+
+<p>OrientDB doesn't split Documents between different classes (as many OR-Mapping tools do). Each Document will reside in the cluster of its most base class. When you execute a query against a class that has sub-classes, OrientDB will search into the clusters of the target class and all its sub-classes. To know more see <a href="#How_it_works">How it works</a>.</p>
+
+<h4>Declare in schema</h4>
+
+<p>OrientDB needs to know the relationships between the class inheritance. Note that this is an abstract concept that applies to both <a class="internal present" href="/wiki/Object-Database.html#inheritance">POJOs</a> and  <a class="internal present" href="/wiki/Document-Database.html#inheritance">Documents</a>.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">account</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Account"</span><span class="o">);</span>
+  <span class="n">OClass</span> <span class="n">company</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"Company"</span><span class="o">).</span><span class="na">setSuperClass</span><span class="o">(</span><span class="n">account</span><span class="o">);</span>
+</pre></div>
+
+<h4>Polymorphic Queries</h4>
+
+<p>By default all the query are polymorphics. Using the example above with this SQL query:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">account</span> <span class="n">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Google</span><span class="err">'</span>
+</pre></div>
+Will be returned all the instances of Account and Company classes that has the property name equals to "Google".
+
+<h4>How it works</h4>
+
+<p>Consider this example. We have 3 classes, with the cluster-id between paranthesis:</p>
+
+<div class="highlight"><pre><span class="n">Account</span><span class="p">(</span>10<span class="p">)</span> <span class="o">&lt;|---</span> <span class="n">Company</span> <span class="p">(</span>13<span class="p">)</span> <span class="o">&lt;|---</span> <span class="n">OrientTechnologiesGroup</span> <span class="p">(</span>27<span class="p">)</span>
+</pre></div>
+
+<p>OrientDB, by default, creates a separate cluster for each class (NOTE: <em>pay attention that by default is "logical". To improve performance use physical cluster!</em>).</p>
+
+<p>This cluster is indicated by the "**defaultClusterId**" property in OClass class and indicates the cluster used by default when not specified. However the OClass has the property "**clusterIds**" (as int[]) that contains all the clusters able to host the records of that class.</p>
+
+<p>By default "clusterIds" and "defaultClusterId" are the same.</p>
+
+<p>When you execute a query against a class, OrientDB limits the result sets only to the records of the clusters contained in the "clusterIds" property.</p>
+
+<p>In this way when you execute this:</p>
+
+<div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">Account</span> <span class="n">WHERE</span> <span class="n">name</span><span class="o">.</span><span class="na">toUpperCase</span><span class="o">()</span> <span class="o">=</span> <span class="err">'</span><span class="n">GOOGLE</span><span class="err">'</span>
+</pre></div>
+
+<p>Will returns all the records for "GOOGLE" contained in all the three classes because for the class "Account" OrientDB searches inside the clusters 10, 13 and 27 following the inheritance specified in the schema.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>SQL Delete |  OrientDB</title>
+  <title>SQL Delete</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_SQL-Delete">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        SQL Delete
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/SQL.html" class="nr1">Sql</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>The <strong>SQL Delete</strong> command deletes one or more records from the database. The set of records involved are taken by the <a class="internal present" href="/wiki/SQL-Where.html">WHERE</a> clause.</p>
+
+<h3>Syntax</h3>
+
+<div class="highlight"><pre>  DELETE FROM <span class="nt">&lt;Class&gt;</span>|cluster:<span class="nt">&lt;cluster&gt;</span>|index:<span class="nt">&lt;index&gt;</span> [<span class="nt">&lt;Condition&gt;</span>*](WHERE) [BY <span class="nt">&lt;Fields&gt;</span>* [ASC|DESC](ORDER)*] [<span class="nt">&lt;MaxRecords&gt;</span>](LIMIT)
+</pre></div>
+
+<p>The <a class="internal present" href="/wiki/SQL-Where.html">WHERE</a> clause is common to the other SQL commands.</p>
+
+<h3>Examples</h3>
+
+<p>Delete all the records with surname equals to 'unknown' ignoring the case:</p>
+
+<div class="highlight"><pre>  <span class="n">delete</span> <span class="n">from</span> <span class="n">Profile</span> <span class="n">where</span> <span class="n">surname</span><span class="o">.</span><span class="na">toLowerCase</span><span class="o">()</span> <span class="o">=</span> <span class="err">'</span><span class="n">unknown</span><span class="err">'</span>
+</pre></div>
+
+<p>To know more about other SQL commands look at <a class="internal present" href="/wiki/SQL.html">SQL commands</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

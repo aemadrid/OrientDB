@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Automatic Backup |  OrientDB</title>
+  <title>Automatic Backup</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Automatic-Backup">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Automatic Backup
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/DB-Server.html" class="nr1">Db Server</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Java class implementation:
+</p><div class="highlight"><pre>  <span class="n">com</span><span class="o">.</span><span class="na">orientechnologies</span><span class="o">.</span><span class="na">orient</span><span class="o">.</span><span class="na">server</span><span class="o">.</span><span class="na">handler</span><span class="o">.</span><span class="na">OAutomaticBackup</span>
+</pre></div>
+
+<h3>Introduction</h3>
+
+<p>Configure an automatic backup of databases. This task is configured as a <a class="internal present" href="/wiki/DB-Server.html#handlers">Server handler</a>. The task can be configured in easy way by changing parameters:</p>
+
+<ul>
+<li>
+<strong>enabled</strong>: true to turn on, false (default) is turned off</li>
+<li>
+<strong>delay</strong>: delay time. You can use different suffixes to specify different measures:</li>
+<li>
+<strong>ms</strong> for milliseconds. Example 10000ms means 10 seconds</li>
+<li>
+<strong>s</strong> for seconds. Example 10s means 10 seconds</li>
+<li>
+<strong>m</strong> for minutes. Example 5m means 5 minutes</li>
+<li>
+<strong>h</strong> for hours. Example 24h means every day</li>
+<li>
+<strong>d</strong> for days. Example 1d means every day</li>
+<li>
+<strong>target.directory</strong>: target directory, the default is "backup"</li>
+<li>
+<strong>target.fileName</strong>: target file name configurable using the following variables between <code>${</code>}:</li>
+<li>
+<strong><code>${DBNAME</code>}</strong>, as the database name</li>
+<li>
+<strong><code>${DATE</code>}</strong>, as the current date following the format. For the complete syntax look at <a href="http://download.oracle.com/javase/1,5.0/docs/api/java/text/SimpleDateFormat.html">Java DateTime syntax</a>
+</li>
+<li>
+<strong>db.include</strong>: database list to include. If empty means all the databases</li>
+<li>
+<strong>db.exclude</strong>: database list to exclude</li>
+</ul><p><em>NOTE: This feature is available since v. 1.0rc6.</em></p>
+
+<p>Default configuration in orientdb-server-config.xml</p>
+
+<div class="highlight"><pre>  <span class="c">&lt;!-- AUTOMATIC BACKUP, TO TURN ON SET THE 'ENABLED' PARAMETER TO 'true' --&gt;</span>
+  <span class="nt">&lt;handler</span> <span class="na">class=</span><span class="s">"com.orientechnologies.orient.server.handler.OAutomaticBackup"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;parameters&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"enabled"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"delay"</span> <span class="na">value=</span><span class="s">"4h"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"target.directory"</span> <span class="na">value=</span><span class="s">"backup"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"target.fileName"</span> <span class="na">value=</span><span class="s">"${DBNAME}-${DATE:yyyyMMddHHmmss}.json"</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- ${DBNAME} AND ${DATE:} VARIABLES ARE SUPPORTED --&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"db.include"</span> <span class="na">value=</span><span class="s">""</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- DEFAULT: NO ONE, THAT MEANS ALL DATABASES. USE COMMA TO SEPARATE MULTIPLE DATABASE NAMES --&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"db.exclude"</span> <span class="na">value=</span><span class="s">""</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- USE COMMA TO SEPARATE MULTIPLE DATABASE NAMES --&gt;</span>
+    <span class="nt">&lt;/parameters&gt;</span>
+  <span class="nt">&lt;/handler&gt;</span>
+</pre></div>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

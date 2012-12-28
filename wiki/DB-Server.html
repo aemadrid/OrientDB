@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>DB Server |  OrientDB</title>
+  <title>DB Server</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_DB-Server">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        DB Server
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB Server (DB-Server from now) is a multi-thread Java application that listen remote commands and execute them against the Orient databases. OrientDB Server supports both binary and HTTP protocols. The first one is used by Orient native client and Orient Console. The second one can be used by any languages since it's based on <a href="OrientDB_REST">HTTP RESTful API</a>. The HTTP protocol is used also by the <a class="internal present" href="/wiki/OrientDB-Studio.html">OrientDB Studio application</a>.</p>
+
+<h3>Start the server</h3>
+
+<p>To start the server execute the script bin/orient-db.sh (or bin/orient-db.bat in MS Windows systems). By default both interfaces are active: binary and http. If you want to disable one of these change the <a href="#Configuration">Server configuration</a>.</p>
+
+<p>When the server starts try to acquire the port 2424 for the binary protocol and 2480 for the HTTP one. If some port is busy the next one will be taken until the port it's free. By default the range for binary protocol is 2424-2430 and 2480-2490 for the http one, but you can always change these settings in <a href="#Configuration">Server configuration</a>.</p>
+
+<h3>Stop the server</h3>
+
+<p>To stop a running server just press CTRL+C in the open window that runs the Server instance or soft kill the process to be sure that the opened databases close softly. Soft kill in MS Windows systems can be done by closing the window. In Unix like systems a kill it's enought (Don't use kill -9 unless you want to force a hard shutdown).</p>
+
+<h3>Connect to the server</h3>
+
+<h4>Console</h4>
+
+<p>The OrientDB distribution provides the <a class="internal present" href="/wiki/Console-Commands.html">Orient Console</a> tool as a console Java application that uses the binary protocol to work with the database.</p>
+
+<h4>OrientDB Studio</h4>
+
+<p>Starting from the release 0.9.13 Orient comes with the <a href="OrientDB_Studio">OrientDB Studio application</a>, a client-side web app that uses the HTTP protocol to work with the database.</p>
+
+<h4>Write your application</h4>
+
+<p>To start writing your first application with Orient you need to consider the language to use. If you plan to use Java you can use the <a class="internal present" href="/wiki/Java-API.html">native APIs</a>. For all the other languages you can use the <a href="OrientDB_REST">HTTP RESTful protocol</a>.</p>
+
+<h3>Cluster</h3>
+
+<p>To know more about the usage of a configuration of multiple servers in cluster look at <a class="internal absent" href="/wiki/Clustering.html">Clustering</a>.</p>
+
+<h3>Configuration</h3>
+
+<h4>Default configuration</h4>
+
+<p>This is the content of the default <b>config/orientdb-server.config</b> file contained in the distribution:
+</p><div class="highlight"><pre>  <span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span>
+  <span class="nt">&lt;orient-server&gt;</span>
+    <span class="nt">&lt;handlers&gt;</span>
+      <span class="nt">&lt;handler</span> <span class="na">class=</span><span class="s">"com.orientechnologies.orient.server.handler.distributed.ODistributedServerManager"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;parameters&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"name"</span> <span class="na">value=</span><span class="s">"default"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"security.algorithm"</span> <span class="na">value=</span><span class="s">"Blowfish"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"network.multicast.address"</span> <span class="na">value=</span><span class="s">"235.1.1.1"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"network.multicast.port"</span> <span class="na">value=</span><span class="s">"2424"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"network.multicast.heartbeat"</span> <span class="na">value=</span><span class="s">"10"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"replication.conflictResolver.strategy"</span> <span class="na">value=</span><span class="s">"com.orientechnologies.orient.server.replication.conflict.ODefaultReplicationConflictResolver"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"replication.conflictResolver.ignoreIfSameContent"</span> <span class="na">value=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"replication.conflictResolver.ignoreIfMergeOk"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"replication.conflictResolver.latestAlwaysWin"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/parameters&gt;</span>
+      <span class="nt">&lt;/handler&gt;</span>
+      <span class="c">&lt;!-- AUTOMATIC BACKUP, TO TURN ON SET THE 'ENABLED' PARAMETER TO 'true' --&gt;</span>
+      <span class="nt">&lt;handler</span> <span class="na">class=</span><span class="s">"com.orientechnologies.orient.server.handler.OAutomaticBackup"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;parameters&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"enabled"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"delay"</span> <span class="na">value=</span><span class="s">"4h"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"target.directory"</span> <span class="na">value=</span><span class="s">"backup"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"target.fileName"</span> <span class="na">value=</span><span class="s">"${DBNAME}-${DATE:yyyyMMddHHmmss}.json"</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- ${DBNAME} AND ${DATE:} VARIABLES ARE SUPPORTED --&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"db.include"</span> <span class="na">value=</span><span class="s">""</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- DEFAULT: NO ONE, THAT MEANS ALL DATABASES. USE COMMA TO SEPARATE MULTIPLE DATABASE NAMES --&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"db.exclude"</span> <span class="na">value=</span><span class="s">""</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- USE COMMA TO SEPARATE MULTIPLE DATABASE NAMES --&gt;</span>
+        <span class="nt">&lt;/parameters&gt;</span>
+      <span class="nt">&lt;/handler&gt;</span>
+    <span class="nt">&lt;/handlers&gt;</span>
+    <span class="nt">&lt;network&gt;</span>
+      <span class="nt">&lt;protocols&gt;</span>
+        <span class="c">&lt;!-- Default registered protocol. It reads commands using the HTTP protocol and write data locally --&gt;</span>
+        <span class="nt">&lt;protocol</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.binary.ONetworkProtocolBinary"</span> <span class="na">name=</span><span class="s">"binary"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;protocol</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.http.ONetworkProtocolHttpDb"</span> <span class="na">name=</span><span class="s">"http"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;protocol</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.distributed.ONetworkProtocolDistributed"</span> <span class="na">name=</span><span class="s">"distributed"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/protocols&gt;</span>
+      <span class="nt">&lt;listeners&gt;</span>
+        <span class="nt">&lt;listener</span> <span class="na">protocol=</span><span class="s">"distributed"</span> <span class="na">port-range=</span><span class="s">"2424-2430"</span> <span class="na">ip-address=</span><span class="s">"0.0.0.0"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;listener</span> <span class="na">protocol=</span><span class="s">"http"</span> <span class="na">port-range=</span><span class="s">"2480-2490"</span> <span class="na">ip-address=</span><span class="s">"127.0.0.1"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;parameters&gt;</span>
+            <span class="c">&lt;!-- Connection's custom parameters. If not specified the global configuration will be taken --&gt;</span>
+            <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"network.http.charset"</span> <span class="na">value=</span><span class="s">"utf-8"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;/parameters&gt;</span>
+          <span class="nt">&lt;commands&gt;</span>
+            <span class="nt">&lt;command</span>
+              <span class="na">pattern=</span><span class="s">"GET|www GET|studio/ GET| GET|*.htm GET|*.html GET|*.xml GET|*.jpeg GET|*.jpg GET|*.png GET|*.gif GET|*.js GET|*.css GET|*.swf GET|*.ico GET|*.txt"</span>
+              <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.http.command.get.OServerCommandGetStaticContent"</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;parameters&gt;</span>
+                <span class="c">&lt;!-- Don't cache html resources in development mode --&gt;</span>
+                <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"http.cache:*.htm *.html"</span> <span class="na">value=</span><span class="s">"Cache-Control: no-cache, no-store, max-age=0, must-revalidate\r\nPragma: no-cache"</span> <span class="nt">/&gt;</span>
+                <span class="c">&lt;!-- Default caching --&gt;</span>
+                <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"http.cache:default"</span> <span class="na">value=</span><span class="s">"Cache-Control: max-age=120"</span> <span class="nt">/&gt;</span>
+              <span class="nt">&lt;/parameters&gt;</span>
+            <span class="nt">&lt;/command&gt;</span>
+          <span class="nt">&lt;/commands&gt;</span>
+        <span class="nt">&lt;/listener&gt;</span>
+      <span class="nt">&lt;/listeners&gt;</span>
+      <span class="nt">&lt;cluster&gt;</span>
+      <span class="nt">&lt;/cluster&gt;</span>
+    <span class="nt">&lt;/network&gt;</span>
+    <span class="nt">&lt;storages&gt;</span>
+      <span class="c">&lt;!-- Default in-memory storage. Data are not saved permanently. --&gt;</span>
+      <span class="nt">&lt;storage</span> <span class="na">path=</span><span class="s">"memory:temp"</span> <span class="na">name=</span><span class="s">"temp"</span> <span class="na">userName=</span><span class="s">"admin"</span> <span class="na">userPassword=</span><span class="s">"admin"</span> <span class="na">loaded-at-startup=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/storages&gt;</span>
+    <span class="nt">&lt;users&gt;</span>
+    <span class="nt">&lt;/users&gt;</span>
+    <span class="nt">&lt;properties&gt;</span>
+      <span class="c">&lt;!-- Caches static contents. If enabled the files will be kept in memory the first time are loaded. Changes to the files will be taken on the next restart --&gt;</span>
+      <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"server.cache.file.static"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+  
+      <span class="c">&lt;!-- Enable/Disable logging. Levels are: finer, fine, finest, info, warning --&gt;</span>
+      <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"log.console.level"</span> <span class="na">value=</span><span class="s">"info"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"log.file.level"</span> <span class="na">value=</span><span class="s">"fine"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/properties&gt;</span>
+  <span class="nt">&lt;/orient-server&gt;</span>
+</pre></div>
+
+<h4>Disable distributed configuration</h4>
+
+<p>If you don't want to run multiple OrientDB server instances in cluster you can disable it by removing the <a class="internal present" href="/wiki/Distributed-Server-Manager.html">Distributed Server Manager</a> handler and change the default listen protocol from "distributed" in "binary".</p>
+
+<p>Example of single server configuration:
+</p><div class="highlight"><pre>  <span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span>
+  <span class="nt">&lt;orient-server&gt;</span>
+   <span class="nt">&lt;handlers&gt;</span>
+    <span class="c">&lt;!-- AUTOMATIC BACKUP, TO TURN ON SET THE 'ENABLED' PARAMETER TO 'true' --&gt;</span>
+    <span class="nt">&lt;handler</span> <span class="na">class=</span><span class="s">"com.orientechnologies.orient.server.handler.OAutomaticBackup"</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;parameters&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"enabled"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"delay"</span> <span class="na">value=</span><span class="s">"4h"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"target.directory"</span> <span class="na">value=</span><span class="s">"backup"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"target.fileName"</span> <span class="na">value=</span><span class="s">"${DBNAME}-${DATE:yyyyMMddHHmmss}.json"</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- ${DBNAME} AND ${DATE:} VARIABLES ARE SUPPORTED --&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"db.include"</span> <span class="na">value=</span><span class="s">""</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- DEFAULT: NO ONE, THAT MEANS ALL DATABASES. USE COMMA TO SEPARATE MULTIPLE DATABASE NAMES --&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"db.exclude"</span> <span class="na">value=</span><span class="s">""</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- USE COMMA TO SEPARATE MULTIPLE DATABASE NAMES --&gt;</span>
+     <span class="nt">&lt;/parameters&gt;</span>
+    <span class="nt">&lt;/handler&gt;</span>
+   <span class="nt">&lt;/handlers&gt;</span>
+   <span class="nt">&lt;network&gt;</span>
+    <span class="nt">&lt;protocols&gt;</span>
+     <span class="c">&lt;!-- Default registered protocol. It reads commands using the HTTP protocol and write data locally --&gt;</span>
+     <span class="nt">&lt;protocol</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.binary.ONetworkProtocolBinary"</span> <span class="na">name=</span><span class="s">"binary"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;protocol</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.http.ONetworkProtocolHttpDb"</span> <span class="na">name=</span><span class="s">"http"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;protocol</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.distributed.ONetworkProtocolDistributed"</span> <span class="na">name=</span><span class="s">"distributed"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/protocols&gt;</span>
+    <span class="nt">&lt;listeners&gt;</span>
+     <span class="nt">&lt;listener</span> <span class="na">protocol=</span><span class="s">"binary"</span> <span class="na">port-range=</span><span class="s">"2424-2430"</span> <span class="na">ip-address=</span><span class="s">"0.0.0.0"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;listener</span> <span class="na">protocol=</span><span class="s">"http"</span> <span class="na">port-range=</span><span class="s">"2480-2490"</span> <span class="na">ip-address=</span><span class="s">"127.0.0.1"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;parameters&gt;</span>
+       <span class="c">&lt;!-- Connection's custom parameters. If not specified the global configuration will be taken --&gt;</span>
+       <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"network.http.charset"</span> <span class="na">value=</span><span class="s">"utf-8"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/parameters&gt;</span>
+      <span class="nt">&lt;commands&gt;</span>
+       <span class="nt">&lt;command</span>
+        <span class="na">pattern=</span><span class="s">"GET|www GET|studio/ GET| GET|*.htm GET|*.html GET|*.xml GET|*.jpeg GET|*.jpg GET|*.png GET|*.gif GET|*.js GET|*.css GET|*.swf GET|*.ico GET|*.txt"</span>
+        <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.server.network.protocol.http.command.get.OServerCommandGetStaticContent"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;parameters&gt;</span>
+         <span class="c">&lt;!-- Don't cache html resources in development mode --&gt;</span>
+         <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"http.cache:*.htm *.html"</span> <span class="na">value=</span><span class="s">"Cache-Control: no-cache, no-store, max-age=0, must-revalidate\r\nPragma: no-cache"</span> <span class="nt">/&gt;</span>
+         <span class="c">&lt;!-- Default caching --&gt;</span>
+         <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"http.cache:default"</span> <span class="na">value=</span><span class="s">"Cache-Control: max-age=120"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/parameters&gt;</span>
+       <span class="nt">&lt;/command&gt;</span>
+      <span class="nt">&lt;/commands&gt;</span>
+     <span class="nt">&lt;/listener&gt;</span>
+    <span class="nt">&lt;/listeners&gt;</span>
+    <span class="nt">&lt;cluster&gt;</span>
+    <span class="nt">&lt;/cluster&gt;</span>
+   <span class="nt">&lt;/network&gt;</span>
+   <span class="nt">&lt;storages&gt;</span>
+    <span class="c">&lt;!-- Default in-memory storage. Data are not saved permanently. --&gt;</span>
+    <span class="nt">&lt;storage</span> <span class="na">path=</span><span class="s">"memory:temp"</span> <span class="na">name=</span><span class="s">"temp"</span> <span class="na">userName=</span><span class="s">"admin"</span> <span class="na">userPassword=</span><span class="s">"admin"</span> <span class="na">loaded-at-startup=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+   <span class="nt">&lt;/storages&gt;</span>
+   <span class="nt">&lt;users&gt;</span>
+   <span class="nt">&lt;/users&gt;</span>
+   <span class="nt">&lt;properties&gt;</span>
+    <span class="c">&lt;!-- Caches static contents. If enabled the files will be kept in memory the first time are loaded. Changes to the files will be taken on the next restart --&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"server.cache.file.static"</span> <span class="na">value=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+  
+    <span class="c">&lt;!-- Enable/Disable logging. Levels are: finer, fine, finest, info, warning --&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"log.console.level"</span> <span class="na">value=</span><span class="s">"info"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"log.file.level"</span> <span class="na">value=</span><span class="s">"fine"</span> <span class="nt">/&gt;</span>
+   <span class="nt">&lt;/properties&gt;</span>
+  <span class="nt">&lt;/orient-server&gt;</span>
+</pre></div>
+
+<h4>Change the Server's database directory</h4>
+
+<p>By default OrientDB server manages the database under the directory "$ORIENTDB_HOME/databases" where $ORIENTDB_HOME is the OrientDB installation directory. By setting the configuration parameter <code>"server.database.path"</code> in server orientdb-server-config.xml you can specify a custom path. Example:
+</p><div class="highlight"><pre>  <span class="nt">&lt;orient-server&gt;</span>
+     ...
+  	<span class="nt">&lt;properties&gt;</span>
+  		<span class="nt">&lt;entry</span> <span class="na">value=</span><span class="s">"C:/temp/databases"</span> <span class="na">name=</span><span class="s">"server.database.path"</span> <span class="nt">/&gt;</span>
+  /&gt;
+  	<span class="nt">&lt;/properties&gt;</span>
+  <span class="nt">&lt;/orient-server&gt;</span>
+</pre></div>
+
+<p>Lvc@</p>
+
+<h4>Plugins</h4>
+
+<p>Plug-ins (old name "Handler") are the way the OrientDB Server can be extended.</p>
+
+<p>To write your own plug-in read below <a href="Extend_the_server">Extend the server</a>.</p>
+
+<p>Available plugins:</p>
+
+<ul>
+<li><a class="internal present" href="/wiki/Automatic-Backup.html">Automatic-Backup</a></li>
+<li><a class="internal present" href="/wiki/Mail-Plugin.html">EMail Plugin</a></li>
+<li><a class="internal present" href="/wiki/JMX-Plugin.html">JMX Plugin</a></li>
+<li><a class="internal present" href="/wiki/Distributed-Server-Manager.html">Distributed-Server-Manager</a></li>
+<li><a class="internal present" href="/wiki/Javascript-Command.html#enable_server_side_scripting">Server-side script interpreter</a></li>
+</ul><h4>Protocols</h4>
+
+<p>Contains the list of protocols used by the <a href="#Listeners">listeners section</a>.
+The protocols supported today are:</p>
+
+<ul>
+<li>
+<strong>binary</strong>: the Raw binary protocol used by OrientDB clients and console application.</li>
+<li>
+<strong>http</strong>: the HTTP RESTful protocol used by OrientDB Studio and direct raw access from any language and browsers.</li>
+</ul><h4>Listeners</h4>
+
+<p>You can configure multiple listeners by adding items under the <code>&lt;listeners&gt;</code> tag and selecting the ip-address and TCP/IP port to bind. The protocol used must be listed in the <a href="#Protocols">protocols section</a>. Listeners can be configured with single port or port range. If a range of ports is specified, then it will try to acquire the first port available. If no such port is available, then an error is thrown.
+By default the Server configuration activates connections from both the protocols:</p>
+
+<ul>
+<li>
+<strong>binary</strong>: by default the binary connections are listened to the port range 2424-2430.</li>
+<li>
+<strong>http</strong>: by default the HTTP connections are listened to the port range 2480-2490.</li>
+</ul><h4>Storages</h4>
+
+<p>Contains the list of the static configured storages. When the server starts for each storages static configured storage enlisted check if exists. If exists opens it, otherwise creates it transparently.</p>
+
+<p>By convention all the storages contained in the $ORIENT_HOME/databases are visible from the OrientDB Server instance without the need of configure them. So configure storages if:</p>
+
+<ul>
+<li>are located outside the default folder. You can use any environment variable in the path such the ORIENT_HOME that points to the Orient installation path if defined otherwise to the root directory where the Orient Server starts.</li>
+<li>want to create/open automatically a database when the server start ups</li>
+</ul><p>By default the <strong>"temp"</strong> database is always configured as in-memory storage useful to store volatile information.</p>
+
+<p>Example of configuration:
+</p><div class="highlight"><pre>    <span class="nt">&lt;storage</span> <span class="na">name=</span><span class="s">"mydb"</span> <span class="na">path=</span><span class="s">"local:C:/temp/databases/mydb"</span>
+             <span class="na">userName=</span><span class="s">"admin"</span> <span class="na">userPassword=</span><span class="s">"admin"</span>
+             <span class="na">loaded-at-startup=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+</pre></div>
+
+<p>To create a new database use the <a href="http://code.google.com/p/orient/wiki/ConsoleCommandCreateDb">CREATE DATABASE console command</a> or create it dinamically using the <a class="internal present" href="/wiki/Java-API.html">Java-API</a>.</p>
+
+<h4>Users</h4>
+
+<p>Starting from v.0.9.15 OrientDB supports per-server users in order to protect sensible operations to the users. In facts the creation of a new database is a server operation as much as the retrieving of server statistics.</p>
+
+<h5>Automatic password generation</h5>
+
+<p>When an OrientDB server starts for the first time, a new user called "root" will be generated and saved in the server configuration. This avoid security problems when, very often, the passwords remain the default ones.</p>
+
+<h5>Resources</h5>
+
+<p>User based authentication checks if the logged user has the permission to access to the requested resource. "*" means access to all the resource. This is the typical setting for the user "root". Multiple resources must be separated by comma.</p>
+
+<p>Example to let to the "root" user to access to all the server commands:</p>
+
+<div class="highlight"><pre>  <span class="nt">&lt;user</span> <span class="na">name=</span><span class="s">"root"</span> <span class="na">resources=</span><span class="s">"*"</span> <span class="na">password=</span><span class="s">"095F17F6488FF5416ED24E"</span><span class="nt">/&gt;</span>
+</pre></div>
+
+<p>Example to let to the "guest" user to access only to the "info-server" command:</p>
+
+<div class="highlight"><pre>  <span class="nt">&lt;user</span> <span class="na">name=</span><span class="s">"guest"</span> <span class="na">resources=</span><span class="s">"info-server"</span> <span class="na">password=</span><span class="s">"3489438DKJDK4343UDH76"</span><span class="nt">/&gt;</span>
+</pre></div>
+
+<p>Supported resources are:</p>
+
+<ul>
+<li>
+<code>info-server</code>, to obtain statistics about the server</li>
+<li>
+<code>database.create</code>, to create a new database</li>
+<li>
+<code>database.exists</code>, to check if a database exists</li>
+<li>
+<code>database.delete</code>, to delete an existent database</li>
+<li>
+<code>database.share</code>, to share a database to another OrientDB Server node</li>
+<li>
+<code>database.passthrough</code>, to access to the hosted databases without database's authentication</li>
+<li>
+<code>server.config.get</code>, to retrieve a configuration setting value</li>
+<li>
+<code>server.config.set</code>, to set a configuration setting value</li>
+</ul><h4>Create new user with some privileges</h4>
+
+<p>To configure a new user open the <strong>config/orientdb-server-config.xml</strong> file and add a new XML tag under the tag <code>&lt;users&gt;</code>:</p>
+
+<div class="highlight"><pre>  <span class="nt">&lt;users&gt;</span>
+    <span class="nt">&lt;user</span> <span class="na">name=</span><span class="s">"MyUser"</span> <span class="na">password=</span><span class="s">"MyPassword"</span> <span class="na">resources=</span><span class="s">"database.exists"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/users&gt;</span>
+</pre></div>
+
+<h3>Extend the server</h3>
+
+<p>To extend the server's features look at <a class="internal present" href="/wiki/Extend-Server.html">Extends the server</a>.</p>
+
+<h3>Debug the server</h3>
+
+<p>To debug the server configure your IDE to execute the class OServerMain:
+</p><div class="highlight"><pre>  <span class="n">com</span><span class="o">.</span><span class="na">orientechnologies</span><span class="o">.</span><span class="na">orient</span><span class="o">.</span><span class="na">server</span><span class="o">.</span><span class="na">OServerMain</span>
+</pre></div>
+
+<p>Passing these parameters:
+</p><div class="highlight"><pre>  <span class="o">-</span><span class="n">server</span>
+  <span class="o">-</span><span class="n">Dorientdb</span><span class="o">.</span><span class="na">config</span><span class="o">.</span><span class="na">file</span><span class="o">=</span><span class="n">config</span><span class="o">/</span><span class="n">orientdb</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="na">xml</span>
+  <span class="o">-</span><span class="n">Dorientdb</span><span class="o">.</span><span class="na">www</span><span class="o">.</span><span class="na">path</span><span class="o">=</span><span class="n">src</span><span class="o">/</span><span class="n">site</span>
+  <span class="o">-</span><span class="n">DORIENTDB_HOME</span><span class="o">=</span><span class="n">url</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">orientdb</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">orientdb</span><span class="o">-</span><span class="mf">1.2</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="n">SNAPSHOT</span>
+  <span class="o">-</span><span class="n">Djava</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">logging</span><span class="o">.</span><span class="na">config</span><span class="o">.</span><span class="na">file</span><span class="o">=</span><span class="n">config</span><span class="o">/</span><span class="n">orientdb</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">log</span><span class="o">.</span><span class="na">properties</span>
+  <span class="o">-</span><span class="n">Dcache</span><span class="o">.</span><span class="na">level1</span><span class="o">.</span><span class="na">enabled</span><span class="o">=</span><span class="kc">false</span>
+  <span class="o">-</span><span class="n">Dprofiler</span><span class="o">.</span><span class="na">enabled</span><span class="o">=</span><span class="kc">true</span>
+</pre></div>
+
+<p>Changing the ORIENTDB_HOME according to your path.</p>
+
+<h3>Benchmarks</h3>
+
+<p><a class="internal present" href="/wiki/Database-Benchmarks.html">Benchmarks</a>.</p>
+
+<h3>Roadmap</h3>
+
+<p><a href="http://code.google.com/p/orient/issues/list?can=2&amp;q=db&amp;colspec=ID+Type+Status+Priority+Milestone+Owner+Summary&amp;cells=tiles">Roadmap</a>.</p>
+
+<p><a href="http://code.google.com/p/orient/wiki/Roadmap">Roadmap wiki page</a></p>
+
+<h3>History</h3>
+
+<p><a href="http://code.google.com/p/orient/source/browse/trunk/history-db.txt">Change history</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

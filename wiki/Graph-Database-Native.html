@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Graph Database Native |  OrientDB</title>
+  <title>Graph Database Native</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Graph-Database-Native">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Graph Database Native
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p><em>NOTE: This API will be deprecated soon. Use <a class="internal present" href="/wiki/Graph-Database-Raw.html">Graph Database Raw</a> or <a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">Graph Database Tinkerpop</a>.</em></p>
+
+<p>OrientDB provides natively the class <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/ODatabaseGraphTx.java">ODatabaseGraphTx</a> to handle graphs in easy way. Furthermore, starting from v. 0.9.22, OrientDB provides an implementation of the <a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">Tinkerpop stack</a>. You can use both APIs together.</p>
+
+<p>Main graph classes:</p>
+
+<ul>
+<li>
+<a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/ODatabaseGraphTx.java">ODatabaseGraphTx</a>: Main class to handle graphs</li>
+<li>
+<a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphVertex.java">OGraphVertex</a>: the <strong>Vertex</strong> implementation</li>
+<li>
+<a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphEdge.java">OGraphEdge</a>: the <strong>Edge</strong> implementation</li>
+</ul><h3>First example</h3>
+
+<h4>Create an empty database</h4>
+
+<p>Launch the <a class="internal present" href="/wiki/Console-Commands.html">console</a> and type:
+</p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">create</span> <span class="n">database</span> <span class="nl">local:C:</span><span class="o">/</span><span class="n">temp</span><span class="o">/</span><span class="n">graph</span><span class="o">/</span><span class="n">graph</span> <span class="n">admin</span> <span class="n">admin</span> <span class="n">local</span>
+</pre></div>
+
+<p><em>If you're using Linux, MacOsX or any other Operative System change the location of the database to adhere to its file system.</em></p>
+
+<h4>Create a graph of 1,000 vertexes</h4>
+
+<p>This example creates a graph of 1,000 vertex. The root node will be bound to the database to get accessed for further uses (such as read). The graph has only one edge, so the deep level is of 1,000!
+</p><div class="highlight"><pre>  <span class="n">ODatabaseGraphTx</span> <span class="n">database</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseGraphTx</span><span class="o">(</span><span class="s">"local:C:/temp/graph/graph"</span><span class="o">);</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="n">OGraphVertex</span> <span class="n">rootNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+  <span class="n">OGraphVertex</span> <span class="n">currentNode</span> <span class="o">=</span> <span class="n">rootNode</span><span class="o">;</span>
+  
+  <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">OGraphVertex</span> <span class="n">newNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
+    <span class="n">currentNode</span><span class="o">.</span><span class="na">link</span><span class="o">(</span><span class="n">newNode</span><span class="o">);</span>
+    <span class="n">currentNode</span> <span class="o">=</span> <span class="n">newNode</span><span class="o">;</span>
+  <span class="o">}</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">setRoot</span><span class="o">(</span><span class="s">"graph"</span><span class="o">,</span> <span class="n">rootNode</span><span class="o">);</span>
+  
+  <span class="n">database</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+
+<p>The main points of the code above are:</p>
+
+<ul>
+<li>
+<code>database.createVertex()</code>: creates a new vertex</li>
+<li>
+<code>database.createVertex().set("id", 0)</code>: set the property "id" to the value 0 to the new created vertex object</li>
+<li>
+<code>currentNode.link(newNode)</code>: links the current node to the new one. OrientDB creates a new edge between them</li>
+<li>
+<code>database.setRoot("graph", rootNode)</code>: set the root vertex as a root node called "graph"</li>
+</ul><h4>Browse the entire graph</h4>
+
+<div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ODatabaseGraphTx</span> <span class="n">database</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseGraphTx</span><span class="o">(</span><span class="s">"local:C:/temp/graph/graph"</span><span class="o">);</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+    <span class="n">OGraphVertex</span> <span class="n">rootNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getRoot</span><span class="o">(</span><span class="s">"graph"</span><span class="o">);</span>
+  
+    <span class="n">readAllTheGraph</span><span class="o">(</span> <span class="n">rootNode</span> <span class="o">);</span>
+  
+    <span class="n">database</span><span class="o">.</span><span class="na">setRoot</span><span class="o">(</span><span class="s">"graph"</span><span class="o">,</span> <span class="n">rootNode</span><span class="o">);</span>
+  <span class="o">}</span>
+  
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">readAllTheGraph</span><span class="o">(</span><span class="kd">final</span> <span class="n">OGraphVertex</span> <span class="n">iNode</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">OGraphVertex</span> <span class="n">node</span> <span class="o">:</span> <span class="n">iNode</span><span class="o">.</span><span class="na">browseEdgeDestinations</span><span class="o">())</span> <span class="o">{</span>
+      <span class="n">readAllTheGraph</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>The main points of the code above are:</p>
+
+<ul>
+<li>
+<code>database.getRoot("graph")</code>: get the root vertex by name ("graph")</li>
+<li>
+<code>iNode.browseEdgeDestinations()</code>: browse all the edge destinations as the "destination" of each edge</li>
+</ul><h3>Build the graph</h3>
+
+<p>To build a graph you have to create vertexes and connect them with edges.</p>
+
+<h4>Create vertexes</h4>
+
+<p>To create a new vertex:
+</p><div class="highlight"><pre>  <span class="n">OGraphVertex</span> <span class="n">vertex</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OGraphVertex</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+  <span class="n">vertex</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"type"</span><span class="o">,</span> <span class="s">"TV"</span><span class="o">);</span>
+  <span class="n">vertex</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"brand"</span><span class="o">,</span> <span class="s">"Samsung"</span><span class="o">);</span>
+  <span class="n">vertex</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>To make the graph elements persistent, remember to call always the save() method against the new vertex.</p>
+
+<h4>Create edges</h4>
+
+<p>Use the <code>OGraphVertex.link( otherVertex )</code> to create a new edge between two vertexes. Use the method <code>OGraphVertex.link( otherVertex, class )</code> to specify also the class name of the edge to use. Example:
+</p><div class="highlight"><pre>  <span class="n">OGraphVertex</span> <span class="n">vertex1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OGraphVertex</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+  <span class="n">vertex1</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Jay"</span><span class="o">);</span>
+  <span class="n">vertex1</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"surname"</span><span class="o">,</span> <span class="s">"Miner"</span><span class="o">);</span>
+  
+  <span class="n">OGraphVertex</span> <span class="n">vertex2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OGraphVertex</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+  <span class="n">vertex2</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Amiga"</span><span class="o">);</span>
+  <span class="n">vertex2</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"type"</span><span class="o">,</span> <span class="s">"Computer"</span><span class="o">);</span>
+  
+  <span class="n">OGraphEdge</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">vertex1</span><span class="o">.</span><span class="na">link</span><span class="o">(</span> <span class="n">vertex2</span> <span class="o">);</span>
+  <span class="n">edge</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"on"</span><span class="o">,</span> <span class="s">"1985"</span><span class="o">);</span>
+  <span class="n">edge</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>Remember to call the save() method against the new edge or any of the vertexes connected. save() is viral and save recursively all the dirty elements.</p>
+
+<h4>Remove edges</h4>
+
+<p>Use the <code>OGraphVertex.unlink( otherVertex )</code> to remove an edge between two vertexes.</p>
+
+<h4>Delete vertexes</h4>
+
+<p>On <code>OGraphVertex.delete()</code> method all the edges are unlinked before to delete the vertex. This assure the graph remains coherent.</p>
+
+<h3>Query vertexes</h3>
+
+<p>OrientDB comes with a powerful query language based on SQL but with several extensions for graphs.</p>
+
+<h4>Query targets</h4>
+
+<p>Query can start from one or multiple root nodes. In SQL the queries can have as target only tables. In OrientDB you can use:</p>
+
+<ul>
+<li>the entire <a class="internal present" href="/wiki/Concepts.html#class">Class</a> (the closest concept to a Relational Table). Example: <code>SELECT FROM OGraphVertex WHERE name = 'test'</code>
+</li>
+<li>the entire <a class="internal present" href="/wiki/Concepts.html#cluster">Cluster</a> (the physical place where records reside). Example: <code>select from cluster:OGraphVertex WHERE outEdges.size() &gt; 0</code>
+</li>
+<li>a single <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>. Example: <code>select from 11:4 where any() traverse(0,10) (@class='Profile' &amp;&amp; address.city = 'Rome')</code>
+</li>
+<li>multiple <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s. Example: <code>select from [where outEdge.size() &gt; 0</code>
+</li>
+</ul><h4>Traverse operator</h4>
+
+<p>OrientDB allows to traverse all or part of the graph starting from a set of <em>Vertexes</em>. The syntax is:
+1b50c0c5fd276c16bb6b98bcd860d08b</p>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<em>target</em> can be one of <a>#Query_target listed above</a>
+</li>
+<li>
+<strong>field</strong> can be:</li>
+<li>
+<strong>outEdges</strong>, as the outgoing edges</li>
+<li>
+<strong>inEdges</strong>, as the incoming edges</li>
+<li><strong>any attribute of the vertex</strong></li>
+<li>
+<strong>any()</strong>, means any of the field considering also <strong>inEdges</strong> and <strong>outEdges</strong>
+</li>
+<li>
+<strong>all()</strong>, means all the fields considering also <strong>inEdges</strong> and <strong>outEdges</strong>
+</li>
+<li>
+<strong>minDeep</strong> is the minimum deep level to start to apply the conditions. Usually is 0 for the root vertex or 1 for the just-outgoing vertexes</li>
+<li>
+<strong>maxDeep</strong>, optionally limits the maximum deep level to reach. -1 means infinite. Default is -1</li>
+<li>
+<strong>fields</strong>, optionally tells the field list to traverse. Default is any()</li>
+<li>
+<strong>conditions</strong> are the conditions to check for any traversed vertex. To know more about the query syntax see <a href="http://code.google.com/p/orient/wiki/SQLWhere">SQL syntax</a>
+</li>
+</ul><h5>Examples</h5>
+
+<p>Returns the record with id "11:4" if traversing all its connections, up to the 10th level, there is a profile that lives in Rome:</p>
+
+<div class="highlight"><pre><span class="n">select</span> <span class="n">from</span> 11<span class="p">:</span>4 <span class="n">where</span> <span class="n">any</span><span class="p">()</span> <span class="n">traverse</span><span class="p">(</span>0<span class="p">,</span>10<span class="p">)</span> <span class="p">(@</span><span class="n">class</span><span class="p">=</span><span class="s">'Profile'</span> <span class="o">&amp;&amp;</span> <span class="n">address</span><span class="p">.</span><span class="n">city</span> <span class="p">=</span> <span class="s">'Rome'</span><span class="p">)</span> 
+</pre></div>
+
+<h3>Polymorphism and custom types</h3>
+
+<p>OrientDB supports the polymorphism with vertex and edges. You can create your own Vertex and Edge types using the Object Oriented paradigm.</p>
+
+<p>All the vertex types must inherit the <strong>OGraphVertex</strong> at the highest point of the inheritance chain. The same is for edge types but the class to inherit is <strong>OGraphEdge</strong>.
+When you extends classes (or types, is the same concepts) you inherit all the fields and constraints of the extended class. Furthermore you can use the OrientDB query engine to execute polymorphic queries (see later).</p>
+
+<p>Example of class inheritance schema:
+</p><div class="highlight"><pre>             <span class="n">OGraphVertex</span>
+                  <span class="o">|</span>
+               <span class="n">Vehicle</span>
+                  <span class="o">|</span>
+                 <span class="o">/</span> <span class="err">\</span>
+                <span class="o">/</span>   <span class="err">\</span>
+              <span class="n">Car</span>  <span class="n">Motocycle</span>
+</pre></div>
+
+<p>This is the simple code that creates the classes:
+</p><div class="highlight"><pre>    <span class="n">OClass</span> <span class="n">vehicleClass</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"GraphVehicle"</span><span class="o">).</span><span class="na">setSuperClass</span><span class="o">(</span><span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">getClass</span><span class="o">(</span><span class="n">OGraphVertex</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+  
+    <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"GraphCar"</span><span class="o">).</span><span class="na">setSuperClass</span><span class="o">(</span><span class="n">vehicleClass</span><span class="o">);</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">createClass</span><span class="o">(</span><span class="s">"GraphMotocycle"</span><span class="o">).</span><span class="na">setSuperClass</span><span class="o">(</span><span class="n">vehicleClass</span><span class="o">);</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSchema</span><span class="o">().</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>Create vertexes of custom type:
+</p><div class="highlight"><pre>    <span class="n">OGraphVertex</span> <span class="n">carNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">(</span><span class="s">"GraphCar"</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="s">"brand"</span><span class="o">,</span> <span class="s">"Hyundai"</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="s">"model"</span><span class="o">,</span> <span class="s">"Coupe"</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="s">"year"</span><span class="o">,</span> <span class="mi">2003</span><span class="o">).</span><span class="na">save</span><span class="o">();</span>
+    <span class="n">OGraphVertex</span> <span class="n">motoNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">(</span><span class="s">"GraphMotocycle"</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="s">"brand"</span><span class="o">,</span> <span class="s">"Yamaha"</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="s">"model"</span><span class="o">,</span> <span class="s">"X-City 250"</span><span class="o">).</span><span class="na">set</span><span class="o">(</span><span class="s">"year"</span><span class="o">,</span> <span class="mi">2009</span><span class="o">).</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>Execute polymorphic queries against custom types:
+</p><div class="highlight"><pre>    List<span class="nt">&lt;OGraphVertex&gt;</span> result = database.query(new OSQLSynchQuery<span class="nt">&lt;OGraphVertex&gt;</span>("select from GraphVehicle"));
+    Assert.assertEquals(result.size(), 2);
+    for (OGraphVertex v : result) {
+      Assert.assertTrue(v.getDocument().getSchemaClass().isSubClassOf(vehicleClass));
+    }
+  
+    database.close();
+</pre></div>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

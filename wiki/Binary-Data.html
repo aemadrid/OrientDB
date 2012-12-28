@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Binary Data |  OrientDB</title>
+  <title>Binary Data</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Binary-Data">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Binary Data
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB natively handles binary data, namely BLOB. However there are some consideration to do based on the type of binary data, the size, the kind of usage, etc.</p>
+
+<p>Sometimes it's better to store binary records in a different path then default database directory to benefit of faster HD (like a SSD) or just to go in parallel if the OS and HW configuration allow this.</p>
+
+<p>In this case create a new <a class="internal present" href="/wiki/Concepts.html#data_segment">data-segment</a> and <a class="internal present" href="/wiki/Concepts.html#cluster">cluster</a> in a different path (available since v1.0):
+</p><div class="highlight"><pre>  <span class="n">db</span><span class="o">.</span><span class="na">addDataSegment</span><span class="o">(</span><span class="s">"binary"</span><span class="o">,</span> <span class="s">"/mnt/ssd"</span><span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">addCluster</span><span class="o">(</span><span class="s">"physical"</span><span class="o">,</span> <span class="s">"binary"</span><span class="o">,</span> <span class="s">"/mnt/ssd"</span><span class="o">,</span> <span class="s">"binary"</span> <span class="o">);</span>
+</pre></div>
+
+<p>All the records in cluster "binary" will reside in files created under the directory "/mnt/ssd".</p>
+
+<h3>Techniques</h3>
+
+<h4>Store on file system and save the path in the document</h4>
+
+<p>This is the simpler way to handle binary data: store them to the file system and just keep the path to retrieve them.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">doc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+  <span class="n">doc</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"binary"</span><span class="o">,</span> <span class="s">"/usr/local/orientdb/binary/test.pdf"</span><span class="o">);</span>
+  <span class="n">doc</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>Pros:</p>
+
+<ul>
+<li>Easy to write</li>
+<li>100% delegated to the File System
+Cons:</li>
+<li>Binary data can't be automatically distributed using the OrientDB cluster</li>
+</ul><h4>Store it as Document's field</h4>
+
+<p>ODocument class is able to manage binary data in form of {{{byte[(byte array). Example:
+</p><div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">doc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="n">db</span><span class="o">);</span>
+  <span class="n">doc</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"binary"</span><span class="o">,</span> <span class="s">"Binary data"</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+  <span class="n">doc</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>This is the easiest way to keep the binary data inside the database, but it's not really efficient on large BLOB because the binary content is serialized in Base64. This means a waste of space (33% more) and a run-time cost in marshalling/unmarshalling.</p>
+
+<p>Pros:</p>
+
+<ul>
+<li>Easy to write
+Cons:</li>
+<li>Waste of space +33%</li>
+<li>Run-time cost of marshalling/unmarshalling</li>
+</ul><h4>Store it with ORecordBytes</h4>
+
+<p>The ORecordBytes class is a record implementation able to store binary content without conversions (see above). This is the faster way to handle binary data with OrientDB but needs a separate record to handle it.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">ORecordBytes</span> <span class="n">record</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ORecordBytes</span><span class="o">(</span><span class="n">db</span><span class="o">,</span> <span class="s">"Binary data"</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+  <span class="n">record</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>Since this is a separate record, the best way to reference it is to link it to a Document record. Example:
+533cfa8bbbc04f9d46a381af8632dd06</p>
+
+<p>In this way you can access to the binary data by traversing the "binary" field of the parent's document record.
+e41206cda0a9135a141f6424c0bbae36</p>
+
+<p>ORecordBytes class can work with Java Streams:
+1f2b8f42752d5332e72b48006e488b88</p>
+
+<p>Pros:</p>
+
+<ul>
+<li>Fast and compact solution
+Cons:</li>
+<li>Slightly complex management</li>
+</ul><h4>Large content: split in multiple ORecordBytes</h4>
+
+<p>OrientDB can store up to 2Gb as record content. But there are other limitations on network buffers and file sizes you should tune to reach the 2GB barrier.</p>
+
+<p>However managing big chunks of binary data means having big <code>byte<a href="%5D%3C/code"></a>}}}  structures in RAM and this could cause a Out Of Memory of the JVM. Many users reported that splitting the binary data in chunks it's the best solution.</code></p>
+
+<p>Continuing from the last example we could handle not a single reference against one ORecordBytes record but multiple references. A One-To-Many relationship. For this purpose the LINKLIST type fits perfect because maintains the order.</p>
+
+<p>To avoid OrientDB caches in memory large records use the massive insert intent and keep in the collection the <a class="internal present" href="/wiki/Concepts.html#rid">RID</a>, not the entire records.</p>
+
+<p>Example to store in OrientDB the file content:
+</p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">declareIntent</span><span class="o">(</span> <span class="k">new</span> <span class="n">OIntentMassiveInsert</span><span class="o">()</span> <span class="o">);</span>
+  
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">ORID</span><span class="o">&gt;</span> <span class="n">chunks</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">ORID</span><span class="o">&gt;();</span>
+  <span class="n">InputStream</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BufferedInputStream</span><span class="o">(</span> <span class="k">new</span> <span class="n">FileInputStream</span><span class="o">(</span> <span class="n">file</span> <span class="o">)</span> <span class="o">);</span>
+  <span class="k">while</span> <span class="o">(</span> <span class="n">in</span><span class="o">.</span><span class="na">available</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">)</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">ORecordBytes</span> <span class="n">chunk</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ORecordBytes</span><span class="o">();</span>
+  
+    <span class="c1">// READ REMAINING DATA, BUT NOT MORE THAN 8K</span>
+    <span class="n">chunk</span><span class="o">.</span><span class="na">fromInputStream</span><span class="o">(</span> <span class="n">in</span><span class="o">,</span> <span class="mi">8192</span> <span class="o">);</span>
+  
+    <span class="c1">// SAVE THE CHUNK TO GET THE REFERENCE (IDENTITY) AND FREE FROM THE MEMORY</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">chunk</span> <span class="o">);</span>
+  
+    <span class="c1">// SAVE ITS REFERENCE INTO THE COLLECTION</span>
+    <span class="n">chunks</span><span class="o">.</span><span class="na">add</span><span class="o">(</span> <span class="n">chunk</span><span class="o">.</span><span class="na">getIdentity</span><span class="o">()</span> <span class="o">);</span>
+  <span class="o">}</span>
+  
+  <span class="c1">// SAVE THE COLLECTION OF REFERENCES IN A NEW DOCUMENT</span>
+  <span class="n">ODocument</span> <span class="n">record</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">();</span>
+  <span class="n">record</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"data"</span><span class="o">,</span> <span class="n">chunks</span> <span class="o">);</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">record</span> <span class="o">);</span>
+  
+  <span class="n">database</span><span class="o">.</span><span class="na">declareIntent</span><span class="o">(</span> <span class="kc">null</span> <span class="o">);</span>
+</pre></div>
+
+<p>Example to read back the file content:
+</p><div class="highlight"><pre>  <span class="n">record</span><span class="o">.</span><span class="na">setLazyLoad</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+  <span class="k">for</span> <span class="o">(</span><span class="n">OIdentifiable</span> <span class="n">id</span> <span class="o">:</span> <span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">OIdentifiable</span><span class="o">&gt;)</span> <span class="n">record</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"data"</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">ORecordBytes</span> <span class="n">chunk</span> <span class="o">=</span> <span class="o">(</span><span class="n">ORecordBytes</span><span class="o">)</span> <span class="n">id</span><span class="o">.</span><span class="na">getRecord</span><span class="o">();</span>
+    <span class="n">chunk</span><span class="o">.</span><span class="na">toOutputStream</span><span class="o">(</span><span class="n">out</span><span class="o">);</span>
+    <span class="n">chunk</span><span class="o">.</span><span class="na">unload</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>Pros:</p>
+
+<ul>
+<li>Fastest and compact solution
+Cons:</li>
+<li>More complex management</li>
+</ul><h3>Conclusion</h3>
+
+<p>What to use?</p>
+
+<ul>
+<li>Have you short binary data? Store them as document's field</li>
+<li>Do you want the maximum of performance and better use of the space? Store it with ORecordBytes</li>
+<li>Have you large binary objects? Store it with ORecordBytes but split the content in multiple records</li>
+</ul>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

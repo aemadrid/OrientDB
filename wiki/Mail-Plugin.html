@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Mail Plugin |  OrientDB</title>
+  <title>Mail Plugin</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Mail-Plugin">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Mail Plugin
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/DB-Server.html" class="nr1">Db Server</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Java class implementation:
+</p><div class="highlight"><pre>  <span class="n">com</span><span class="o">.</span><span class="na">orientechnologies</span><span class="o">.</span><span class="na">orient</span><span class="o">.</span><span class="na">server</span><span class="o">.</span><span class="na">plugin</span><span class="o">.</span><span class="na">mail</span><span class="o">.</span><span class="na">OMailPlugin</span>
+</pre></div>
+Available since: <strong>v. 1.2.0</strong>.
+
+<h3>Introduction</h3>
+
+<p>Allows to send (and in future read) emails.</p>
+
+<h3>Configuration</h3>
+
+<p>This plugin is configured as a <a class="internal present" href="/wiki/DB-Server.html#handlers">Server handler</a>. The plugin can be configured in easy way by changing parameters:</p>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Type</th>
+<th>Example</th>
+<th>Since</th>
+</tr>
+<tr>
+<td>enabled</td>
+<td>true to turn on, false (default) is turned off</td>
+<td>boolean</td>
+<td>true</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>profile.&lt;name&gt;.mail.smtp.host</code></td>
+<td>The SMTP host name or ip-address</td>
+<td>string</td>
+<td>smtp.gmail.com</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>profile.&lt;name&gt;.mail.smtp.port</code></td>
+<td>The SMTP port</td>
+<td>number</td>
+<td>587</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>profile.&lt;name&gt;.mail.smtp.auth</code></td>
+<td>Authenticate in SMTP</td>
+<td>boolean</td>
+<td>true</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>profile.&lt;name&gt;.mail.smtp.starttls.enable</code></td>
+<td>Enable the starttls</td>
+<td>boolean</td>
+<td>true</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>profile.&lt;name&gt;.mail.smtp.user</code></td>
+<td>The SMTP username</td>
+<td>string</td>
+<td>yoda@starwars.com</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>profile.&lt;name&gt;.mail.smtp.password</code></td>
+<td>The SMTP password</td>
+<td>string</td>
+<td>UseTh3F0rc3</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td><code>profile.&lt;name&gt;.mail.date.format</code></td>
+<td>The date format to use, default is "yyyy-MM-dd HH:mm:ss"</td>
+<td>string</td>
+<td>yyyy-MM-dd HH:mm:ss</td>
+<td>1.2.0</td>
+</tr>
+</table><p>Default configuration in orientdb-server-config.xml. Example:
+</p><div class="highlight"><pre>  <span class="c">&lt;!-- MAIL, TO TURN ON SET THE 'ENABLED' PARAMETER TO 'true' --&gt;</span>
+  <span class="nt">&lt;handler</span> 
+  <span class="na">class=</span><span class="s">"com.orientechnologies.orient.server.plugin.mail.OMailPlugin"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;parameters&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"enabled"</span> <span class="na">value=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="c">&lt;!-- CREATE MULTIPLE PROFILES WITH profile.&lt;name&gt;... --&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"profile.default.mail.smtp.host"</span> <span class="na">value=</span><span class="s">"smtp.gmail.com"</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"profile.default.mail.smtp.port"</span> <span class="na">value=</span><span class="s">"587"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"profile.default.mail.smtp.auth"</span> <span class="na">value=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"profile.default.mail.smtp.starttls.enable"</span> <span class="na">value=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"profile.default.mail.smtp.user"</span> <span class="na">value=</span><span class="s">"test@gmail.com"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"profile.default.mail.smtp.password"</span> <span class="na">value=</span><span class="s">"mypassword"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"profile.default.mail.date.format"</span> <span class="na">value=</span><span class="s">"yyyy-MM-dd HH:mm:ss"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/parameters&gt;</span>
+  <span class="nt">&lt;/handler&gt;</span>
+</pre></div>
+
+<h3>Usage =</h3>
+
+<p>The message is managed as a map of properties containing all the fields those are part of the message.</p>
+
+<p>Supported message's properties:</p>
+
+<table><tbody>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Mandatory</th>
+<th>Example</th>
+<th>Since</th>
+</tr>
+<tr>
+<td>to</td>
+<td>destination addresses separated by commas</td>
+<td>Yes</td>
+<td>to : "first@mail.com", "second@mail.com"</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td>cc</td>
+<td>Carbon copy addresses separated by commas</td>
+<td>No</td>
+<td>cc: "first@mail.com", "second@mail.com"</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td>bcc</td>
+<td>Blind Carbon Copy addresses separated by commas</td>
+<td>No</td>
+<td>bcc : "first@mail.com", "second@mail.com"</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td>subject</td>
+<td>The subject of the message</td>
+<td>No</td>
+<td>subject : "This Email plugin rocks!"</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td>message</td>
+<td>The message's content</td>
+<td>Yes</td>
+<td>message : "Hi, how are you mate?"</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td>date</td>
+<td>The subject of the message. Pass a java.util.Date object or a string formatted following the rules specified in "mail.date.format" configuration parameter or "yyyy-MM-dd HH:mm:ss" is taken</td>
+<td>No, if not specified current date is assumed</td>
+<td>date : "2012-09-25 13:20:00"</td>
+<td>1.2.0</td>
+</tr>
+<tr>
+<td>attachments</td>
+<td>The files to attach</td>
+<td>No</td>
+<td>attachments : ["tmp/2.eml"]("tmp/1.pdf",)</td>
+<td>1.2.0</td>
+</tr>
+</tbody></table><h3>= From Server-Side Functions</h3>
+
+<p>The Email plugin install a new variable in the server-side function's context: "mail".</p>
+
+<p>Example to send an email writing a function in JS:
+</p><div class="highlight"><pre>  <span class="n">mail</span><span class="o">.</span><span class="na">send</span><span class="o">({</span>
+    <span class="nl">to:</span> <span class="s">"orientdb@ruletheworld.com"</span><span class="o">,</span>
+    <span class="nl">cc:</span> <span class="s">"yoda@starwars.com"</span><span class="o">,</span>
+    <span class="nl">bcc:</span> <span class="s">"darthvader@starwars.com"</span><span class="o">,</span>
+    <span class="nl">subject:</span> <span class="s">"The EMail plugin works"</span><span class="o">,</span>
+    <span class="n">message</span> <span class="o">:</span> <span class="s">"Sending email from OrientDB Server is so powerful to build real web applications!"</span>
+  <span class="o">});</span>
+</pre></div>
+
+<h3>= From Java</h3>
+
+<div class="highlight"><pre>  <span class="n">OMailPlugin</span> <span class="n">plugin</span> <span class="o">=</span> <span class="n">OServerMain</span><span class="o">.</span><span class="na">server</span><span class="o">().</span><span class="na">getPlugin</span><span class="o">(</span><span class="s">"mail"</span><span class="o">);</span>
+  
+  <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;();</span>
+  <span class="n">message</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"to"</span><span class="o">,</span>      <span class="s">"orientdb@ruletheworld.com"</span><span class="o">);</span>
+  <span class="n">message</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"cc"</span><span class="o">,</span>      <span class="s">"yoda@starts.com"</span><span class="o">);</span>
+  <span class="n">message</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"bcc"</span><span class="o">,</span>     <span class="s">"darthvader@starwars.com"</span><span class="o">);</span>
+  <span class="n">message</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"subject"</span><span class="o">,</span> <span class="s">"The EMail plugin works"</span><span class="o">);</span>
+  <span class="n">message</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"message"</span><span class="o">,</span> <span class="s">"Sending email from OrientDB Server is so powerful to build real web applications!"</span><span class="o">);</span>
+  
+  <span class="n">plugin</span><span class="o">.</span><span class="na">send</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+</pre></div>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

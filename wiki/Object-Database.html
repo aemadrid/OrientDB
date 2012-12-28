@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Object Database |  OrientDB</title>
+  <title>Object Database</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Object-Database">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Object Database
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p><em>Note: The object database has been refactored since the release 1.0. If you use the previous one look at: <a href="#Old_Implementation_ODatabaseObjectTx">Old Implementation ODatabaseObjectTx</a>.</em></p>
+
+<h3>Requirements</h3>
+
+<p>To use the Object Database interface you must include these jars in your classpath:
+</p><div class="highlight"><pre>  <span class="n">orient</span><span class="o">-</span><span class="n">commons</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">core</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">object</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<p>If you're using the Object Database interface connected to a remote server (not local/embedded mode) include also:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">-</span><span class="n">client</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">enterprise</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<h3>Introduction</h3>
+
+<p>The OrientDB <strong>Object Interface</strong> works on top of the <a class="internal present" href="/wiki/Document-Database.html">Document-Database</a> and works like an Object Database: manages Java objects directly. It uses the Java Reflection to register the classes  and <a href="http://www.jboss.org/javassist">Javassist tool</a> to manage the Object-to-Document conversion. Please consider that the Java Reflection in modern Java Virtual Machines is really fast and the discovering of Java meta data is made only at first time.</p>
+
+<p>Future implementation could use also the byte-code enhancement techniques in addition.</p>
+
+<p>The proxied objects has a ODocument bounded to it and trasparently replicate object modifications. It also allows lazy loading of the fields: they won't be loaded from the document until the first access. To do so the object MUST implement <a href="http://en.wikipedia.org/wiki/Mutator_method">getters and setters</a> since the <a href="http://www.jboss.org/javassist">Javassist Proxy</a> is bounded to them.
+In case of object load, edit an update all non loaded fields won't be lost.</p>
+
+<p>The database instance has an API to generate new objects already proxied, in case a non-proxied instance is passed it will be serialized, wrapped around a proxied instance and returned.</p>
+
+<p>Read more about the <a class="internal present" href="/wiki/Object-2-Record-Java-Binding.html">Binding between Java Objects and Records</a>.</p>
+
+<p>Quick example of usage:
+</p><div class="highlight"><pre>  <span class="c1">// OPEN THE DATABASE</span>
+  <span class="n">OObjectDatabaseTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OObjectDatabaseTx</span> <span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">).</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="c1">// REGISTER THE CLASS ONLY ONCE AFTER THE DB IS OPEN/CREATED</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">getEntityManager</span><span class="o">().</span><span class="na">registerEntityClasses</span><span class="o">(</span><span class="s">"foo.domain"</span><span class="o">);</span>
+  
+  <span class="c1">// CREATE A NEW PROXIED OBJECT AND FILL IT</span>
+  <span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">Account</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span> <span class="s">"Luke"</span> <span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">setSurname</span><span class="o">(</span> <span class="s">"Skywalker"</span> <span class="o">);</span>
+  
+  <span class="n">City</span> <span class="n">rome</span> <span class="o">=</span>  <span class="n">db</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">City</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="s">"Rome"</span><span class="o">,</span>  <span class="n">db</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">Country</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="s">"Italy"</span><span class="o">));</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">getAddresses</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">Address</span><span class="o">(</span><span class="s">"Residence"</span><span class="o">,</span> <span class="n">rome</span><span class="o">,</span> <span class="s">"Piazza Navona, 1"</span><span class="o">));</span>
+  
+  <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">account</span> <span class="o">);</span>
+  
+  <span class="c1">// CREATE A NEW OBJECT AND FILL IT</span>
+  <span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Account</span><span class="o">();</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span> <span class="s">"Luke"</span> <span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">setSurname</span><span class="o">(</span> <span class="s">"Skywalker"</span> <span class="o">);</span>
+  
+  <span class="n">City</span> <span class="n">rome</span> <span class="o">=</span> <span class="k">new</span> <span class="n">City</span><span class="o">(</span><span class="s">"Rome"</span><span class="o">,</span> <span class="k">new</span> <span class="n">Country</span><span class="o">(</span><span class="s">"Italy"</span><span class="o">));</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">getAddresses</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">Address</span><span class="o">(</span><span class="s">"Residence"</span><span class="o">,</span> <span class="n">rome</span><span class="o">,</span> <span class="s">"Piazza Navona, 1"</span><span class="o">));</span>
+  
+  <span class="c1">// SAVE THE ACCOUNT: THE DATABASE WILL SERIALIZE THE OBJECT AND GIVE THE PROXIED INSTANCE</span>
+  <span class="n">account</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">account</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Connection Pool</h4>
+
+<p>One of most common use case is to reuse the database avoiding to create it every time. It's also the typical scenario of the Web applications.
+</p><div class="highlight"><pre>  <span class="c1">// OPEN THE DATABASE</span>
+  <span class="n">OObjectDatabaseTx</span> <span class="n">db</span><span class="o">=</span> <span class="n">OObjectDatabasePool</span><span class="o">.</span><span class="na">global</span><span class="o">().</span><span class="na">acquire</span><span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="c1">// REGISTER THE CLASS ONLY ONCE AFTER THE DB IS OPEN/CREATED</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">getEntityManager</span><span class="o">().</span><span class="na">registerEntityClass</span><span class="o">(</span><span class="s">"org.petshop.domain"</span><span class="o">);</span>
+  
+  <span class="k">try</span> <span class="o">{</span>
+    <span class="o">...</span>
+  <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>The close() method doesn't close the database but release it to the owner pool. It could be reused in the future.</p>
+
+<h4>Database URL</h4>
+
+<p>In the example above a database of type Database Object Transactional has been created using the storage: remote:localhost/petshop. This address is a <a href="http://it.wikipedia.org/wiki/Uniform_Resource_Locator">URL</a>. To know more about database and storage types go to <a class="internal present" href="/wiki/Concepts.html#database_url">Database URL</a>.</p>
+
+<p>In this case the storage resides in the same computer of the client, but we're using the <strong>remote</strong> storage type. For this reason we need a OrientDB Server instance up and running. If we would open the database directly bypassing the server we had to use the <strong>local</strong> storage type such as "local:/usr/local/database/petshop/petshop" where, in this case, the storage was located in the /usr/local/database/petshop folder on the local file system.</p>
+
+<h4>Multi-threading</h4>
+
+<p>The OObjectDatabaseTx class is non thread-safe. For this reason use different OObjectDatabaseTx instances by multiple threads. They will share local cache once transactions are committed.</p>
+
+<h4>Inheritance</h4>
+
+<p>Starting from the release 0.9.19 OrientDB supports the <a class="internal present" href="/wiki/Inheritance.html">Inheritance</a>. Using the ObjectDatabase the inheritance of Documents fully matches the Java inheritance.</p>
+
+<p>When registering a new class Orient will also generate the correct inheritance schema if not already generated.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Account</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+  <span class="c1">// getters and setters</span>
+  <span class="o">}</span>
+  
+  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Company</span> <span class="kd">extends</span> <span class="n">Account</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">employees</span><span class="o">;</span>
+  <span class="c1">// getters and setters</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>When you save a Company object, OrientDB will save the object as unique Document in the cluster specified for Company class. When you search between all the Account instances with:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">account</span>
+</pre></div>
+
+<p>The search will find all the Account and Company documents that satisfy the query.</p>
+
+<h3>Use the database</h3>
+
+<p>Before to use a database you need to open or create it:
+</p><div class="highlight"><pre>  <span class="c1">// CREATE AN IN MEMORY DATABASE</span>
+  <span class="n">OObjectDatabase</span> <span class="n">db1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OObjectDatabaseTx</span><span class="o">(</span><span class="s">"memory:petshop"</span><span class="o">).</span><span class="na">create</span><span class="o">();</span>
+  
+  <span class="c1">// OPEN A REMOTE DATABASE</span>
+  <span class="n">OObjectDatabase</span> <span class="n">db2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OObjectDatabaseTx</span><span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">).</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+</pre></div>
+
+<p>The database instance will share the connection versus the storage. if it's a local storage, then all the database instances will be synchronized on it. If it's a remote storage then the network connection will be shared among all the database instances.</p>
+
+<p>To get the reference to the current user use:
+</p><div class="highlight"><pre>  <span class="n">OUser</span> <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getUser</span><span class="o">();</span>
+</pre></div>
+
+<p>Once finished remember to close the database to free precious resources.
+</p><div class="highlight"><pre>  <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+
+<h3>Working with POJO</h3>
+
+<p>Please read the <a class="internal present" href="/wiki/Object-2-Record-Java-Binding.html">POJO binding guide</a> containing all the information about the management of POJO.</p>
+
+<h4>Work in schema-less mode</h4>
+
+<p>The Object Database can be used totally in schema-less mode as long as the <a class="internal present" href="/wiki/Object-2-Record-Java-Binding.html">POJO binding guide</a> requirements are followed. Schema less means that the class must be created but even without properties. Take a look to this example:</p>
+
+<div class="highlight"><pre>  <span class="n">OObjectDatabase</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OObjectDatabaseTx</span><span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">).</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">getEntityManager</span><span class="o">().</span><span class="na">registerEntityClass</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  
+  <span class="n">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  <span class="n">p</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span> <span class="s">"Luca"</span> <span class="o">);</span>
+  <span class="n">p</span><span class="o">.</span><span class="na">setSurname</span><span class="o">(</span> <span class="s">"Garulli"</span> <span class="o">);</span>
+  <span class="n">p</span><span class="o">.</span><span class="na">setCity</span><span class="o">(</span> <span class="k">new</span> <span class="n">City</span><span class="o">(</span> <span class="s">"Rome"</span><span class="o">,</span> <span class="s">"Italy"</span> <span class="o">)</span> <span class="o">);</span>
+  
+  <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">p</span> <span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+
+<p>This is the very first example. While the code it's pretty clear and easy to understand please note that we didn't declared "Person" structure before now. However Orient has been able to recognize the new object and save it in persistent way.</p>
+
+<h4>Work in schema-full mode</h4>
+
+<p>In the schema-full mode you need to declare the classes you're using. Each class contains one or multiple properties. This mode is similar to the classic Relational DBMS approach where you need to create tables before to store records. To work in schema-full mode take a look to the <a href="JavaSchemaAPI">Schema APIs</a> page.</p>
+
+<h4>Create a new object</h4>
+
+<p>The best practice to create a Java object is to use the OObjectDatabase.newInstance() API:</p>
+
+<div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">surname</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(){</span>
+    <span class="o">}</span>
+  
+    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">){</span>
+     <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+  
+    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">surname</span><span class="o">){</span>
+     <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+     <span class="k">this</span><span class="o">.</span><span class="na">surname</span> <span class="o">=</span> <span class="n">surname</span><span class="o">;</span>
+    <span class="o">}</span>
+  <span class="c1">// getters and setters</span>
+  <span class="o">}</span>
+  
+  <span class="n">OObjectDatabase</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OObjectDatabaseTx</span><span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">).</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">getEntityManager</span><span class="o">().</span><span class="na">registerEntityClass</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  
+  <span class="c1">// CREATES A NEW PERSON FROM THE EMPTY CONSTRUCTOR</span>
+  <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span> <span class="s">"Antoni"</span> <span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">setSurname</span><span class="o">(</span> <span class="s">"Gaudi"</span> <span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">person</span> <span class="o">);</span>
+  
+  <span class="c1">// CREATES A NEW PERSON FROM A PARAMETRIZED CONSTRUCTOR</span>
+  <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>  <span class="s">"Antoni"</span><span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">setSurname</span><span class="o">(</span> <span class="s">"Gaudi"</span> <span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">person</span> <span class="o">);</span>
+  
+  <span class="c1">// CREATES A NEW PERSON FROM A PARAMETRIZED CONSTRUCTOR</span>
+  <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">,</span><span class="s">"Antoni"</span><span class="o">,</span><span class="s">"Gaudi"</span><span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">person</span> <span class="o">);</span>
+</pre></div>
+
+<p>However any Java object can be saved by calling the db.save() method, if not created with the database API will be serialized and saved. In this case the user have to assign the result of the db.save() method in order to get the proxied instance, if not the database will always treat the object as a new one.
+Example:
+</p><div class="highlight"><pre>  <span class="c1">// REGISTER THE CLASS ONLY ONCE AFTER THE DB IS OPEN/CREATED</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">getEntityManager</span><span class="o">().</span><span class="na">registerEntityClass</span><span class="o">(</span><span class="n">Animal</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  
+  <span class="n">Animal</span> <span class="n">animal</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Animal</span><span class="o">();</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span> <span class="s">"Gaudi"</span> <span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">setLocation</span><span class="o">(</span> <span class="s">"Madrid"</span> <span class="o">);</span>
+  <span class="n">animal</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">animal</span> <span class="o">);</span>
+</pre></div>
+
+<p>Note that the behaviour depends by the transaction begun if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a></p>
+
+<h4>Browse all the records in a cluster</h4>
+
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">Object</span> <span class="n">o</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseCluster</span><span class="o">(</span><span class="s">"CityCars"</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="o">((</span><span class="n">Car</span><span class="o">)</span> <span class="n">o</span><span class="o">).</span><span class="na">getModel</span><span class="o">()</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Browse all the records of a class</h4>
+
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">Animal</span> <span class="n">animal</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="n">Animal</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span> <span class="n">animal</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Count records of a class</h4>
+
+<div class="highlight"><pre>  <span class="kt">long</span> <span class="n">cars</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">countClass</span><span class="o">(</span><span class="s">"Car"</span><span class="o">);</span>
+</pre></div>
+
+<h4>Count records of a cluster</h4>
+
+<div class="highlight"><pre>  <span class="kt">long</span> <span class="n">cityCars</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">countCluster</span><span class="o">(</span><span class="s">"CityCar"</span><span class="o">);</span>
+</pre></div>
+
+<h4>Update an object</h4>
+
+<p>Any proxied object can be updated using the Java language and then calling the db.save() method to synchronize the changes to the repository. Behaviour depends by the transaction begun if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.</p>
+
+<div class="highlight"><pre>  <span class="n">animal</span><span class="o">.</span><span class="na">setLocation</span><span class="o">(</span> <span class="s">"Nairobi"</span> <span class="o">);</span>
+  <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">animal</span> <span class="o">);</span>
+</pre></div>
+
+<p>Orient will update only the fields really changed.</p>
+
+<p>Example of how to update the price of all the animals by 5% more:</p>
+
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">Animal</span> <span class="n">animal</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="n">Animal</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+    <span class="n">animal</span><span class="o">.</span><span class="na">setPrice</span><span class="o">(</span><span class="n">animal</span><span class="o">.</span><span class="na">getPrice</span><span class="o">()</span> <span class="o">*</span> <span class="mi">105</span> <span class="o">/</span> <span class="mi">100</span><span class="o">);</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">animal</span><span class="o">);</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>If the db.save() method is called with a non-proxied object the database will create a new document, even if said object were already saved</p>
+
+<h4>Delete an object</h4>
+
+<p>To delete an object call the db.delete() method on a proxied object. If called on a non-proxied object the database won't do anything. Behaviour also depends by the transaction begun if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.</p>
+
+<div class="highlight"><pre>  <span class="n">db</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span> <span class="n">animal</span> <span class="o">);</span>
+</pre></div>
+
+<p>Example of deletion of all the objects of class "Animal".</p>
+
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">Animal</span> <span class="n">animal</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="n">Animal</span><span class="o">.</span><span class="na">class</span><span class="o">))</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="n">animal</span><span class="o">);</span>
+</pre></div>
+
+<h5>Cascade deleting</h5>
+
+<p>Object Database uses JPA annotations to manage cascade deleting. It can be done expliciting (orphanRemoval = true) or using the CascadeType.
+The first mode works only with @OneToOne and @OneToMany annotations, the CascadeType works also with @ManyToMany annotation.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  
+  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">JavaCascadeDeleteTestClass</span> <span class="o">{</span>
+    <span class="o">...</span>
+  
+    <span class="nd">@OneToOne</span><span class="o">(</span><span class="n">orphanRemoval</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">JavaSimpleTestClass</span>  <span class="n">simpleClass</span><span class="o">;</span>
+  
+    <span class="nd">@ManyToMany</span><span class="o">(</span><span class="n">cascade</span> <span class="o">=</span> <span class="o">{</span> <span class="n">CascadeType</span><span class="o">.</span><span class="na">REMOVE</span> <span class="o">})</span>
+    <span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Child</span><span class="o">&gt;</span>   <span class="n">children</span>	<span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Child</span><span class="o">&gt;();</span>
+  
+    <span class="nd">@OneToMany</span><span class="o">(</span><span class="n">orphanRemoval</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Child</span><span class="o">&gt;</span>          <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Child</span><span class="o">&gt;();</span>
+  
+    <span class="nd">@OneToMany</span><span class="o">(</span><span class="n">orphanRemoval</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Child</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Child</span><span class="o">&gt;();</span>
+    <span class="o">...</span>
+  
+    <span class="c1">// GETTERS AND SETTERS</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>so calling </p>
+
+<div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="n">testClass</span><span class="o">);</span>
+</pre></div>
+
+<p>or</p>
+
+<div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">JavaCascadeDeleteTestClass</span> <span class="n">testClass</span> <span class="o">:</span> <span class="n">database</span><span class="o">.</span><span class="na">browseClass</span><span class="o">(</span><span class="n">JavaCascadeDeleteTestClass</span><span class="o">.</span><span class="na">class</span><span class="o">))</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="n">testClass</span><span class="o">);</span>
+</pre></div>
+
+<p>will also delete JavaSimpleTestClass instances contained in "simpleClass" field and all the other documents contained in "children","list" and "test"</p>
+
+<h4>Attaching and Detaching</h4>
+
+<p>Since version 1.1.0 the Object Database provides attach(Object) and detach(Object) methods to manually manage object to document data transfer.</p>
+
+<h5>Attach</h5>
+
+<p>With the attach method all data contained in the object will be copied in the associated document, overwriting all existing informations.</p>
+
+<div class="highlight"><pre>  <span class="n">Animal</span> <span class="n">animal</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">Animal</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="s">"Gaudi"</span> <span class="o">;</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">location</span> <span class="o">=</span> <span class="s">"Madrid"</span><span class="o">;</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">attach</span><span class="o">(</span><span class="n">animal</span><span class="o">);</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">animal</span><span class="o">);</span>
+</pre></div>
+
+<p>in this way all changes done within the object without using setters will 
+be copied to the document.</p>
+
+<p>There's also an attachAndSave(Object) methods that after attaching data saves the object.</p>
+
+<div class="highlight"><pre>  <span class="n">Animal</span> <span class="n">animal</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">Animal</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="s">"Gaudi"</span> <span class="o">;</span>
+  <span class="n">animal</span><span class="o">.</span><span class="na">location</span> <span class="o">=</span> <span class="s">"Madrid"</span><span class="o">;</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">attachAndSave</span><span class="o">(</span><span class="n">animal</span><span class="o">);</span>
+</pre></div>
+
+<p>This will do the same as the example before</p>
+
+<h5>Detach</h5>
+
+<p>With the detach method all data contained in the document will be copied in the associated object, overwriting all existing informations. The detach(Object) method returns a proxied object, if there's a need to get a non proxied detached instance the detach(Object,boolean) can be used.</p>
+
+<div class="highlight"><pre>  <span class="n">Animal</span> <span class="n">animal</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">load</span><span class="o">(</span><span class="n">rid</span><span class="o">);</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">detach</span><span class="o">(</span><span class="n">animal</span><span class="o">);</span>
+</pre></div>
+
+<p>this will copy all the loaded document information in the object, without needing to call all getters. This methods returns a proxied instance</p>
+
+<div class="highlight"><pre>  <span class="n">Animal</span> <span class="n">animal</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">load</span><span class="o">(</span><span class="n">rid</span><span class="o">);</span>
+  <span class="n">animal</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">detach</span><span class="o">(</span><span class="n">animal</span><span class="o">,</span><span class="kc">true</span><span class="o">);</span>
+</pre></div>
+
+<p>this example does the same as before but in this case the detach will return a non proxied instance.</p>
+
+<p>Since version 1.2 there's also the detachAll(Object, boolean) method that detaches recursively the entire object tree. This may throw a StackOverflowError with big trees. To avoid it increase the stack size with -Xss java option.
+The boolean parameter works the same as with the detach() method.</p>
+
+<div class="highlight"><pre>  <span class="n">Animal</span> <span class="n">animal</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">load</span><span class="o">(</span><span class="n">rid</span><span class="o">);</span>
+  <span class="n">animal</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">detachAll</span><span class="o">(</span><span class="n">animal</span><span class="o">,</span><span class="kc">true</span><span class="o">);</span>
+</pre></div>
+
+<h3>Execute a query</h3>
+
+<p>Orient supports two kinds of queries:</p>
+
+<ul>
+<li>Native</li>
+<li>SQL</li>
+</ul><h4>Native query</h4>
+
+<p>Native queries are written in Java code. They are pretty fast since the JVM compiles it as for the rest of application.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  List<span class="nt">&lt;ODocument&gt;</span> result = db.getUnderlying().command(
+    new ONativeSynchQuery<span class="nt">&lt;ODocument</span><span class="err">,</span> <span class="err">OQueryContextNativeSchema&lt;ODocument</span><span class="nt">&gt;</span>&gt;("Person",
+  						new OQueryContextNativeSchema<span class="nt">&lt;ODocument&gt;</span>()) {
+      @Override
+      public boolean filter(OQueryContextNativeSchema<span class="nt">&lt;ODocument&gt;</span> iRecord) {
+        return iRecord.field("city").field("name").eq("Rome").and().field("name").like("G%").go();
+      };
+    }).execute();
+</pre></div>
+
+<h4>SQL query</h4>
+
+<p>Although OrientDB is part of NoSQL databases, supports the SQL engine, or at least a subset of it with such extensions to work with objects and graphs.</p>
+
+<p>To know more about the SQL syntax supported go to: <a class="internal present" href="/wiki/SQL-Query.html">SQL-Query</a>.</p>
+
+<p>Example:</p>
+
+<div class="highlight"><pre>  List<span class="nt">&lt;Animal&gt;</span> result = db.query(
+    new OSQLSynchQuery<span class="nt">&lt;Animal&gt;</span>("select * from Animal where ID = 10 and name like 'G%'"));
+</pre></div>
+
+<h5>Right usage of the graph</h5>
+
+<p>OrientDB is a graph database. This means that traversing is very efficient. You can use this feature to optimize queries. A common technique is the <a class="internal present" href="/wiki/Pivoting-With-Query.html">Pivoting</a>.</p>
+
+<h5>SQL Commands</h5>
+
+<p>To execute SQL commands use the <code>command()</code> method passing a OCommandSQL object:</p>
+
+<div class="highlight"><pre>  <span class="kt">int</span> <span class="n">recordsUpdated</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">command</span><span class="o">(</span>
+    <span class="k">new</span> <span class="nf">OCommandSQL</span><span class="o">(</span><span class="s">"update Animal set sold = false"</span><span class="o">)).</span><span class="na">execute</span><span class="o">();</span>
+</pre></div>
+
+<p>See all the <a class="internal present" href="/wiki/SQL.html">SQL Commands</a>.</p>
+
+<h4>Get the ODocument from a POJO</h4>
+
+<p>The OObjectDatabase implementation has APIs to get a document from its referencing object:</p>
+
+<div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getRecordByUserObject</span><span class="o">(</span> <span class="n">animal</span> <span class="o">);</span>
+</pre></div>
+
+<p>In case of non-proxied objects the document will be a new generated one with all object field serialized in it.</p>
+
+<h4>Get the POJO from a Record</h4>
+
+<p>The Object Database can also create an Object from a record.</p>
+
+<div class="highlight"><pre>  <span class="n">Object</span> <span class="n">pojo</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getUserObjectByRecord</span><span class="o">(</span><span class="n">record</span><span class="o">);</span>
+</pre></div>
+
+<hr><h3>Old Implementation ODatabaseObjectTx</h3>
+
+<p>Until the release 1.0rc9 the Object Database was implemented as the class <code>com.orientechnologies.orient.db.object.ODatabaseObjectTx</code>. This class is deprecated, but if you want to continue to use it change the package to: <code>com.orientechnologies.orient.object.db</code>.</p>
+
+<h4>Introduction</h4>
+
+<p><strong>This implementation and documentation refers to all ODatabaseObjectXXX deprecated classes.</strong></p>
+
+<p>The Orient Object DB works on top of the <a class="internal present" href="/wiki/Document-Database.html">Document-Database</a> and it's able to treat Java objects without the use of pre-processor, byte enhancer or Proxy classes. It uses the simpler way: the Java Reflection. Please consider that the Java reflection in modern Java Virtual Machines is really fast and the discovering of Java meta data is made at first time. Future implementation could use the byte-code enhancement techniques in addition.</p>
+
+<p>Read more about the <a class="internal present" href="/wiki/Object-2-Record-Java-Binding.html">Binding between Java Objects and Records</a>.</p>
+
+<p>Quick example of usage:
+</p><div class="highlight"><pre>  <span class="c1">// OPEN THE DATABASE</span>
+  <span class="n">ODatabaseObjectTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseObjectTx</span> <span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">).</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="n">db</span><span class="o">.</span><span class="na">getEntityManager</span><span class="o">().</span><span class="na">registerEntityClasses</span><span class="o">(</span><span class="s">"foo.domain"</span><span class="o">);</span>
+  
+  <span class="c1">// CREATE A NEW ACCOUNT OBJECT AND FILL IT</span>
+  <span class="n">Account</span> <span class="n">account</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Account</span><span class="o">()</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span> <span class="s">"Luke"</span> <span class="o">);</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">setSurname</span><span class="o">(</span> <span class="s">"Skywalker"</span> <span class="o">);</span>
+  
+  <span class="n">City</span> <span class="n">rome</span> <span class="o">=</span> <span class="k">new</span> <span class="n">City</span><span class="o">(</span><span class="s">"Rome"</span><span class="o">,</span> <span class="k">new</span> <span class="n">Country</span><span class="o">(</span><span class="s">"Italy"</span><span class="o">));</span>
+  <span class="n">account</span><span class="o">.</span><span class="na">getAddresses</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">Address</span><span class="o">(</span><span class="s">"Residence"</span><span class="o">,</span> <span class="n">rome</span><span class="o">,</span> <span class="s">"Piazza Navona, 1"</span><span class="o">));</span>
+  
+  <span class="n">db</span><span class="o">.</span><span class="na">save</span><span class="o">(</span> <span class="n">account</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Connection Pool</h4>
+
+<p>One of most common use case is to reuse the database avoiding to create it every time. It's also the typical scenario of the Web applications.
+</p><div class="highlight"><pre>  <span class="c1">// OPEN THE DATABASE</span>
+  <span class="n">ODatabaseObjectTx</span> <span class="n">db</span><span class="o">=</span> <span class="n">ODatabaseObjectPool</span><span class="o">.</span><span class="na">global</span><span class="o">().</span><span class="na">acquire</span><span class="o">(</span><span class="s">"remote:localhost/petshop"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="o">...</span>
+  
+  <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+
+<p>The close() method doesn't close the database but release it to the owner pool. It could be reused in the future.</p>
+
+<h4>Inheritance</h4>
+
+<p>Starting from the release 0.9.19 OrientDB supports the <a class="internal present" href="/wiki/Inheritance.html">Inheritance</a>. Using the ObjectDatabase the inheritance of Documents fully matches the Java inheritance.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Account</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+  <span class="o">}</span>
+  
+  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Company</span> <span class="kd">extends</span> <span class="n">Account</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">employees</span><span class="o">;</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>When you save a Company object, OrientDB will save the object as unique Document in the cluster specified for Company class. When you search between all the Account instances with:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">account</span>
+</pre></div>
+
+<p>The search will find all the Account and Company documents that satisfy the query.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

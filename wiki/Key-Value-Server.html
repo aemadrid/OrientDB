@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Key Value Server |  OrientDB</title>
+  <title>Key Value Server</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Key-Value-Server">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Key Value Server
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p><img src="http://www.orientechnologies.com/images/orient_kv_small.png"></p>
+
+
+
+<h3>Introduction</h3>
+
+<p><img src="http://www.orientechnologies.com/images/orientkv-screenshoot-mid.png"></p>
+
+<p>Orient Key/Value Server (KV-Server from now) has been built on top of <a class="internal present" href="/wiki/Document-Database.html">Orient Document Database</a>. The KV-Server is a multi-thread Java application that listen commands on a TCP/IP socket at the port 2431. The port can be changed in the <a href="#Configuration">configuration</a> file.</p>
+
+<p>Orient KV-Server groups key/value pairs inside buckets. If you come from the Relational DBMS world and you'd like to know how to use a Key/Value paradigm in place of the classic Relational one, take a look to the <a class="internal present" href="/wiki/Key-Value-Example.html">"Bucket/Key/Value paradigm as replacement of the Relational DBMS"</a>.</p>
+
+<h4>Bucket</h4>
+
+<p>All the entries are grouped in Buckets. Buckets are containers of entries. Using different buckets you can separate logically your entries in seperate containers.</p>
+
+<h3>Cluster</h3>
+
+<p>Orient Key/Value Server scales out very well in a cluster with thousands of running machines: Orient will divide the load among all the nodes. Cluster, by default, works in auto-discovery mode: when a node starts it attaches itself to the cluster if any. When a node goes down the cluster auto rebalances itself.</p>
+
+<p><img src="http://www.orientechnologies.com/images/orientkv-cluster-ring.png"></p>
+
+<p><img src="http://www.orientechnologies.com/images/orientkv-cluster-work.png"></p>
+
+<p><img src="http://www.orientechnologies.com/images/orientkv-cluster-failover.png"></p>
+
+<p>Orient uses <a href="http://www.hazelcast.com">Hazelcast</a> to handle the partitioned cluster among nodes. In the partitioned version Orient delegates to Hazelcast all the management of the distributed Map. Hazelcast envolves the OrientDB engine in these conditions:</p>
+
+<ul>
+<li>When an entry is not found, it <b>searches</b> the key in the OrientDB.</li>
+<li>When a new entry is <b>created</b>, it saves the entry also in the OrientDB. The write is synchronous.</li>
+<li>When an entry is <b>updated</b>, it saves the entry also in the OrientDB. The write is synchronous.</li>
+<li>When an entry is <b>deleted</b>, it deletes the entry also in the OrientDB. The delete is synchronous.</li>
+</ul><h3>Start the server</h3>
+
+<h4>Start a single node server</h4>
+
+<p>Execute the script <code>bin/orient-kv.sh</code> (or <code>bin/orient-kv.bat</code> in MS Windows systems). If the port 2431 is busy the next one will be taken. By default the range is 2431-2440 but you can change it in <a href="#Single_machine_configuration">configuration</a>.</p>
+
+<h4>Start a clustered multi node server</h4>
+
+<p>Execute the script <code>bin/orient-kv-partition.sh</code> (or <code>bin/orient-kv-partition.bat</code> in MS Windows systems). If the port 2431 is busy the next one will be taken. By default the range is 2431-2440 but you can change it in <a href="#Multi-nodes_configuration">configuration</a>.</p>
+
+<p>During the start, the KV-Server searches for an available cluster using the configuration setted. If a cluster is found, then it attaches to it and the cluster network is re-configured to use the new server. If no one cluster is available, then a new network cluster is created with a single node until other nodes will attach to it.</p>
+
+<h3>Stop the server</h3>
+
+<p>CTRL+C or Soft kill of the process to be sure that the opened databases close softly.</p>
+
+<h3>Configuration</h3>
+
+<h4>Single machine configuration</h4>
+
+<p>This is the content of the default <b>config/orient-kv.config</b> file contained in the distribution:</p>
+
+<div class="highlight"><pre>  <span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span>
+  <span class="c">&lt;!-- Orient Key/Value Server configuration --&gt;</span>
+  <span class="nt">&lt;orient-server&gt;</span>
+  	<span class="nt">&lt;network&gt;</span>
+  		<span class="nt">&lt;protocols&gt;</span>
+              <span class="c">&lt;!-- Default registered protocol. It reads commands using the HTTP protocol and write data</span>
+<span class="c">                   locally --&gt;</span>
+  			<span class="nt">&lt;protocol</span> <span class="na">name=</span><span class="s">"http2local"</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.kv.network.protocol.http.local.ONetworkProtocolHttpKVLocal"</span> <span class="nt">/&gt;</span>
+  		<span class="nt">&lt;/protocols&gt;</span>
+  		<span class="nt">&lt;listeners&gt;</span>
+              <span class="c">&lt;!-- Default listener using the HTTP-2-LOCAL protocol bound to localhost, port 2431. If the port is busy</span>
+<span class="c">                   then it will try to acquire the next one up to the 2440. --&gt;</span>
+  			<span class="nt">&lt;listener</span> <span class="na">ip-address=</span><span class="s">"127.0.0.1"</span> <span class="na">port-range=</span><span class="s">"2431-2440"</span> <span class="na">protocol=</span><span class="s">"http2local"</span> <span class="nt">/&gt;</span>
+  		<span class="nt">&lt;/listeners&gt;</span>
+  	<span class="nt">&lt;/network&gt;</span>
+  	<span class="nt">&lt;storages&gt;</span>
+          <span class="c">&lt;!-- Default in-memory storage. Data are not saved permanently. --&gt;</span>
+          <span class="nt">&lt;storage</span> <span class="na">name=</span><span class="s">"temp"</span> <span class="na">path=</span><span class="s">"memory:temp"</span><span class="nt">/&gt;</span>
+  	<span class="nt">&lt;/storages&gt;</span>
+  	<span class="nt">&lt;properties&gt;</span>
+          <span class="c">&lt;!-- Set the asynchronous commit of the maps to the disk in persistent way. It the value is 0</span>
+<span class="c">               or this property is not defined, the map is written synchronously to the disk.</span>
+<span class="c">               If the value is major than 0 the maps will be written to disk every VALUE milliseconds --&gt;</span>
+          <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"asynch-commit-delay"</span> <span class="na">value=</span><span class="s">"5000"</span> <span class="nt">/&gt;</span>
+  	<span class="nt">&lt;/properties&gt;</span>
+  <span class="nt">&lt;/orient-server&gt;</span>
+</pre></div>
+
+<h4>Multi-nodes configuration</h4>
+
+<p>This is the content of the default <b>config/orient-kv-partition.config</b> file contained in the distribution:</p>
+
+<div class="highlight"><pre>  <span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span>
+  <span class="c">&lt;!-- Orient Key/Value Server configuration --&gt;</span>
+  <span class="nt">&lt;orient-server&gt;</span>
+      <span class="nt">&lt;handlers&gt;</span>
+        <span class="nt">&lt;handler</span> <span class="na">class=</span><span class="s">"com.orientechnologies.orient.kv.network.protocol.http.partitioned.OServerClusterMember"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/handlers&gt;</span>
+  	<span class="nt">&lt;network&gt;</span>
+  		<span class="nt">&lt;protocols&gt;</span>
+              <span class="c">&lt;!-- Default registered protocol. It reads commands using the HTTP protocol and write data</span>
+<span class="c">                   to the Hazelcast maps. Hazelcast will propagate changes among the nodes depending of Hazelcast</span>
+<span class="c">                   configuration (see hazelcast.xml file). Hazelcast then store clustered maps using the Orient</span>
+<span class="c">                   MapStore implementation. --&gt;</span>
+  			<span class="nt">&lt;protocol</span> <span class="na">name=</span><span class="s">"http2partitioned"</span> <span class="na">implementation=</span><span class="s">"com.orientechnologies.orient.kv.network.protocol.http.partitioned.ONetworkProtocolHttpKVPartitioned"</span> <span class="nt">/&gt;</span>
+  		<span class="nt">&lt;/protocols&gt;</span>
+  		<span class="nt">&lt;listeners&gt;</span>
+              <span class="c">&lt;!-- Default listener using the HTTP-2-PARTITIONED protocol bound to localhost, port 2431. If the port is busy</span>
+<span class="c">                   then it will try to acquire the next one up to the 2440. --&gt;</span>
+  			<span class="nt">&lt;listener</span> <span class="na">ip-address=</span><span class="s">"127.0.0.1"</span> <span class="na">port-range=</span><span class="s">"2431-2440"</span> <span class="na">protocol=</span><span class="s">"http2partitioned"</span> <span class="nt">/&gt;</span>
+  		<span class="nt">&lt;/listeners&gt;</span>
+  	<span class="nt">&lt;/network&gt;</span>
+  	<span class="nt">&lt;storages&gt;</span>
+          <span class="c">&lt;!-- Default in-memory storage. Data are not saved permanently. --&gt;</span>
+          <span class="nt">&lt;storage</span> <span class="na">name=</span><span class="s">"temp"</span> <span class="na">path=</span><span class="s">"memory:temp"</span><span class="nt">/&gt;</span>
+  	<span class="nt">&lt;/storages&gt;</span>	
+  	<span class="nt">&lt;properties&gt;</span>
+          <span class="c">&lt;!-- Set the asynchronous commit of the maps to the disk in persistent way. It the value is 0</span>
+<span class="c">               or this property is not defined, the map is written synchronously to the disk.</span>
+<span class="c">               If the value is major than 0 the maps will be written to disk every VALUE milliseconds --&gt;</span>
+          <span class="nt">&lt;entry</span> <span class="na">name=</span><span class="s">"asynch-commit-delay"</span> <span class="na">value=</span><span class="s">"5000"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/properties&gt;</span>
+  <span class="nt">&lt;/orient-server&gt;</span>
+</pre></div>
+
+<h4>Handlers</h4>
+
+<p>Handlers between the available ones:</p>
+
+<ul>
+<li>com.orientechnologies.orient.kv.network.protocol.http.partitioned.OServerClusterMember: manages the server in a cluster</li>
+</ul><h4>Protocols</h4>
+
+<p>Contains the list of protocols used by the <a href="#Listeners">listeners section</a>.
+The protocols supported today are:</p>
+
+<ul>
+<li>http2local: the default one for KV-Server</li>
+<li>http2partitioned: the distributed version for KV-Server</li>
+<li>binary: the raw binary protocol used by Orient DB Server</li>
+</ul><h4>Listeners</h4>
+
+<p>You can configure multiple listeners by adding items under the <code>&lt;listeners&gt;</code> tag and selecting the ip-address and TCP/IP port to bind. The protocol used must be listed in the <a href="#Protocols">protocols section</a>.</p>
+
+<h4>Storages</h4>
+
+<p>Contains the list of the configured storages. By default the petshop storage is added for testing purpose. You can use any envirnoment variable in the path such the ORIENT_HOME that points to the Orient installation path if defined otherwise to the root directory  where the KV Server starts.</p>
+
+<p>The create database command enlist a new storage in this section.</p>
+
+<h4>Cluster</h4>
+
+<p>The cluster configuration, instead, is located in the <b>config/hazelcast.xml</b> file. This is the default one:</p>
+
+<div class="highlight"><pre>  <span class="nt">&lt;hazelcast&gt;</span>
+  	<span class="nt">&lt;group&gt;</span>
+  		<span class="nt">&lt;name&gt;</span>orientkv<span class="nt">&lt;/name&gt;</span>
+  		<span class="nt">&lt;password&gt;</span>orient<span class="nt">&lt;/password&gt;</span>
+  	<span class="nt">&lt;/group&gt;</span>
+  	<span class="nt">&lt;network&gt;</span>
+  		<span class="nt">&lt;port</span> <span class="na">auto-increment=</span><span class="s">"true"</span><span class="nt">&gt;</span>5701<span class="nt">&lt;/port&gt;</span>
+  		<span class="nt">&lt;join&gt;</span>
+  			<span class="nt">&lt;multicast</span> <span class="na">enabled=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+  				<span class="nt">&lt;multicast-group&gt;</span>224.2.2.3<span class="nt">&lt;/multicast-group&gt;</span>
+  				<span class="nt">&lt;multicast-port&gt;</span>54327<span class="nt">&lt;/multicast-port&gt;</span>
+  			<span class="nt">&lt;/multicast&gt;</span>
+  			<span class="nt">&lt;tcp-ip</span> <span class="na">enabled=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+  				<span class="nt">&lt;interface&gt;</span>127.0.0.1<span class="nt">&lt;/interface&gt;</span>
+  			<span class="nt">&lt;/tcp-ip&gt;</span>
+  		<span class="nt">&lt;/join&gt;</span>
+  		<span class="nt">&lt;interfaces</span> <span class="na">enabled=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+  			<span class="nt">&lt;interface&gt;</span>127.0.0.1<span class="nt">&lt;/interface&gt;</span>
+  		<span class="nt">&lt;/interfaces&gt;</span>
+  		<span class="nt">&lt;symmetric-encryption</span> <span class="na">enabled=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+  			<span class="c">&lt;!--</span>
+<span class="c">  				encryption algorithm such as DES/ECB/PKCS5Padding, PBEWithMD5AndDES, AES/CBC/PKCS5Padding, Blowfish, DESede</span>
+<span class="c">  			--&gt;</span>
+  			<span class="nt">&lt;algorithm&gt;</span>PBEWithMD5AndDES<span class="nt">&lt;/algorithm&gt;</span>
+  			<span class="c">&lt;!-- salt value to use when generating the secret key --&gt;</span>
+  			<span class="nt">&lt;salt&gt;</span>thesalt<span class="nt">&lt;/salt&gt;</span>
+  			<span class="c">&lt;!-- pass phrase to use when generating the secret key --&gt;</span>
+  			<span class="nt">&lt;password&gt;</span>thepass<span class="nt">&lt;/password&gt;</span>
+  			<span class="c">&lt;!-- iteration count to use when generating the secret key --&gt;</span>
+  			<span class="nt">&lt;iteration-count&gt;</span>19<span class="nt">&lt;/iteration-count&gt;</span>
+  		<span class="nt">&lt;/symmetric-encryption&gt;</span>
+  		<span class="nt">&lt;asymmetric-encryption</span> <span class="na">enabled=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+  			<span class="c">&lt;!-- encryption algorithm --&gt;</span>
+  			<span class="nt">&lt;algorithm&gt;</span>RSA/NONE/PKCS1PADDING<span class="nt">&lt;/algorithm&gt;</span>
+  			<span class="c">&lt;!-- private key password --&gt;</span>
+  			<span class="nt">&lt;keyPassword&gt;</span>thekeypass<span class="nt">&lt;/keyPassword&gt;</span>
+  			<span class="c">&lt;!-- private key alias --&gt;</span>
+  			<span class="nt">&lt;keyAlias&gt;</span>local<span class="nt">&lt;/keyAlias&gt;</span>
+  			<span class="c">&lt;!-- key store type --&gt;</span>
+  			<span class="nt">&lt;storeType&gt;</span>JKS<span class="nt">&lt;/storeType&gt;</span>
+  			<span class="c">&lt;!-- key store password --&gt;</span>
+  			<span class="nt">&lt;storePassword&gt;</span>thestorepass<span class="nt">&lt;/storePassword&gt;</span>
+  			<span class="c">&lt;!-- path to the key store --&gt;</span>
+  			<span class="nt">&lt;storePath&gt;</span>keystore<span class="nt">&lt;/storePath&gt;</span>
+  		<span class="nt">&lt;/asymmetric-encryption&gt;</span>
+  	<span class="nt">&lt;/network&gt;</span>
+  	<span class="nt">&lt;executor-service&gt;</span>
+  		<span class="nt">&lt;core-pool-size&gt;</span>16<span class="nt">&lt;/core-pool-size&gt;</span>
+  		<span class="nt">&lt;max-pool-size&gt;</span>64<span class="nt">&lt;/max-pool-size&gt;</span>
+  		<span class="nt">&lt;keep-alive-seconds&gt;</span>60<span class="nt">&lt;/keep-alive-seconds&gt;</span>
+  	<span class="nt">&lt;/executor-service&gt;</span>
+  	<span class="nt">&lt;queue</span> <span class="na">name=</span><span class="s">"default"</span><span class="nt">&gt;</span>
+  		<span class="c">&lt;!--</span>
+<span class="c">  			Maximum size of the queue. When a JVM's local queue size reaches the maximum, all put/offer operations will get blocked until the</span>
+<span class="c">  			queue size of the JVM goes down below the maximum. Any integer between 0 and Integer.MAX_VALUE. 0 means Integer.MAX_VALUE.</span>
+<span class="c">  			Default is 0.</span>
+<span class="c">  		--&gt;</span>
+  		<span class="nt">&lt;max-size-per-jvm&gt;</span>10000<span class="nt">&lt;/max-size-per-jvm&gt;</span>
+  		<span class="c">&lt;!--</span>
+<span class="c">  			Maximum number of seconds for each item to stay in the queue. Items that are not consumed in &lt;time-to-live-seconds&gt; will</span>
+<span class="c">  			automatically get evicted from the queue. Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0.</span>
+<span class="c">  		--&gt;</span>
+  		<span class="nt">&lt;time-to-live-seconds&gt;</span>0<span class="nt">&lt;/time-to-live-seconds&gt;</span>
+  	<span class="nt">&lt;/queue&gt;</span>
+  	<span class="nt">&lt;map</span> <span class="na">name=</span><span class="s">"default"</span><span class="nt">&gt;</span>
+  		<span class="nt">&lt;map-store</span> <span class="na">enabled=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+  			<span class="c">&lt;!--</span>
+<span class="c">  				OrientDB implementation (www.orientechnologies.com). It's very fast, Open Source with Apache 2 license.</span>
+<span class="c">  			--&gt;</span>
+  			<span class="nt">&lt;class-name&gt;</span>com.orientechnologies.orient.kv.network.protocol.http.partitioned.OMapLoaderStore<span class="nt">&lt;/class-name&gt;</span>
+  			<span class="c">&lt;!--</span>
+<span class="c">  				Number of seconds to delay to call the MapStore.store(key, value). If the value is zero then it is write-through so</span>
+<span class="c">  				MapStore.store(key, value) will be called as soon as the entry is updated. Otherwise it is write-behind so updates will be</span>
+<span class="c">  				stored after write-delay-seconds value by calling Hazelcast.storeAll(map). Default value is 0.</span>
+<span class="c">  			--&gt;</span>
+  			<span class="nt">&lt;write-delay-seconds&gt;</span>0<span class="nt">&lt;/write-delay-seconds&gt;</span>
+  		<span class="nt">&lt;/map-store&gt;</span>
+  		<span class="c">&lt;!--</span>
+<span class="c">  			Number of backups. If 1 is set as the backup-count for example, then all entries of the map will be copied to another JVM for</span>
+<span class="c">  			fail-safety. Valid numbers are 0 (no backup), 1, 2, 3.</span>
+<span class="c">  		--&gt;</span>
+  		<span class="nt">&lt;backup-count&gt;</span>1<span class="nt">&lt;/backup-count&gt;</span>
+  		<span class="c">&lt;!--</span>
+<span class="c">  			Valid values are: NONE (no eviction), LRU (Least Recently Used), LFU (Least Frequently Used). NONE is the default.</span>
+<span class="c">  		--&gt;</span>
+  		<span class="nt">&lt;eviction-policy&gt;</span>LRU<span class="nt">&lt;/eviction-policy&gt;</span>
+  		<span class="c">&lt;!--</span>
+<span class="c">  			Maximum size of the map. When max size is reached, map is evicted based on the policy defined. Any integer between 0 and</span>
+<span class="c">  			Integer.MAX_VALUE. 0 means Integer.MAX_VALUE. Default is 0.</span>
+<span class="c">  		--&gt;</span>
+  		<span class="nt">&lt;max-size&gt;</span>5000<span class="nt">&lt;/max-size&gt;</span>
+  		<span class="c">&lt;!--</span>
+<span class="c">  			When max. size is reached, specified percentage of the map will be evicted. Any integer between 0 and 100. If 25 is set for</span>
+<span class="c">  			example, 25% of the entries will get evicted.</span>
+<span class="c">  		--&gt;</span>
+  		<span class="nt">&lt;eviction-percentage&gt;</span>25<span class="nt">&lt;/eviction-percentage&gt;</span>
+  	<span class="nt">&lt;/map&gt;</span>
+  <span class="nt">&lt;/hazelcast&gt;</span>
+</pre></div>
+
+<p>For more information visit the <a href="http://www.hazelcast.com/documentation.jsp#Config">Hazelcast page</a>.</p>
+
+<h3>Try it</h3>
+
+<p><a href="http://moobilis.com:2431">Online demo</a></p>
+
+<h3>Download and install it</h3>
+
+<p><a href="http://code.google.com/p/orient/downloads/list?can=2&amp;q=kv+latest">Download latest</a> and <a class="internal present" href="/wiki/Key-Value-Server-Install.html">install it</a>.</p>
+
+<h3>Benchmarks</h3>
+
+<p><a class="internal present" href="/wiki/Key-Value-Benchmarks.html">Benchmarks</a>.</p>
+
+<h3>Roadmap</h3>
+
+<p><a href="http://code.google.com/p/orient/issues/list?can=2&amp;q=kv&amp;colspec=ID+Type+Status+Priority+Milestone+Owner+Summary&amp;cells=tiles">Roadmap</a>.</p>
+
+<h3>History</h3>
+
+<p><a href="http://code.google.com/p/orient/source/browse/trunk/history-kv.txt">Change history</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

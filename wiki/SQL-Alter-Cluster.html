@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>SQL Alter Cluster |  OrientDB</title>
+  <title>SQL Alter Cluster</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_SQL-Alter-Cluster">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        SQL Alter Cluster
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/SQL.html" class="nr1">Sql</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>The <strong>SQL Alter Cluster</strong> command update a cluster.</p>
+
+<h3>Syntax</h3>
+
+<div class="highlight"><pre><span class="n">ALTER</span> <span class="n">CLUSTER</span> <span class="o">&lt;</span><span class="n">cluster</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;|&lt;</span><span class="n">cluster</span><span class="o">-</span><span class="n">id</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">attribute</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">attribute</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span>
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>cluster-name</strong> name of the cluster to modify</li>
+<li>
+<strong>cluster-id</strong> id of the cluster to modify</li>
+<li>
+<strong>attribute-name</strong> between those supported:</li>
+<li>
+<strong>NAME</strong> cluster's name</li>
+<li>
+<strong>DATASEGMENT</strong> <a class="internal present" href="/wiki/Concepts.html#data_segment">data-segment</a> to use for this cluster</li>
+<li>
+<strong>attribute-value</strong> attribute's value to set</li>
+</ul><h3>Examples</h3>
+
+<div class="highlight"><pre>  <span class="n">ALTER</span> <span class="n">CLUSTER</span> <span class="n">profile</span> <span class="n">NAME</span> <span class="n">profile2</span>
+</pre></div>
+
+<div class="highlight"><pre>  <span class="n">ALTER</span> <span class="n">CLUSTER</span> <span class="mi">9</span> <span class="n">NAME</span> <span class="n">profile2</span>
+</pre></div>
+
+<p>To know more about other SQL commands look at <a class="internal present" href="/wiki/SQL.html">SQL commands</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Replication |  OrientDB</title>
+  <title>Replication</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Replication">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Replication
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Distributed-Architecture.html" class="nr1">Distributed Architecture</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB supports the <a href="http://en.wikipedia.org/wiki/Multi-master_replication">Multi Master replication</a>. This means that all the nodes in the cluster are Master and are able to read and write to the database. This allows to scale up horizontally without bottlenecks like most of any other RDBMS and NoSQL solution do.</p>
+
+<p>Replication works only in the <a class="internal present" href="/wiki/Distributed-Architecture.html">Distributed-Architecture</a> and is subject to <a class="internal present" href="/wiki/Distributed-Routing.html">Distributed-Routing</a> in the cluster.</p>
+
+<h3>How does it work?</h3>
+
+<h4>Operation Log</h4>
+
+<p>In distributed configuration each Server Node maintains own <strong>Operation Log</strong> by writing all the non idempotent operations that modify the database. Log is written before to apply changes to the database.</p>
+
+<p><img src="http://www.orientdb.org/images/replication-log.png"></p>
+
+<h4>Synchronous mode</h4>
+
+<p>Guarantees two databases are always consistent. It's more expensive than asynchronous because the First Server waits for the Second Server's answer before to send back the ACK to the client. After ACK the Client is secure the data is placed in multiple nodes at the same time.</p>
+
+<p><img src="http://www.orientdb.org/images/replication-synch.png"></p>
+
+<h5>Flow</h5>
+
+<p><img src="http://www.orientdb.org/images/replication-synch-flow.png"></p>
+
+<h4>Asynchronous mode</h4>
+
+<p>Changes are propagated without waiting for the answer. Two databases could be not consistent in the range of few ms. For this reason it's called “Eventually Consistent”. It's much less expensive than synchronous replication.</p>
+
+<p><img src="http://www.orientdb.org/images/replication-asynch.png"></p>
+
+<h5>Flow</h5>
+
+<p>Operations from <strong>5a</strong> to <strong>7a</strong> are executed in parallel with <strong>5b</strong> avoiding the latency cost of synchronous mode.</p>
+
+<p><img src="http://www.orientdb.org/images/replication-asynch-flow.png"></p>
+
+<h4>Alignment of nodes</h4>
+
+<p>Alignment is done automatic when a Server Node joins the cluster by comparing the last operation-id in the Server’s log files.</p>
+
+<p><img src="http://www.orientdb.org/images/alignment.png"></p>
+
+<h5>Request</h5>
+
+<p>When the Server #3 joins the cluster, it sends an alignment request specifying last operation id in log. Each Server Node will send the newer operations in turn.</p>
+
+<p><img src="http://www.orientdb.org/images/alignment-request.png"></p>
+
+<h5>Orchestration</h5>
+
+<p>Server #1 acquires the distributed lock “align.DB-1” and start to send the delta. Once finished the lock is removed and the end alignment message is sent.</p>
+
+<p><img src="http://www.orientdb.org/images/alignment-orchestration.png"></p>
+
+<h5>End</h5>
+
+<p>Server #1 releases the distributed lock “align.DB-1” and sends back the Alignment Response.</p>
+
+<p><img src="http://www.orientdb.org/images/alignment-ends.png"></p>
+
+<h5>Continues with other nodes</h5>
+
+<p>Server #3 sends a new alignment request against Server #2 with the new operation-id 92:999 but the Server #2 has no new operations, so returns 0 operations aligned.</p>
+
+<p><img src="http://www.orientdb.org/images/alignment-continues.png"></p>
+
+<h5>Completed</h5>
+
+<p>All the Server Nodes are perfectly aligned to the last operation id.</p>
+
+<p><img src="http://www.orientdb.org/images/alignment-done.png"></p>
+
+<h3>Further readings</h3>
+
+<p>Continue with:</p>
+
+<ul>
+<li><a class="internal present" href="/wiki/Distributed-Architecture.html">Distributed-Architecture</a></li>
+<li>
+<a class="internal present" href="/wiki/Distributed-Routing.html">Distributed-Routing</a> in the cluster</li>
+<li><a class="internal present" href="/wiki/Distributed-Configuration.html">Distributed database configuration</a></li>
+</ul>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

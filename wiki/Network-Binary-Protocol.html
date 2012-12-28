@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Network Binary Protocol |  OrientDB</title>
+  <title>Network Binary Protocol</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Network-Binary-Protocol">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Network Binary Protocol
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/DB-Server.html" class="nr1">Db Server</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Current protocol version for 1.0-SNAPSHOT: <strong>12</strong>. Look at <a href="#Compatibility">compatibility</a> for retro-compatibility.</p>
+
+
+
+<h3>Introduction</h3>
+
+<p>The OrientDB binary protocol is the fastest way to interface a client application to an OrientDB Server instance. The aim of this page is to provide a starting point from which to build a language binding, maintaining high-performance.</p>
+
+<p>If you'd like to develop a new binding, please take a look to the available ones before starting a new project from scratch</p>
+
+<ul>
+<li>
+<strong><a href="https://github.com/tglman/orientdb-c">C Language binding</a></strong> compatible with C++ and other languages that support C calls,</li>
+<li>
+<strong><a href="https://github.com/AntonTerekhov/OrientDB-PHP">OrientDB-PHP</a></strong> binary protocol,</li>
+<li>Ruby, publicly available soon</li>
+</ul><p>Also, check the available <a href="OrientDB_REST">REST implementations</a>.</p>
+
+<p>Before starting, please note that:</p>
+
+<ul>
+<li>
+<strong><a class="internal present" href="/wiki/Concepts.html#record">Record</a></strong> is an abstraction of <strong><a class="internal present" href="/wiki/Concepts.html#document">Document</a></strong>. However, keep in mind that in OrientDB you can handle structures at a lower level than Documents. These include positional records, raw strings, raw bytes, etc. Look at <a class="internal present" href="/wiki/Concepts.html#record_types">Record</a> for more information.</li>
+</ul><p>For more in-depth information please look at the Java classes:</p>
+
+<ul>
+<li>Client side: <a href="http://code.google.com/p/orient/source/browse/trunk/client/src/main/java/com/orientechnologies/orient/client/remote/OStorageRemote.java">OStorageRemote.java</a>
+</li>
+<li>Server side: <a href="http://code.google.com/p/orient/source/browse/trunk/server/src/main/java/com/orientechnologies/orient/server/network/protocol/binary/ONetworkProtocolBinary.java">ONetworkProtocolBinary.java</a>
+</li>
+<li>Protocol constants: <a href="http://code.google.com/p/orient/source/browse/trunk/enterprise/src/main/java/com/orientechnologies/orient/enterprise/channel/binary/OChannelBinaryProtocol.java">OChannelBinaryProtocol.java</a>
+</li>
+</ul><h4>Connection</h4>
+
+<p><em>(Since 0.9.24-SNAPSHOT Nov 25th 2010)</em> Once connected, the server sends a short number (2 byte) containing the binary protocol number. The client should check that it supports that version of the protocol. Every time the protocol changes the version is incremented.</p>
+
+<h4>Getting started</h4>
+
+<p>After the connection has been established, a client can <a href="#CONNECT">Connect</a> to the server or request the opening of a database <a href="#DB_OPEN">Database Open</a>. Currently, only TCP/IP raw sockets are supported. For this operation use socket APIs appropriate to the language you're using. After the <a href="#CONNECT">Connect</a> and <a href="#DB_OPEN">Database Open</a> all the client's requests are sent to the server until the client closes the socket. When the socket is closed, OrientDB Server instance frees resources the used for the connection.</p>
+
+<p>The first operation following the socket-level connection must be one of:</p>
+
+<ul>
+<li>
+<a href="#CONNECT">Connect to the server</a> to work with the OrientDB Server instance</li>
+<li>
+<a href="#DB_OPEN">Database Open</a> to open an existing database</li>
+</ul><p>In both cases a <a href="#Session-Id">Session-Id</a> is sent back to the client. The server assigns a unique Session-Id to the client. This value must be used for all further operations against the server. </p>
+
+<h4>Session-Id</h4>
+
+<p>All the operations that follow the open/connect must contain, as the first parameter, the client <strong>Session-Id</strong> (as Integer, 4 bytes) and it will be sent back on completion of the request just after the result field.</p>
+
+<p><em>NOTE: In order to create a new server-side connection, the client must send a negative number into the open/connect calls.</em></p>
+
+<p>This <strong>Session-Id</strong> can be used into the client to keep track of the requests if it handles multiple session bound to the same connection. In this way the client can implement a sharing policy to save resources. This requires that the client implementation handle the response returned and dispatch it to the correct caller thread.</p>
+
+<h3>Enable debug messages on protocol</h3>
+
+<p>To make the development of a new client easier it's strongly suggested to activate debug mode on the binary channel. To activate this, edit the file orientdb-server-config.xml and configure the new parameter "network.binary.debug" on the "binary" or "distributed" listener. E.g.:</p>
+
+<div class="highlight"><pre>    <span class="o">...</span>
+    <span class="o">&lt;</span><span class="n">listener</span> <span class="n">protocol</span><span class="o">=</span><span class="s">"distributed"</span> <span class="n">port</span><span class="o">-</span><span class="n">range</span><span class="o">=</span><span class="s">"2424-2430"</span>
+              <span class="n">ip</span><span class="o">-</span><span class="n">address</span><span class="o">=</span><span class="s">"127.0.0.1"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">parameters</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">parameter</span> <span class="n">name</span><span class="o">=</span><span class="s">"network.binary.debug"</span> <span class="n">value</span><span class="o">=</span><span class="s">"true"</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;/</span><span class="n">parameters</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">listener</span><span class="o">&gt;</span>
+    <span class="o">...</span>
+</pre></div>
+
+<p>In the log file (or the console if you have configured the orientdb-server-log.properties file)
+all the packets received will be printed.</p>
+
+<h3>Exchange</h3>
+
+<p>This is the typical exchange of messages between client and server sides:
+</p><div class="highlight"><pre>  <span class="o">+------+</span>                    <span class="o">+------+</span>
+  <span class="o">|</span><span class="n">Client</span><span class="o">|</span>                    <span class="o">|</span><span class="n">Server</span><span class="o">|</span>
+  <span class="o">+------+</span>                    <span class="o">+------+</span>
+     <span class="o">|</span> <span class="n">TCP</span><span class="o">/</span><span class="n">IP</span> <span class="n">Socket</span> <span class="n">connection</span>  <span class="o">|</span>
+     <span class="o">+--------------------------&gt;|</span>
+     <span class="o">|</span> <span class="n">DB_OPEN</span>                   <span class="o">|</span>
+     <span class="o">+--------------------------&gt;|</span>
+     <span class="o">|</span>  <span class="n">RESPONSE</span> <span class="o">(+</span> <span class="n">SESSION</span><span class="o">-</span><span class="n">ID</span><span class="o">)</span>  <span class="o">|</span>
+     <span class="o">+&lt;--------------------------+</span>
+    <span class="o">...</span>                         <span class="o">...</span>
+     <span class="o">|</span> <span class="n">REQUEST</span> <span class="o">(+</span> <span class="n">SESSION</span><span class="o">-</span><span class="n">ID</span><span class="o">)</span>    <span class="o">|</span>
+     <span class="o">+--------------------------&gt;|</span>
+     <span class="o">|</span>  <span class="n">RESPONSE</span> <span class="o">(+</span> <span class="n">SESSION</span><span class="o">-</span><span class="n">ID</span><span class="o">)</span>  <span class="o">|</span>
+     <span class="o">+&lt;--------------------------+</span>
+    <span class="o">...</span>                         <span class="o">...</span>
+     <span class="o">|</span> <span class="n">DB_CLOSE</span> <span class="o">(+</span> <span class="n">SESSION</span><span class="o">-</span><span class="n">ID</span><span class="o">)</span>   <span class="o">|</span>
+     <span class="o">+--------------------------&gt;|</span>
+     <span class="o">|</span> <span class="n">TCP</span><span class="o">/</span><span class="n">IP</span> <span class="n">Socket</span> <span class="n">close</span>       <span class="o">|</span>
+     <span class="o">+--------------------------&gt;|</span>
+</pre></div>
+
+<h3>Network message format</h3>
+
+<p>In explaining the network messages these conventions will be used:</p>
+
+<ul>
+<li>fields are bracketed by parenthesis and contain the name and the type separated by ':'. E.g. <code>(length:int)</code>
+</li>
+</ul><h3>Supported types</h3>
+
+<p>The network protocol supports different types of information:</p>
+
+<table><tbody>
+<tr>
+<th>Type</th>
+<th>Minimum length in bytes</th>
+<th>Maximum length in bytes</th>
+<th>Notes</th>
+<th>Example</th>
+</tr>
+<tr>
+<th>boolean</th>
+<td>1</td>
+<td>1</td>
+<td>Single byte: 1 = true, 0 = false</td>
+<td>1</td>
+</tr>
+<tr>
+<th>byte</th>
+<td>1</td>
+<td>1</td>
+<td>Single byte, used to store small numbers and booleans</td>
+<td>1</td>
+</tr>
+<tr>
+<th>short</th>
+<td>2</td>
+<td>2</td>
+<td>Signed short type</td>
+<td>01</td>
+</tr>
+<tr>
+<th>int</th>
+<td>4</td>
+<td>4</td>
+<td>Signed integer type</td>
+<td>0001</td>
+</tr>
+<tr>
+<th>long</th>
+<td>8</td>
+<td>8</td>
+<td>Signed long type</td>
+<td>00000001</td>
+</tr>
+<tr>
+<th>bytes</th>
+<td>4</td>
+<td>N</td>
+<td>Used for binary data. The format is <code>(length:int)[bytes)]((content:&lt;length&gt;)</code>. Send -1 as NULL</td>
+<td><code>000511111</code></td>
+</tr>
+<tr>
+<th>string</th>
+<td>4</td>
+<td>N</td>
+<td>Used for text messages.The format is: <code>(length:int)[bytes)]((content:&lt;length&gt;)</code>. Send -1 as NULL</td>
+<td><code>0005Hello</code></td>
+</tr>
+<tr>
+<th>record</th>
+<td>2</td>
+<td>N</td>
+<td>An entire record serialized. The format depends if a RID is passed or an entire record with its content. In case of null record then -2 as short is passed. In case of RID -3 is passes as short and then the RID: <code>(-3:short)(cluster-id:short)(cluster-position:long)</code>. In case of record: <code>(0:short)(record-type:byte)(cluster-id:short)(cluster-position:long)(record-version:int)(record-content:bytes)</code>
+</td>
+<td></td>
+</tr>
+</tbody></table>
+|| **strings** ||4||N||Used for multiple text messages. The format is: {{{(length:int)[# Record format
+
+Documents are exchanged with the server component in a proprietary format (as a string) derived from JSON, but more compact. The string retrieved from the storage could be filled with spaces. This is due to the oversize feature if it is set. Just ignore the tailing spaces.
+
+To know more about types look at [http://code.google.com/p/orient/wiki/Types Supported types]((Nth-string:string)]}}}||<code>00020005Hello0007World!</code>||).
+
+These are the rules:
+- Any string content must escape some characters:
+- <code>" -&gt; \"</code>
+- <code>\ -&gt; \\</code>
+- The **class**, if present, is at the begin and must end with <code>@</code>. E.g. <code>Customer@</code>
+- Each **Field** must be present with its name and value separated by <code>:</code>. E.g.<code>name:"Barack"</code>
+- **Fields** must be separated by <code>,</code>. E.g. <code>name:"Barack",surname:"Obama"</code>
+- All **Strings** must be enclosed by <code>"</code> character. E.g. <code>city:"Rome"</code>
+- All **Binary** content (like byte[must be encoded in Base64 and enclosed by underscore <code>_</code> character. E.g. <code>buffer:_AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGx_</code>. Since v1.0rc7
+- *Numbers* (integer, long, short, byte, floats, double) are formatted as strings as ouput by the Java toString() method. No thousands separator must be used. The decimal separator is always <code>.</code> Starting from version 0.9.25, if the type is not integer, a suffix is used to distinguish the right type when unmarshalled: b=byte, s=short, l=long, f=float, d=double, c=BigDecimal (since 1.0rc8). E.g. <code>salary:120.3f</code> or <code>code:124b</code>.
+- Output of [http://docs.oracle.com/javase/6/docs/api/java/lang/Float.html#toString(float) Floats](]))
+- Output of [Doubles](http://docs.oracle.com/javase/6/docs/api/java/lang/Double.html#toString(double))
+- Output of [BigDecimal](http://docs.oracle.com/javase/6/docs/api/java/math/BigDecimal.html#toPlainString())
+
+- **Booleans** are expressed as <code>true</code> and <code>false</code> always in lower-case. They are recognized as boolean since the text has no double quote as is the case with strings
+- **Dates** must be in the POSIX format (also called UNIX format: http://en.wikipedia.org/wiki/Unix_time). Are always stored as longs but end with:
+- the 't' character when it's DATETIME type (default in schema-less mode when a Date object is used). Datetime handles the maximum precision up to milliseconds. E.g. <code>lastUpdate:1296279468000t</code> is read as 2011-01-29 05:37:48
+- the 'a' character when it's DATE type. Date handles up to day as precision. E.g. <code>lastUpdate:1306281600000a</code> is read as 2011-05-25 00:00:00 (Available since 1.0rc2)
+- **<a class="internal present" href="/wiki/Concepts.html#recordid">Record Id</a>** (link) must be prefixed by <code>#</code>. A Record Id always has the format <code>&lt;cluster-id&gt;:&lt;cluster-position&gt;</code>. E.g. <code>location:#3:2</code>
+- **Embedded** documents are enclosed by parenthesis <code>(</code> and <code>)</code> characters. E.g. <code>(name:"rules")</code>. *Note: before SVN revision 2007 (0.9.24-snapshot) only <code>*</code> characters were used to begin and end the embedded document.*
+- **Collections** (array, list and sets) must be enclosed by <code>[and <code>](</code>)</code> characters. E.g.<code>[<code>[#10:3,#10:4](1,2,3]</code>,)</code> and <code>[There is a special case when use LINKSET type reported in detail in [#Special_use_of_LINKSET_types Special use of LINKSET types]((name:"Luca")]</code>.) section.
+- **Maps** (as a collection of entries with key/value) must be enclosed in <code>{</code> and <code></code>} characters. E.g. <code>rules:{"database":2,"database.cluster.internal":2</code>} (NB. to set a value part of a key/value pair, set it to the text "null", without quotation marks. Eg. <code>rules:{"database_name":"fred","database_alias":null</code>})
+- **Null** fields have an empty value part of the field. E.g. <code>salary_cloned:,salary:</code>
+
+{{{[Simple example (line breaks introduced so it's visible on this page):
+<div class="highlight"><pre>  <span class="n">Profile</span><span class="nd">@nick</span><span class="o">:</span><span class="s">"ThePresident"</span><span class="o">,</span><span class="nl">follows:</span><span class="o">[],</span><span class="nl">followers:</span><span class="o">[</span><span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">5</span><span class="o">,</span><span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">6</span><span class="o">],</span><span class="nl">name:</span><span class="s">"Barack"</span><span class="o">,</span><span class="nl">surname:</span><span class="s">"Obama"</span><span class="o">,</span>
+  <span class="nl">location:</span><span class="err">#</span><span class="mi">3</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span><span class="nl">invitedBy:</span><span class="o">,</span><span class="nl">salary_cloned:</span><span class="o">,</span><span class="nl">salary:</span><span class="mf">120.3f</span>
+</pre></div>
+
+Complex example used in schema (line breaks introduced so it's visible on this page):
+<div class="highlight"><pre>  <span class="nl">name:</span><span class="s">"ORole"</span><span class="o">,</span><span class="nl">id:</span><span class="mi">0</span><span class="o">,</span><span class="nl">defaultClusterId:</span><span class="mi">3</span><span class="o">,</span><span class="nl">clusterIds:</span><span class="o">[</span><span class="mi">3</span><span class="o">],</span><span class="nl">properties:</span><span class="o">[(</span><span class="nl">name:</span><span class="s">"mode"</span><span class="o">,</span><span class="nl">type:</span><span class="mi">17</span><span class="o">,</span><span class="nl">offset:</span><span class="mi">0</span><span class="o">,</span>
+  <span class="nl">mandatory:</span><span class="kc">false</span><span class="o">,</span><span class="nl">notNull:</span><span class="kc">false</span><span class="o">,</span><span class="nl">min:</span><span class="o">,</span><span class="nl">max:</span><span class="o">,</span><span class="nl">linkedClass:</span><span class="o">,</span>
+  <span class="nl">linkedType:</span><span class="o">,</span><span class="nl">index:</span><span class="o">),(</span><span class="nl">name:</span><span class="s">"rules"</span><span class="o">,</span><span class="nl">type:</span><span class="mi">12</span><span class="o">,</span><span class="nl">offset:</span><span class="mi">1</span><span class="o">,</span><span class="nl">mandatory:</span><span class="kc">false</span><span class="o">,</span><span class="nl">notNull:</span><span class="kc">false</span><span class="o">,</span><span class="nl">min:</span><span class="o">,</span>
+  <span class="nl">max:</span><span class="o">,</span><span class="nl">linkedClass:</span><span class="o">,</span><span class="nl">linkedType:</span><span class="mi">17</span><span class="o">,</span><span class="nl">index:</span><span class="o">)]</span>
+</pre></div>
+
+Other example of ORole that uses a map (line breaks introduced so it's visible on this page):
+<div class="highlight"><pre>  <span class="n">ORole</span><span class="nd">@name</span><span class="o">:</span><span class="s">"reader"</span><span class="o">,</span><span class="nl">inheritedRole:</span><span class="o">,</span><span class="nl">mode:</span><span class="mi">0</span><span class="o">,</span><span class="nl">rules:</span><span class="o">{</span><span class="s">"database"</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span><span class="s">"database.cluster.internal"</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span><span class="s">"database.cluster.orole"</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span><span class="s">"database.cluster.ouser"</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span>
+  <span class="s">"database.class.*"</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span><span class="s">"database.cluster.*"</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span><span class="s">"database.query"</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span><span class="s">"database.command"</span><span class="o">:</span><span class="mi">2</span><span class="o">,</span>
+  <span class="s">"database.hook.record"</span><span class="o">:</span><span class="mi">2</span><span class="o">}</span>
+</pre></div>
+
+# Request
+
+Each request has own format depending of the operation requested. The operation requested is indicated in the first byte:
+- *1 byte* for the operation. See [#Operation_types Operation types](@][,][:]*}}}) for the list
+- **4 bytes** for the [Session-Id](#Session-Id) number as Integer
+- **N bytes** = message content based on the operation type
+## Operation types
+
+<table>
+<tr>
+<th>Command</th>
+<th>Value as byte</th>
+<td>**Require authentication?**</td>
+<th>Description</th>
+<td>Can asynchronous? (no response)</td>
+<td>Since</td>
+</tr>
+<tr>
+<td>SHUTDOWN</td>
+<td>1</td>
+<td>Server (CONNECT operation)</td>
+<td>Shut down the server</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>CONNECT</td>
+<td>2</td>
+<td></td>
+<td>First operation to access to server commands</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DB_OPEN</td>
+<td>3</td>
+<td></td>
+<td>First operation to access to the database</td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DB_CREATE</td>
+<td>4</td>
+<td>Server (CONNECT operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DB_CLOSE</td>
+<td>5</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DB_EXIST</td>
+<td>6</td>
+<td>Server (CONNECT operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DB_DELETE</td>
+<td>7</td>
+<td>Server (CONNECT operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DB_SIZE</td>
+<td>8</td>
+<td>Database (DB_OPEN operation)</td>
+<td>Returns the database size in bytes</td>
+<td>no</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td>DB_COUNTRECORDS</td>
+<td>9</td>
+<td>Database (DB_OPEN operation)</td>
+<td>Returns the total number of records in the database</td>
+<td>no</td>
+<td>0.9.25</td>
+</tr>
+<tr>
+<td>DATACLUSTER_ADD</td>
+<td>10</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DATACLUSTER_REMOVE</td>
+<td>11</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DATACLUSTER_COUNT</td>
+<td>12</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DATACLUSTER_DATARANGE</td>
+<td>13</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DATASEGMENT_ADD</td>
+<td>20</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DATASEGMENT_REMOVE</td>
+<td>21</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>RECORD_LOAD</td>
+<td>30</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>RECORD_CREATE</td>
+<td>31</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td>RECORD_UPDATE</td>
+<td>32</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td>RECORD_DELETE</td>
+<td>33</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td>COUNT</td>
+<td>40</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>COMMAND</td>
+<td>41</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>TX_COMMIT</td>
+<td>60</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>CONFIG_GET</td>
+<td>70</td>
+<td>Server (CONNECT operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>CONFIG_SET</td>
+<td>71</td>
+<td>Server (CONNECT operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>CONFIG_LIST</td>
+<td>72</td>
+<td>Server (CONNECT operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>DB_RELOAD</td>
+<td>73</td>
+<td>Database (DB_OPEN operation)</td>
+<td></td>
+<td>no</td>
+<td></td>
+</tr>
+</table><h3>Response</h3>
+
+<p>Every request has a response unless the command supports the asynchronous mode (look at the table above).</p>
+
+<ul>
+<li>
+<strong>1 byte</strong>: Success status of the request if succeeded or failed (0=OK, 1=ERROR)</li>
+<li>
+<strong>4 bytes</strong>: <a href="#Session-Id">Session-Id</a> (Integer)</li>
+<li>
+<strong>N bytes</strong>: Message content depending on the operation requested</li>
+</ul><h4>Statuses</h4>
+
+<p>Every time the client sends a request, and the command is not in asynchronous mode (look at the table above), client must read the one-byte response status that indicates OK or ERROR. The rest of response bytes depends on this first byte.
+</p><div class="highlight"><pre>   <span class="o">*</span> <span class="n">OK</span>                     <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+   <span class="o">*</span> <span class="n">ERROR</span>                  <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+</pre></div>
+
+<p><strong>OK response bytes are depends for every request type. ERROR response bytes sequence described below.</strong></p>
+
+<h4>Errors</h4>
+
+<p>The format is: <code>[The pairs {{{exception-class</code> and <code>exception-message</code> continue while the following byte is 1. A 0 in this position indicates that no more data follows.</p>
+
+<p>E.g. (parentheses are used here just to separate fields to make this easier to read: they are not present in the server response):
+</p><div class="highlight"><pre>  <span class="o">(</span><span class="mi">1</span><span class="o">)(</span><span class="n">com</span><span class="o">.</span><span class="na">orientechnologies</span><span class="o">.</span><span class="na">orient</span><span class="o">.</span><span class="na">core</span><span class="o">.</span><span class="na">exception</span><span class="o">.</span><span class="na">OStorageException</span><span class="o">)(</span><span class="n">Can</span><span class="err">'</span><span class="n">t</span> <span class="n">open</span> <span class="n">the</span> <span class="n">storage</span> <span class="err">'</span><span class="n">demo</span><span class="err">'</span><span class="o">)(</span><span class="mi">0</span><span class="o">)</span>
+</pre></div>
+
+<p>Example of 2 depth-levels exception:
+d32d0e78292ee88fa0dfad13c5617836</p>
+
+<h3>Operations</h3>
+
+<p>This section explains the <em>request</em> and <em>response</em> messages of all suported operations.</p>
+
+<h4>SHUTDOWN</h4>
+
+<p>Shut down the server. Requires "shutdown" permission to be set in <em>orientdb-server-config.xml</em> file.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">user</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">user</span><span class="o">-</span><span class="nl">password:</span><span class="n">string</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="n">empty</span>
+</pre></div>
+Typically the credentials are those of the OrientDB server administrator. This is not the same as the <em>admin</em> user for individual databases.
+
+<h4>CONNECT</h4>
+
+<p>This is the first operation requested by the client when it needs to work with the server instance. It returns the session id of the client.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">driver</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">driver</span><span class="o">-</span><span class="nl">version:</span><span class="n">string</span><span class="o">)(</span><span class="n">protocol</span><span class="o">-</span><span class="nl">version:</span><span class="kt">short</span><span class="o">)(</span><span class="n">client</span><span class="o">-</span><span class="nl">id:</span><span class="n">string</span><span class="o">)(</span><span class="n">user</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">user</span><span class="o">-</span><span class="nl">password:</span><span class="n">string</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="n">session</span><span class="o">-</span><span class="nl">id:</span><span class="kt">int</span><span class="o">)</span>
+</pre></div>
+Where:
+
+<ul>
+<li>client's <em>driver-name</em> as string. Example: "OrientDB Java client"</li>
+<li>client's <em>driver-version</em> as string. Example: "1.0rc8-SNAPSHOT"</li>
+<li>client's <em>protocol-version</em> as short. Example: 7</li>
+<li>client's <em>client-id</em> as string. Can be null for clients. In clustered  configuration is the distributed node ID as TCP host+port. Example: "10.10.10.10:2480"</li>
+<li>
+<em>user-name</em> as string. Example: "root"</li>
+<li>
+<em>user-password</em> as string. Example: "kdsjkkasjad"
+Typically the credentials are those of the OrientDB server administrator. This is not the same as the <em>admin</em> user for individual databases. It returns the <a href="(1">#Session-Id Session-Id</a>(exception-class:string)(exception-message:string)]*(0)}}}) to being reused for all the next calls.
+## DB_OPEN</li>
+</ul><p>This is the first operation the client should call. It opens a database on the remote OrientDB Server. Returns the <a href="#Session-Id">Session-Id</a> to being reused for all the next calls and the list of configured <a class="internal present" href="/wiki/Concepts.html#cluster">clusters</a>.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">driver</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">driver</span><span class="o">-</span><span class="nl">version:</span><span class="n">string</span><span class="o">)(</span><span class="n">protocol</span><span class="o">-</span><span class="nl">version:</span><span class="kt">short</span><span class="o">)(</span><span class="n">client</span><span class="o">-</span><span class="nl">id:</span><span class="n">string</span><span class="o">)(</span><span class="n">database</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">database</span><span class="o">-</span><span class="nl">type:</span><span class="n">string</span><span class="o">)(</span><span class="n">user</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">user</span><span class="o">-</span><span class="nl">password:</span><span class="n">string</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="n">session</span><span class="o">-</span><span class="nl">id:</span><span class="kt">int</span><span class="o">)(</span><span class="n">num</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="nl">clusters:</span><span class="kt">short</span><span class="o">)[(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">type:</span><span class="n">string</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">dataSegmentId:</span><span class="kt">short</span><span class="o">)](</span><span class="n">cluster</span><span class="o">-</span><span class="nl">config:</span><span class="n">bytes</span><span class="o">)</span>
+</pre></div>
+Where:
+
+<ul>
+<li>client's <strong>driver-name</strong> as string. Example: "OrientDB Java client"</li>
+<li>client's <strong>driver-version</strong> as string. Example: "1.0rc8-SNAPSHOT"</li>
+<li>client's <strong>protocol-version</strong> as short. Example: 7</li>
+<li>client's <strong>client-id</strong> as string. Can be null for clients. In clustered  configuration is the distributed node ID as TCP host+port. Example: "10.10.10.10:2480"</li>
+<li>
+<strong>database-name</strong> as string. Example: "demo"</li>
+<li>
+<strong>database-type</strong> as string, can be 'document' or 'graph' (since version 8). Example: "document"</li>
+<li>
+<strong>user-name</strong> as string. Example: "admin"</li>
+<li>
+<strong>user-password</strong> as string. Example: "admin"</li>
+<li>
+<strong>cluster-config</strong> is always null unless you're running in a server clustered configuration.
+## DB_CREATE</li>
+</ul><p>Creates a database in the remote OrientDB server instance</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">database</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">database</span><span class="o">-</span><span class="nl">type:</span><span class="n">string</span><span class="o">)(</span><span class="n">storage</span><span class="o">-</span><span class="nl">type:</span><span class="n">string</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="n">empty</span>
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong>database-name</strong> as string. Example: "demo"</li>
+<li>
+<strong>database-type</strong> as string, can be 'document' or 'graph' (since version 8). Example: "document"</li>
+<li>
+<strong>storage-type</strong> can be one of the <a class="internal present" href="/wiki/Concepts.html#database_url">supported types</a>:</li>
+<li>local, as a persistent database</li>
+<li>memory, as a volatile database
+NB. It doesn't make sense to use "remote" in this context
+## DB_CLOSE</li>
+</ul><p>Closes the database and the network connection to the OrientDB Server instance. No return is expected. The socket is also closed.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="n">empty</span>
+  <span class="nl">Response:</span> <span class="n">no</span> <span class="n">response</span><span class="o">,</span> <span class="n">the</span> <span class="n">socket</span> <span class="n">is</span> <span class="n">just</span> <span class="n">closed</span> <span class="n">at</span> <span class="n">server</span> <span class="n">side</span>
+</pre></div>
+
+<h4>DB_EXIST</h4>
+
+<p>Asks if a database exists in the OrientDB Server instance. It returns true (non-zero) or false (zero).</p>
+
+<div class="highlight"><pre>  Request:  (database-name:string) <span class="nt">&lt;--</span> <span class="err">before</span> <span class="err">1.0rc1</span> <span class="err">this</span> <span class="err">was</span> <span class="err">empty</span>
+  <span class="err">Response:</span> <span class="err">(result:byte)</span>
+</pre></div>
+
+<h4>DB_RELOAD</h4>
+
+<p>Reloads database information. Available since 1.0rc4.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="n">empty</span>
+  <span class="nl">Response:</span><span class="o">(</span><span class="n">num</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="nl">clusters:</span><span class="kt">short</span><span class="o">)[(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">type:</span><span class="n">string</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">dataSegmentId:</span><span class="kt">short</span><span class="o">)]</span>
+</pre></div>
+
+<h4>DB_DELETE</h4>
+
+<p>Removes a database from the OrientDB Server instance. It returns nothing if the database has been deleted or throws a OStorageException if the database doesn't exists.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">database</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="n">empty</span>
+</pre></div>
+
+<h4>DB_SIZE</h4>
+
+<p>Asks for the size of a database in the OrientDB Server instance.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="n">empty</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="nl">size:</span><span class="kt">long</span><span class="o">)</span>
+</pre></div>
+
+<h4>DB_COUNTRECORDS</h4>
+
+<p>Asks for the number of records in a database in the OrientDB Server instance.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="n">empty</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="nl">count:</span><span class="kt">long</span><span class="o">)</span>
+</pre></div>
+
+<h4>DATACLUSTER_ADD</h4>
+
+<p>Add a new data cluster.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="nl">type:</span><span class="n">string</span><span class="o">)(</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="nl">location:</span><span class="n">string</span><span class="o">)(</span><span class="n">datasegment</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)</span>
+</pre></div>
+In all cases:
+<div class="highlight"><pre>  <span class="nl">Response:</span> <span class="o">(</span><span class="k">new</span><span class="o">-</span><span class="nl">cluster:</span><span class="kt">short</span><span class="o">)</span>
+</pre></div>
+Where: type is one of "PHYSICAL" or "MEMORY".
+
+<h4>DATACLUSTER_REMOVE</h4>
+
+<p>Remove a cluster.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">number:</span><span class="kt">short</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="n">delete</span><span class="o">-</span><span class="n">on</span><span class="o">-</span><span class="nl">clientside:</span><span class="kt">byte</span><span class="o">)</span>
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>delete-on-clientside</strong> can be 1 if the cluster has been successfully removed and the client has to remove too, otherwise 0
+## DATACLUSTER_COUNT</li>
+</ul><p>Returns the number of records in one or more clusters.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">count:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">number:</span><span class="kt">short</span><span class="o">)*</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="n">records</span><span class="o">-</span><span class="n">in</span><span class="o">-</span><span class="nl">clusters:</span><span class="kt">long</span><span class="o">)</span>
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong>cluster-count</strong> the number of requested clusters</li>
+<li>
+<strong>cluster-number</strong> the cluster id of each single cluster</li>
+<li>
+<strong>records-in-clusters</strong> is the total number of records found in the requested clusters</li>
+</ul><h5>Example</h5>
+
+<p>Request the record count for clusters 5, 6 and 7. Note the "03" at the beginning to tell you're passing 3 cluster ids (as short each). 1,000 as long (8 bytes) is the answer.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="mi">03050607</span>
+  <span class="nl">Response:</span> <span class="mi">00001000</span>
+</pre></div>
+
+<h4>DATACLUSTER_DATARANGE</h4>
+
+<p>Returns the range of record ids for a cluster.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">number:</span><span class="kt">short</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="nl">begin:</span><span class="kt">long</span><span class="o">)(</span><span class="nl">end:</span><span class="kt">long</span><span class="o">)</span>
+</pre></div>
+
+<h5>Example</h5>
+
+<p>Request the range for cluster 7. The range 0-1,000 is returned in the response as 2 longs (8 bytes each).
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="mi">07</span>
+  <span class="nl">Response:</span> <span class="mi">0000000000001000</span>
+</pre></div>
+
+<h4>DATASEGMENT_ADD</h4>
+
+<p>Add a new data segment.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="nl">location:</span><span class="n">string</span><span class="o">)</span>
+</pre></div>
+In all cases:
+<div class="highlight"><pre>  <span class="nl">Response:</span> <span class="o">(</span><span class="k">new</span><span class="o">-</span><span class="n">datasegment</span><span class="o">-</span><span class="nl">id:</span><span class="kt">int</span><span class="o">)</span>
+</pre></div>
+
+<h4>DATASEGMENT_REMOVE</h4>
+
+<p>Drop a data segment.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="nl">name:</span><span class="n">string</span><span class="o">)</span>
+</pre></div>
+In all cases:
+<div class="highlight"><pre>  <span class="nl">Response:</span> <span class="o">(</span><span class="nl">succeeded:</span><span class="kt">boolean</span><span class="o">)</span>
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong>succeeded</strong>, is true if the data segment has been removed, otherwise false</li>
+</ul><h4>RECORD_LOAD</h4>
+
+<p>Load a record by <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>, according to a <a class="internal present" href="/wiki/Fetching-Strategies.html">fetch plan</a></p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">position:</span><span class="kt">long</span><span class="o">)(</span><span class="n">fetch</span><span class="o">-</span><span class="nl">plan:</span><span class="n">string</span><span class="o">)(</span><span class="n">ignore</span><span class="o">-</span><span class="nl">cache:</span><span class="kt">byte</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">[(</span><span class="n">payload</span><span class="o">-</span><span class="nl">status:</span><span class="kt">byte</span><span class="o">)[(</span><span class="n">record</span><span class="o">-</span><span class="nl">content:</span><span class="n">bytes</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">version:</span><span class="kt">int</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">type:</span><span class="kt">byte</span><span class="o">)]*]+</span>
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong>fetch-plan</strong>, the <a class="internal present" href="/wiki/Fetching-Strategies.html">fetch plan</a> to use or an empty string</li>
+<li>
+<strong>ignore-cache</strong>, tells if the cache must be ignored: 1 = ignore the cache, 0 = not ignore. since protocol v.9 (introduced in release 1.0rc9)</li>
+<li>
+<strong>payload-status</strong> can be:</li>
+<li>0: no records remain to be fetched</li>
+<li>1: a record is returned as resultset</li>
+<li>2: a record is returned as pre-fetched to be loaded in client's cache only. It's not part of the result set but the client knows that it's available for later access. This value is not currently used.</li>
+<li>
+<strong>record-type</strong> is</li>
+<li>'b': raw bytes</li>
+<li>'f': flat data</li>
+<li>'d': document
+## RECORD_CREATE</li>
+</ul><p>Create a new record. Returns the position in the cluster of the new record. New records can have version &gt; 0 (since v1.0) in case the RID has been recycled.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">datasegment</span><span class="o">-</span><span class="nl">id:</span><span class="kt">int</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">content:</span><span class="n">bytes</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">type:</span><span class="kt">byte</span><span class="o">)(</span><span class="nl">mode:</span><span class="kt">byte</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">position:</span><span class="kt">long</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">version:</span><span class="kt">int</span><span class="o">)</span>
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong>datasegment-id</strong> the segment id to store the data (since version 10 - 1.0-SNAPSHOT). -1 Means default one.</li>
+<li>
+<strong>record-type</strong> is:</li>
+<li>'b': raw bytes</li>
+<li>'f': flat data</li>
+<li>'d': document</li>
+</ul><p>and <strong>mode</strong> is:</p>
+
+<ul>
+<li>0 = synchronous (default mode waits for the answer)</li>
+<li>1 = asynchronous (don't need an answer)</li>
+</ul><h4>RECORD_UPDATE</h4>
+
+<p>Update a record. Returns the new record's version.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">position:</span><span class="kt">long</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">content:</span><span class="n">bytes</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">version:</span><span class="kt">int</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">type:</span><span class="kt">byte</span><span class="o">)(</span><span class="nl">mode:</span><span class="kt">byte</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="n">record</span><span class="o">-</span><span class="nl">version:</span><span class="kt">int</span><span class="o">)</span>
+</pre></div>
+Where <strong>record-type</strong> is:
+
+<ul>
+<li>'b': raw bytes</li>
+<li>'f': flat data</li>
+<li>'d': document</li>
+</ul><p>and <strong>record-version</strong> <strong>policy</strong> is:</p>
+
+<ul>
+<li>'-1': Document update, version increment, no version control.</li>
+<li>'-2': Document update, no version control nor increment.</li>
+<li>'-3': Used internal in transaction rollback (version decrement).</li>
+<li>'&gt;-1': Standard document update (version control).</li>
+</ul><p>and <strong>mode</strong> is:</p>
+
+<ul>
+<li>0 = synchronous (default mode waits for the answer)</li>
+<li>1 = asynchronous (don't need an answer)</li>
+</ul><h4>RECORD_DELETE</h4>
+
+<p>Delete a record by its <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>. During the optimistic transaction the record will be deleted only if the versions match. Returns true if has been deleted otherwise false.</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">position:</span><span class="kt">long</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">version:</span><span class="kt">int</span><span class="o">)(</span><span class="nl">mode:</span><span class="kt">byte</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="n">payload</span><span class="o">-</span><span class="nl">status:</span><span class="kt">byte</span><span class="o">)</span>
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>mode</strong> is:</li>
+<li>0 = synchronous (default mode waits for the answer)</li>
+<li>1 = asynchronous (don't need an answer)</li>
+<li>
+<strong>payload-status</strong> returns the number of records deleted: 1 if the record has been successfully deleted, otherwise 0.
+## COUNT</li>
+</ul><p>Returns the number of records contained in the requested cluster.
+</p><div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">(</span><span class="n">record</span><span class="o">-</span><span class="nl">count:</span><span class="kt">long</span><span class="o">)</span>
+</pre></div>
+
+<h4>COMMAND</h4>
+
+<p>Executes remote commands:</p>
+
+<div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="nl">mode:</span><span class="kt">byte</span><span class="o">)(</span><span class="n">class</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">command</span><span class="o">-</span><span class="n">payload</span><span class="o">)</span>
+  <span class="nl">Response:</span> <span class="o">[(</span><span class="n">payload</span><span class="o">-</span><span class="nl">status:</span><span class="kt">byte</span><span class="o">)[(</span><span class="nl">content:</span><span class="o">?)]*]+</span>
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong>mode</strong> can be 'a' for asynchronous mode and 's' for synchronous mode</li>
+<li>
+<strong>class-name</strong> is the class name of the command implementation. There are short form for the most common commands:</li>
+<li>
+<strong>q</strong> stands for query as idempotent command. It's like passing <code>com.orientechnologies.orient.core.sql.query.OSQLSynchQuery</code>
+</li>
+<li>
+<strong>c</strong> stands for command as non-idempotent command (insert, update, etc). It's like passing <code>com.orientechnologies.orient.core.sql.OCommandSQL</code>
+</li>
+<li>
+<strong>s</strong> stands for script. It's like passing <code>com.orientechnologies.orient.core.command.script.OCommandScript</code>. Script commands by using any supported server-side scripting like <a href="http://code.google.com/p/orient/wiki/JavascriptCommand">Javascript command</a>. Since v1.0.</li>
+<li>
+<strong>any other values</strong> is the class name. The command will be created via reflection using the default constructor and invoking the <code>fromStream()</code> method against it</li>
+<li>
+<strong>command-payload</strong> is the command's serialized payload (see below <a href="#SQL_command_payload">SQL command payload</a>)</li>
+<li>
+<strong>payload-status</strong> will be:</li>
+<li>0: no records remain to be fetched</li>
+<li>1: a record is returned as a resultset</li>
+<li>2: a record is returned as pre-fetched to be loaded in client's cache only. It's not part of the result set but the client knows that it's available for later access.</li>
+<li>'n', means null result</li>
+<li>'r', means single record returned</li>
+<li>'a', serialized result</li>
+<li>'l', collection of records</li>
+<li>
+<strong>content</strong>, depends on the payload-status.</li>
+</ul><h5>SQL command payload</h5>
+
+<p>Payload is:
+</p><div class="highlight"><pre>  <span class="o">(</span><span class="nl">text:</span><span class="n">string</span><span class="o">)(</span><span class="n">non</span><span class="o">-</span><span class="n">text</span><span class="o">-</span><span class="nl">limit:</span><span class="kt">int</span><span class="o">)[(</span><span class="nl">fetchplan:</span><span class="n">string</span><span class="o">)](</span><span class="n">serialized</span><span class="o">-</span><span class="nl">params:</span><span class="n">bytes</span><span class="o">)</span>
+</pre></div>
+
+<ul>
+<li>
+<strong>text</strong>: text of the query</li>
+<li>
+<strong>non-text-limit</strong> : Limit can be set in query's text, or here. This field had priority. Send -1 to use limit from query's text</li>
+<li>
+<strong>fetchplan</strong>: used only for select queries, otherwise empty</li>
+<li>
+<strong>serialized-params</strong>: used to parametrise query. Send 0:int to disable</li>
+</ul><h5>SQL Script command payload</h5>
+
+<p>Payload is:
+</p><div class="highlight"><pre>  <span class="o">(</span><span class="nl">language:</span><span class="n">string</span><span class="o">)(</span><span class="nl">text:</span><span class="n">string</span><span class="o">)(</span><span class="n">non</span><span class="o">-</span><span class="n">text</span><span class="o">-</span><span class="nl">limit:</span><span class="kt">int</span><span class="o">)[(</span><span class="nl">fetchplan:</span><span class="n">string</span><span class="o">)](</span><span class="n">serialized</span><span class="o">-</span><span class="nl">params:</span><span class="n">bytes</span><span class="o">)</span>
+</pre></div>
+
+<ul>
+<li>
+<strong>language</strong>: name of the language to use. The language must be recognized on the OrientDB Server. Usually is "Javascript" that it's bundled with the JVM</li>
+<li>
+<strong>text</strong> : the text containing the script to be executed</li>
+<li>
+<strong>non-text-limit</strong> : Limit can be set in query's text, or here. This field had priority. Send -1 to use limit from query's text</li>
+<li>
+<strong>fetchplan</strong>: used only for select queries, otherwise empty</li>
+<li>
+<strong>serialized-params</strong>: used to parametrise query. Send 0:int to disable</li>
+</ul><h4>TX_COMMIT</h4>
+
+<p>Commits a transaction. This operation flushes all the pending changes to the server side.
+</p><div class="highlight"><pre>  Request:  (tx-id:int)(using-tx-log:byte)[(operation-type:byte)(cluster-id:short)(cluster-position:long)(record-type:byte)<span class="nt">&lt;record-content&gt;</span>]*(0-byte indicating end-of-records)
+  Response: (created-record-count:int)[(client-specified-cluster-id:short)(client-specified-cluster-position:long)(created-cluster-id:short)(created-cluster-position:long)]*(updated-record-count:int)[(updated-cluster-id:short)(updated-cluster-position:long)(new-record-version:int)]*
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>tx-id</strong> is the Transaction's Id</li>
+<li>
+<strong>use-tx-log</strong> tells if the server must use the Transaction Log to recover the transaction. 1 = true, 0 = false</li>
+<li>
+<strong>operation-type</strong> can be:</li>
+<li>1, for <strong>UPDATES</strong>
+</li>
+<li>2, for <strong>DELETES</strong>
+</li>
+<li>3, for <strong>CREATIONS</strong>
+</li>
+<li>
+<strong>record-content</strong> depends on the operation type:</li>
+<li>For <strong>UPDATED</strong> (1): <code>(original-record-version:int)(record-content:bytes)</code>
+</li>
+<li>For <strong>DELETED</strong> (2): <code>(original-record-version:int)</code>
+</li>
+<li>For <strong>CREATED</strong> (3): <code>(record-content:bytes)</code>
+</li>
+</ul><p>This response contains two parts: a map of 'temporary' client-generated record ids to 'real' server-provided record ids for each CREATED record, and a  map of UPDATED record ids to update record-versions.</p>
+
+<p>Look at <a class="internal present" href="/wiki/Transactions.html#optimistic_transaction">Optimistic Transaction</a> to know how temporary <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>s are managed.</p>
+
+<h3>Special use of LINKSET types</h3>
+
+<p>Starting from 1.0rc8-SNAPSHOT OrientDB can transform collections of links from the classic mode:</p>
+
+<p>{{{[to:</p>
+
+<div class="highlight"><pre><span class="p">(</span><span class="n">ORIDs</span><span class="p">@</span><span class="n">pageSize</span><span class="p">:</span>16<span class="p">,</span><span class="n">root</span><span class="p">:</span>#2<span class="p">:</span>6<span class="p">)</span>
+</pre></div>
+
+<p>For more information look at the announcement of this new feature: <a href="https://groups.google.com/d/topic/orient-database/QF52JEwCuTM/discussion">https://groups.google.com/d/topic/orient-database/QF52JEwCuTM/discussion</a></p>
+
+<p>In practice to optimize cases with many relationships/edges the collection is transformed in a mvrb-tree. This is because the embedded object. In that case the important thing is the link to the root node of the balanced tree.</p>
+
+<p>You can disable this behaviour by setting </p>
+
+<p><em>mvrbtree.ridBinaryThreshold</em> = -1</p>
+
+<p>Where <em>mvrbtree.ridBinaryThreshold</em> is the threshold where OrientDB will use the tree instead of plain collection (as before). -1 means "hey, never use the new mode but leave all as before".</p>
+
+<h4>Tree node binary structure</h4>
+
+<p>To improve performance this structure is managed in binary form. Below how is made:
+b8c64fea51e84fc68a92c017a44f9f94</p>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<em>TREE SIZE</em> as signed integer (4 bytes) containing the size of the tree. Only the root node has this value updated, so to know the size of the collection you need to load the root node and get this field. other nodes can contain not updated values because upon rotation of pieces of the tree (made during tree rebalancing) the root can change and the old root will have the "old" size as dirty.</li>
+<li>
+<em>NODE SIZE</em> as signed integer (4 bytes) containing number of entries in this node. It's always &lt;= to the page-size defined at the tree level and equals for all the nodes. By default page-size is 16 items</li>
+<li>
+<em>COLOR</em> as 1 byte containing 1=Black, 0=Red. To know more about the meaning of this look at <a>http://en.wikipedia.org/wiki/Red%E2%80%93black_tree Red-Black Trees</a>
+</li>
+<li>
+<strong>PARENT RID</strong> as <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the parent node record</li>
+<li>
+<strong>LEFT RID</strong> as <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the left node record</li>
+<li>
+<strong>RIGHT RID</strong> as <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the right node record</li>
+<li>
+<strong>RID LIST</strong> as the list of <a class="internal present" href="/wiki/Concepts.html#recordid">RIDs</a> containing the references to the records. This is pre-allocated to the configured page-size. Since each <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> takes 10 bytes, a page-size of 16 means 16 x 10bytes = 160bytes</li>
+</ul><p>The size of the tree-node on disk (and memory) is fixed to avoid fragmentation. To compute it: 39 bytes + 10 * PAGE-SIZE bytes. For a page-size = 16 you'll have 39 + 160 = 199 bytes.</p>
+
+<h3>History</h3>
+
+<h4>Version 12</h4>
+
+<ol>
+<li>DB_OPEN returns the dataSegmentId foreach cluster</li>
+</ol><h4>Version 11</h4>
+
+<ol>
+<li>RECORD_CREATE always returns the record version. This was necessary because new records could have version &gt; 0 to avoid MVCC problems on RID recycle</li>
+</ol><h3>Compatibility</h3>
+
+<p>Current release of OrientDB server supports older client versions.</p>
+
+<ul>
+<li>version 11: 100% compatible. 1.0-SNAPSHOT</li>
+<li>version 10: 100% compatible. 1.0rc9-SNAPSHOT</li>
+<li>version 9: 100% compatible. 1.0rc9-SNAPSHOT</li>
+<li>version 8: 100% compatible. 1.0rc9-SNAPSHOT</li>
+<li>version 7: 100% compatible. 1.0rc7-SNAPSHOT - 1.0rc8</li>
+<li>version 6: 100% compatible. Before 1.0rc7-SNAPSHOT</li>
+<li>&lt; version 6: not compatible</li>
+</ul>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

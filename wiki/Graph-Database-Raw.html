@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Graph Database Raw |  OrientDB</title>
+  <title>Graph Database Raw</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Graph-Database-Raw">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Graph Database Raw
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Requirements</h3>
+
+<p>To use the Graph Database interface you must include these jars in your classpath:
+</p><div class="highlight"><pre>  <span class="n">orient</span><span class="o">-</span><span class="n">commons</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">core</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<p>If you're using the Graph Database interface connected to a remote server (not local/embedded mode) include also:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">-</span><span class="n">client</span><span class="o">-*.</span><span class="na">jar</span>
+  <span class="n">orientdb</span><span class="o">-</span><span class="n">enterprise</span><span class="o">-*.</span><span class="na">jar</span>
+</pre></div>
+
+<h3>Introduction</h3>
+
+<p>OrientDB provides natively the class <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphDatabase.java">OGraphDatabase</a> to handle graphs at document level. Furthermore, starting from v. 0.9.22, OrientDB provides an implementation of the <a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">Tinkerpop stack</a>. You can use both APIs together.</p>
+
+<p>Main graph classes:</p>
+
+<ul>
+<li>
+<a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphDatabase.java">OGraphDatabase</a>: Main class to handle graphs</li>
+</ul><h4>Use the database pool</h4>
+
+<p>In order to recycle database instance use the OGraphDatabasePool class. Remember to close ALWAYS the database instance when you've finished by using a try/finally block. Example:</p>
+
+<div class="highlight"><pre>  <span class="n">database</span> <span class="o">=</span> <span class="n">OGraphDatabasePool</span><span class="o">.</span><span class="na">global</span><span class="o">().</span><span class="na">acquire</span><span class="o">(</span><span class="s">"local:/tmp/graphdb"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="k">try</span><span class="o">{</span>
+    <span class="o">...</span>
+  <span class="o">}</span> <span class="k">finally</span><span class="o">{</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h3>First example</h3>
+
+<h4>Create an empty database</h4>
+
+<p>Launch the <a class="internal present" href="/wiki/Console-Commands.html">console</a> and type:
+</p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">create</span> <span class="n">database</span> <span class="nl">local:C:</span><span class="o">/</span><span class="n">temp</span><span class="o">/</span><span class="n">graph</span><span class="o">/</span><span class="n">graph</span> <span class="n">admin</span> <span class="n">admin</span> <span class="n">local</span>
+</pre></div>
+
+<p><em>If you're using Linux, MacOsX or any other Operative System change the location of the database to adhere to its file system.</em></p>
+
+<h4>Create a graph of 1,000 vertexes</h4>
+
+<p>This example creates a graph of 1,000 vertex. The root node will be bound to the database to get accessed for further uses (such as read). The graph has only one edge, so the deep level is of 1,000!
+</p><div class="highlight"><pre>  <span class="n">OGraphDatabase</span> <span class="n">database</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OGraphDatabase</span><span class="o">(</span><span class="s">"local:C:/temp/graph/graph"</span><span class="o">);</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+  <span class="n">ODocument</span> <span class="n">rootNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">().</span><span class="na">field</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+  <span class="n">ODocument</span> <span class="n">currentNode</span> <span class="o">=</span> <span class="n">rootNode</span><span class="o">;</span>
+  
+  <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="o">;</span> <span class="o">++</span><span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ODocument</span> <span class="n">newNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">().</span><span class="na">field</span><span class="o">(</span><span class="s">"id"</span><span class="o">,</span> <span class="n">i</span><span class="o">);</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">createEdge</span><span class="o">(</span> <span class="n">currentNode</span><span class="o">,</span> <span class="n">newNode</span><span class="o">);</span>
+    <span class="n">currentNode</span> <span class="o">=</span> <span class="n">newNode</span><span class="o">;</span>
+  <span class="o">}</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">setRoot</span><span class="o">(</span><span class="s">"graph"</span><span class="o">,</span> <span class="n">rootNode</span><span class="o">);</span>
+  
+  <span class="n">database</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+
+<p>The main points of the code above are:</p>
+
+<ul>
+<li>
+<code>database.createVertex()</code>: creates a new vertex. Note vertexes and edges are always ODocument instances</li>
+<li>
+<code>database.createVertex().field("id", 0)</code>: set the property "id" to the value 0 to the new created vertex object</li>
+<li>
+<code>database.createEdge( currentNode, newNode)</code>: links the current node to the new one. OrientDB creates a new edge between them</li>
+<li>
+<code>database.setRoot("graph", rootNode)</code>: set the root vertex as a root node called "graph"</li>
+</ul><h4>Browse the entire graph</h4>
+
+<div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">OGraphDatabase</span> <span class="n">database</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OGraphDatabase</span><span class="o">(</span><span class="s">"local:C:/temp/graph/graph"</span><span class="o">);</span>
+    <span class="n">database</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  
+    <span class="n">ODocument</span> <span class="n">rootNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getRoot</span><span class="o">(</span><span class="s">"graph"</span><span class="o">);</span>
+  
+    <span class="n">readAllTheGraph</span><span class="o">(</span> <span class="n">rootNode</span> <span class="o">);</span>
+  
+    <span class="n">database</span><span class="o">.</span><span class="na">setRoot</span><span class="o">(</span><span class="s">"graph"</span><span class="o">,</span> <span class="n">rootNode</span><span class="o">);</span>
+  <span class="o">}</span>
+  
+  <span class="kd">private</span> <span class="kt">void</span> <span class="nf">readAllTheGraph</span><span class="o">(</span><span class="kd">final</span> <span class="n">ODocument</span> <span class="n">iNode</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">ODocument</span> <span class="nl">edge:</span> <span class="n">database</span><span class="o">.</span><span class="na">getOutEdges</span><span class="o">(</span><span class="n">iNode</span><span class="o">))</span> <span class="o">{</span>
+      <span class="n">readAllTheGraph</span><span class="o">(</span> <span class="n">database</span><span class="o">.</span><span class="na">getInVertex</span><span class="o">(</span> <span class="n">edge</span> <span class="o">)</span> <span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>The main points of the code above are:</p>
+
+<ul>
+<li>
+<code>database.getRoot("graph")</code>: get the root vertex by name ("graph")</li>
+<li>
+<code>database.getOutEdges(iNode)</code>: browse all the outgoing edges</li>
+<li>
+<code>database.getInVertex( edge )</code>: for each edge returns the incoming vertex</li>
+</ul><h3>Build the graph</h3>
+
+<p>To build a graph you have to create vertexes and connect them with edges.</p>
+
+<h4>Create vertexes</h4>
+
+<p>To create a new vertex:
+</p><div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">vertex</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">();</span>
+  <span class="n">vertex</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"type"</span><span class="o">,</span> <span class="s">"TV"</span><span class="o">);</span>
+  <span class="n">vertex</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"brand"</span><span class="o">,</span> <span class="s">"Samsung"</span><span class="o">);</span>
+  <span class="n">vertex</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>To make the graph elements persistent, remember to call always the save() method against the new vertex.</p>
+
+<h4>Create edges</h4>
+
+<p>Use the <code>database.createEdge( sourceVertex, destinationVertex )</code> to create a new edge between two vertexes. name of the edge to use. Example:
+</p><div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">vertex1</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">();</span>
+  <span class="n">vertex1</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Jay"</span><span class="o">);</span>
+  <span class="n">vertex1</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"surname"</span><span class="o">,</span> <span class="s">"Miner"</span><span class="o">);</span>
+  
+  <span class="n">ODocument</span> <span class="n">vertex2</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">();</span>
+  <span class="n">vertex2</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Amiga"</span><span class="o">);</span>
+  <span class="n">vertex2</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"type"</span><span class="o">,</span> <span class="s">"Computer"</span><span class="o">);</span>
+  
+  <span class="n">ODocument</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createEdge</span><span class="o">(</span> <span class="n">vertex1</span><span class="o">,</span> <span class="n">vertex2</span> <span class="o">);</span>
+  <span class="n">edge</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"on"</span><span class="o">,</span> <span class="s">"1985"</span><span class="o">);</span>
+  <span class="n">edge</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>Remember to call the save() method against the new edge or any of the vertexes connected. save() is viral and save recursively all the dirty elements.</p>
+
+<h4>Manage labels</h4>
+
+<p><a href="http://code.google.com/p/orient/wiki/GraphDatabaseTinkerpop">TinkerPop Blueprints</a> model supports the concept of "label". You can label vertexes and edges. In OrientDB a label is just a field as any others. To create an edge with a label you can use:
+</p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">createEdge</span><span class="o">(</span> <span class="n">vertex1</span><span class="o">,</span> <span class="n">vertex2</span> <span class="o">).</span><span class="na">field</span><span class="o">(</span> <span class="s">"label"</span><span class="o">,</span> <span class="s">"ciao"</span> <span class="o">);</span>
+</pre></div>
+Or you could use the constant:
+<div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">createEdge</span><span class="o">(</span> <span class="n">vertex1</span><span class="o">,</span> <span class="n">vertex2</span> <span class="o">).</span><span class="na">field</span><span class="o">(</span> <span class="n">OGraphDatabase</span><span class="o">.</span><span class="na">LABEL</span><span class="o">,</span> <span class="s">"ciao"</span> <span class="o">);</span>
+</pre></div>
+
+<h4>Remove edges</h4>
+
+<p>Use the <code>database.removeEdge( edge )</code> to remove an edge between two vertexes.</p>
+
+<h4>Delete vertexes</h4>
+
+<p>On <code>database.removeVertex( vertex )</code> method all the edges are unlinked before to delete the vertex. This assure the graph remains coherent.</p>
+
+<h3>Query the graph</h3>
+
+<p>OrientDB comes with a powerful query language based on SQL but with several extensions for graphs.</p>
+
+<h4>Query targets</h4>
+
+<p>Query can start from one or multiple root nodes. In SQL the queries can have as target only tables. In OrientDB you can use:</p>
+
+<ul>
+<li>the entire <a class="internal present" href="/wiki/Concepts.html#class">Class</a> (the closest concept to a Relational Table). Example: <code>SELECT FROM v WHERE name = 'test'</code>
+</li>
+<li>the entire <a class="internal present" href="/wiki/Concepts.html#cluster">Cluster</a> (the physical place where records reside). Example: <code>select from cluster:OGraphVertex WHERE outEdges.size() &gt; 0</code>
+</li>
+<li>a single <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>. Example: <code>select from 11:4</code>
+</li>
+<li>multiple <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s. Example: <code>select from [where outEdge.size() &gt; 0</code>
+</li>
+<li>sub-query as target: <code>SELECT FROM ( SELECT FROM v WHERE since IS NOT NULL) WHERE out.size() &gt; 0 </code>
+</li>
+</ul><h3>Traversing</h3>
+
+<p>For more information look at <a class="internal present" href="/wiki/Java-Traverse.html">Java Traverse</a>.</p>
+
+<h5>== Right usage of the graph ==</h5>
+
+<p>OrientDB is a graph database. This means that traversing is very efficient. You can use this feature to optimize queries. A common technique is the <a class="internal present" href="/wiki/Pivoting-With-Query.html">Pivoting</a>.</p>
+
+<h3>Polymorphism and custom types</h3>
+
+<p>OrientDB supports the polymorphism with vertex and edges. You can create your own Vertex and Edge types using the Object Oriented paradigm.</p>
+
+<p>All the vertex types must inherit the <em>OGraphVertex</em> at the highest point of the inheritance chain. The same is for edge types but the class to inherit is <em>OGraphEdge</em>.
+When you extends classes (or types, is the same concepts) you inherit all the fields and constraints of the extended class. Furthermore you can use the OrientDB query engine to execute polymorphic queries (see later).</p>
+
+<p>Example of class inheritance schema:
+</p><div class="highlight"><pre>             <span class="n">OGraphVertex</span>
+                  <span class="o">|</span>
+               <span class="n">Vehicle</span>
+                  <span class="o">|</span>
+                 <span class="o">/</span> <span class="err">\</span>
+                <span class="o">/</span>   <span class="err">\</span>
+              <span class="n">Car</span>  <span class="n">Motocycle</span>
+</pre></div>
+
+<p>This is the simple code that creates the classes:
+</p><div class="highlight"><pre>  <span class="n">OClass</span> <span class="n">vehicleClass</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertexType</span><span class="o">(</span><span class="s">"GraphVehicle"</span><span class="o">);</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">createVertexType</span><span class="o">(</span><span class="s">"GraphCar"</span><span class="o">,</span> <span class="n">vehicleClass</span> <span class="o">);</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">createVertexType</span><span class="o">(</span><span class="s">"GraphMotocycle"</span><span class="o">,</span> <span class="n">vehicleClass</span> <span class="o">);</span>
+</pre></div>
+
+<p>Create vertexes of custom type:
+</p><div class="highlight"><pre>    <span class="n">ODocument</span> <span class="n">carNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">(</span><span class="s">"GraphCar"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"brand"</span><span class="o">,</span> <span class="s">"Hyundai"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"model"</span><span class="o">,</span> <span class="s">"Coupe"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"year"</span><span class="o">,</span> <span class="mi">2003</span><span class="o">).</span><span class="na">save</span><span class="o">();</span>
+    <span class="n">ODocument</span> <span class="n">motoNode</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">createVertex</span><span class="o">(</span><span class="s">"GraphMotocycle"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"brand"</span><span class="o">,</span> <span class="s">"Yamaha"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"model"</span><span class="o">,</span> <span class="s">"X-City 250"</span><span class="o">).</span><span class="na">field</span><span class="o">(</span><span class="s">"year"</span><span class="o">,</span> <span class="mi">2009</span><span class="o">).</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<p>Execute polymorphic queries against custom types:
+</p><div class="highlight"><pre>    List<span class="nt">&lt;ODocument&gt;</span> result = database.query(new OSQLSynchQuery<span class="nt">&lt;ODocument&gt;</span>("select from GraphVehicle"));
+    Assert.assertEquals(result.size(), 2);
+    for (ODocument v : result) {
+      Assert.assertTrue(v.getSchemaClass().isSubClassOf(vehicleClass));
+    }
+  
+    database.close();
+</pre></div>
+
+<h3>Concurrency</h3>
+
+<p>Since release 1.2.0 concurrent accesses to the same graph are managed using different locking strategies:
+cb215cdf5dcad5ef23b05a9b716ffcac</p>
+
+<p>By default <code>DATABASE_LEVEL_LOCKING</code> is used. In case of single-thread massive insertion you can disable it:
+79fb9ffb68fc5c6b8cb3a0c98833e9d5</p>
+
+<p>NOTE: <em>Set the locking mode after the database has been open or created.</em></p>
+
+<p>Using the <code>LOCK_MODE.RECORD_LEVEL_LOCKING</code> you have more fine-grained access to the graph locking only the portions you access, but this could raise dead-locks (the timeout expires, so no stall for the application) because multiple resources need to be locked, for example, when you remove an edge.</p>
+
+<p>To avoid to incur into the dire <a>http://code.google.com/p/orient/wiki/TroubleshootingJava#OConcurrentModificationException:_Cannot_update_record_#X:Y_in_s OConcurrentModificationException</a> you have to:</p>
+
+<ul>
+<li>use the default <code>DATABASE_LEVEL_LOCKING</code> locking mode</li>
+<li>disable caches. Level1 should be enough if you don't have multiple clients accessing to the remote protocol against the same server, otherwise disable the 2nd level cache as well</li>
+<li>always refer to the vertices and edges by their RID, never as document instances. The document instances you've in the current thread could be old because another client/thread could have updated them</li>
+</ul>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

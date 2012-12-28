@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Java Multi Threading |  OrientDB</title>
+  <title>Java Multi Threading</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Java-Multi-Threading">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Java Multi Threading
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB supports multi-threads access to the database. <code>ODatabase*</code> instances are not thread-safe, so you've to get <em>an instance per thread</em> and each database instance can be used <em>only in one thread per time</em>.</p>
+
+<p>Multiple database instances points to the same storage by using the same URL. In this case Storage is thread-save and orchestrates requests from different <code>ODatabase*</code> instances.</p>
+
+<div class="highlight"><pre>  <span class="n">ODatabaseDocument1</span><span class="o">------+</span>
+                          <span class="o">+----&gt;</span> <span class="n">OStorageLocal</span> <span class="o">(</span><span class="n">url</span><span class="o">=</span><span class="nl">local:</span><span class="o">/</span><span class="n">temp</span><span class="o">/</span><span class="n">db</span><span class="o">)</span>
+  <span class="n">ODatabaseDocument2</span><span class="o">------+</span>
+</pre></div>
+
+<p>Database instances share the following objects:</p>
+
+<ul>
+<li>schema</li>
+<li>index manager</li>
+<li>security</li>
+</ul><p>These objects are synchronized for concurrent contexts by storing the current database in the <a href="http://download.oracle.com/javase/6/docs/api/java/lang/ThreadLocal.html">ThreadLocal</a> variable. Every time you create, open or acquire a database connection, the database instance is <strong>automatically</strong> set into the current <a href="http://download.oracle.com/javase/6/docs/api/java/lang/ThreadLocal.html">ThreadLocal</a> space, so in normal use this is hidden from the developer.</p>
+
+<p>The current database is always reset for all common operations like load, save, etc.</p>
+
+<p>Example of using two database in the same thread:
+</p><div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">rec1</span> <span class="o">=</span> <span class="n">database1</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+  <span class="n">ODocument</span> <span class="n">rec2</span> <span class="o">=</span> <span class="n">database2</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+  
+  <span class="n">rec1</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Luca"</span><span class="o">);</span>
+  <span class="n">database1</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">rec1</span><span class="o">);</span> <span class="c1">// force saving in database1 no matter where the record came from</span>
+  
+  <span class="n">rec2</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Luke"</span><span class="o">);</span>
+  <span class="n">database2</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">rec2</span><span class="o">);</span> <span class="c1">// force saving in database2 no matter where the record came from</span>
+</pre></div>
+
+<h3>Manual control</h3>
+
+<p>Beware when you reuse database instances from different threads or then a thread handle multiple databases. In this case you can override the current database by calling this manually:</p>
+
+<div class="highlight"><pre>  <span class="n">ODatabaseRecordThreadLocal</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">.</span><span class="na">set</span><span class="o">(</span> <span class="n">database</span> <span class="o">);</span>
+</pre></div>
+
+<p>Where database is the current database instance. Example:</p>
+
+<div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">rec1</span> <span class="o">=</span> <span class="n">database1</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+  <span class="n">ODocument</span> <span class="n">rec2</span> <span class="o">=</span> <span class="n">database2</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+  
+  <span class="n">ODatabaseRecordThreadLocal</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">.</span><span class="na">set</span><span class="o">(</span> <span class="n">database1</span> <span class="o">);</span>
+  <span class="n">rec1</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Luca"</span><span class="o">);</span>
+  <span class="n">rec1</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+  
+  <span class="n">ODatabaseRecordThreadLocal</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">.</span><span class="na">set</span><span class="o">(</span> <span class="n">database2</span> <span class="o">);</span>
+  <span class="n">rec2</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Luke"</span><span class="o">);</span>
+  <span class="n">rec2</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</pre></div>
+
+<h3>Custom database factory</h3>
+
+<p>Since v1.2 Orient provides an interface to manage custom database management in MultiThreading cases:</p>
+
+<div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ODatabaseThreadLocalFactory</span> <span class="o">{</span>
+  
+    <span class="kd">public</span> <span class="n">ODatabaseRecord</span> <span class="nf">getThreadDatabase</span><span class="o">();</span>
+  
+  <span class="o">}</span>
+</pre></div>
+
+<p>Examples:
+</p><div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomRecordFactory</span> <span class="kd">implements</span> <span class="n">ODatabaseThreadLocalFactory</span> <span class="o">{</span>
+  
+    <span class="kd">public</span> <span class="n">ODatabaseRecord</span> <span class="nf">getDb</span><span class="o">(){</span>
+     <span class="k">return</span> <span class="n">ODatabaseDocumentPool</span><span class="o">.</span><span class="na">global</span><span class="o">().</span><span class="na">acquire</span><span class="o">(</span><span class="n">url</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+    <span class="o">}</span>
+  
+  <span class="o">}</span>
+  
+  
+  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomObjectFactory</span> <span class="kd">implements</span> <span class="n">ODatabaseThreadLocalFactory</span> <span class="o">{</span>
+  
+    
+    <span class="kd">public</span> <span class="n">ODatabaseRecord</span> <span class="nf">getThreadDatabase</span><span class="o">(){</span>
+     <span class="k">return</span> <span class="n">OObjectDatabasePool</span><span class="o">.</span><span class="na">global</span><span class="o">().</span><span class="na">acquire</span><span class="o">(</span><span class="n">url</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">).</span><span class="na">getUnderlying</span><span class="o">().</span><span class="na">getUnderlying</span><span class="o">();</span>
+    <span class="o">}</span>
+  
+  <span class="o">}</span>
+</pre></div>
+
+<p>Registering the factory:</p>
+
+<div class="highlight"><pre>  <span class="n">ODatabaseThreadLocalFactory</span> <span class="n">customFactory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyCustomRecordFactory</span><span class="o">();</span>
+   <span class="n">Orient</span><span class="o">.</span><span class="na">instance</span><span class="o">().</span><span class="na">registerThreadDatabaseFactory</span><span class="o">(</span><span class="n">customFactory</span><span class="o">);</span>
+</pre></div>
+
+<p>When a database is not found in current thread it will be called the factory getDb() to retrieve the database instance.</p>
+
+<h4>Close a database</h4>
+
+<p>What happens if you are working with two databases and close one? The Thread Local isn't a stack, so you loose the previous database in use. Example:
+</p><div class="highlight"><pre>  <span class="n">ODatabaseDocumentTx</span> <span class="n">db1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="s">"local:/temo/db1"</span><span class="o">).</span><span class="na">create</span><span class="o">();</span>
+  
+  <span class="n">ODatabaseDocumentTx</span> <span class="n">db2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="s">"local:/temo/db2"</span><span class="o">).</span><span class="na">create</span><span class="o">();</span>
+  <span class="o">...</span>
+  
+  <span class="n">db2</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+  
+  <span class="c1">// NOW NO DATABASE IS SET IN THREAD LOCAL. TO WORK WITH DB1 SET IT IN THE THREAD LOCAL</span>
+  <span class="n">ODatabaseRecordThreadLocal</span><span class="o">.</span><span class="na">INSTANCE</span><span class="o">.</span><span class="na">set</span><span class="o">(</span> <span class="n">db1</span> <span class="o">);</span>
+  
+  <span class="o">...</span>
+</pre></div>
+
+<h3>What about running transaction?</h3>
+
+<p>Transactions are bound to a database, so if you change the current database while a tx is running, the deleted and saved objects remain attached to the original database transaction. When it commits, the objects are committed.</p>
+
+<p>Example:
+</p><div class="highlight"><pre>  <span class="n">ODatabaseDocumentTx</span> <span class="n">db1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="s">"local:/temo/db1"</span><span class="o">).</span><span class="na">create</span><span class="o">();</span>
+  
+  <span class="n">db1</span><span class="o">.</span><span class="na">begin</span><span class="o">();</span>
+  
+  <span class="n">ODocument</span> <span class="n">doc1</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="s">"Customer"</span><span class="o">);</span>
+  <span class="n">doc1</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Luca"</span><span class="o">);</span>
+  <span class="n">doc1</span><span class="o">.</span><span class="na">save</span><span class="o">();</span> <span class="c1">// NOW IT'S BOUND TO DB1'S TX</span>
+  
+  <span class="n">ODatabaseDocumentTx</span> <span class="n">db2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="s">"local:/temo/db2"</span><span class="o">).</span><span class="na">create</span><span class="o">();</span> <span class="c1">// THE CURRENT DB NOW IS DB2</span>
+  
+  <span class="n">ODocument</span> <span class="n">doc2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="s">"Provider"</span><span class="o">);</span>
+  <span class="n">doc2</span><span class="o">.</span><span class="na">field</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"Chuck"</span><span class="o">);</span>
+  <span class="n">doc2</span><span class="o">.</span><span class="na">save</span><span class="o">();</span> <span class="c1">// THIS IS BOUND TO DB2 BECAUSE IT'S THE CURRENT ONE</span>
+  
+  <span class="n">db1</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span> <span class="c1">// WILL COMMIT DOC1 ONLY</span>
+</pre></div>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

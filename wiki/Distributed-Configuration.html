@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Distributed Configuration |  OrientDB</title>
+  <title>Distributed Configuration</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Distributed-Configuration">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Distributed Configuration
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Distributed-Architecture.html" class="nr1">Distributed Architecture</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>orientdb-cserver-config.xml</h3>
+
+<h4>Database configuration</h4>
+
+<p>To enable the clustering between nodes, add and enable the <strong>OHazelcastPlugin</strong>. Below an example of configuration.</p>
+
+<p>Example in <strong>orientdb-cserver-config.xml</strong> file:
+</p><div class="highlight"><pre>  <span class="nt">&lt;orient-server&gt;</span>
+    <span class="nt">&lt;handlers&gt;</span>
+      <span class="c">&lt;!-- CLUSTER PLUGIN, TO TURN ON SET THE 'ENABLED' PARAMETER TO 'true' --&gt;</span>
+      <span class="nt">&lt;handler</span> <span class="na">class=</span><span class="s">"com.orientechnologies.orient.server.cluster.hazelcast.OHazelcastPlugin"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;parameters&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"enabled"</span> <span class="na">value=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"alias"</span> <span class="na">value=</span><span class="s">"europe2012"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"configuration"</span> <span class="na">value=</span><span class="s">"${ORIENTDB_HOME}/config/hazelcast.xml"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;parameter</span> <span class="na">name=</span><span class="s">"db.*"</span>
+                     <span class="na">value=</span><span class="s">"</span>
+<span class="s">  {</span>
+<span class="s">    'servers' : {</span>
+<span class="s">      '*' : {</span>
+<span class="s">        'synchronization' : true,</span>
+<span class="s">        'clusters' : {</span>
+<span class="s">          '*' : { </span>
+<span class="s">            'synchronization' : true,</span>
+<span class="s">            'operations' : {</span>
+<span class="s">              'create' : { 'direction' : 'in-out', 'mode' : 'synchronous' },</span>
+<span class="s">              'read'   : { 'direction' : 'in',     'mode' : 'synchronous' },</span>
+<span class="s">              'update' : { 'direction' : 'in-out', 'mode' : 'synchronous' },</span>
+<span class="s">              'delete' : { 'direction' : 'in-out', 'mode' : 'synchronous' }</span>
+<span class="s">            },</span>
+<span class="s">            'offlineMaxBuffer' : 1000000</span>
+<span class="s">           },</span>
+<span class="s">          'internal' : { 'synchronization' : false },</span>
+<span class="s">          'index' : { 'synchronization' : false }</span>
+<span class="s">        },</span>
+<span class="s">        'classes': {}</span>
+<span class="s">      }</span>
+<span class="s">    }</span>
+<span class="s">  }"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/parameters&gt;</span>
+      <span class="nt">&lt;/handler&gt;</span>
+    <span class="nt">&lt;/handlers&gt;</span>
+  <span class="nt">&lt;/orient-server&gt;</span>
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong><code>&lt;enabled&gt;</code></strong> to enable or disable the plugin. Can be <strong><code>true</code></strong> or <strong><code>false</code></strong>
+</li>
+<li>
+<strong><code>&lt;alias&gt;</code></strong> the node's alias. If the alias is not specified, then <code>&lt;ip-address&gt;:&lt;port&gt;</code> will be taken, i.e. <strong><code>192.168.0.100:2424</code></strong>. Use this to assign a name that makes sense like "europe1" to the first european node.</li>
+<li>
+<strong><code>&lt;configuration&gt;</code></strong> specifies the Hazelcast's file name</li>
+</ul><p><strong><code>&lt;db.</code></strong>&gt;** is the configuration for the default database. To define ad-hoc configuration specify <strong><code>db.&lt;db-name&gt;</code></strong> where <strong><code>db-name</code></strong> is the database's name to configure in clustering.</p>
+
+<h4>Node configuration</h4>
+
+<p>The configuration can be set per single node. Use '<code>**</code>' to specify default configuration. Each server node can configure the behavior for clusters and classes. Syntax:
+</p><div class="highlight"><pre>  <span class="nt">&lt;node-id&gt;</span> : {
+    'defaultCluster' : <span class="nt">&lt;default-cluster-id&gt;</span>|<span class="nt">&lt;default-cluster-name&gt;</span>,
+    'clusters' : { },
+    'classes' : { }
+  }
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong><code>&lt;node-id&gt;</code></strong> is the node's id. If the alias is not specified, then <code>&lt;ip-address&gt;:&lt;port&gt;</code> will be taken, i.e. <strong><code>192.168.0.100:2424</code></strong>
+</li>
+<li>
+<strong><code>&lt;default-cluster-id&gt;</code></strong> is the cluster's id</li>
+<li>
+<strong><code>&lt;default-cluster-name&gt;</code></strong> is the cluster's name as string</li>
+</ul><h4>Record cluster configuration</h4>
+
+<p>The record cluster configuration specifies how to replicate a record cluster. Syntax:
+</p><div class="highlight"><pre>  <span class="nt">&lt;node-id&gt;</span> : {
+    'clusters' : {
+      <span class="nt">&lt;cluster-name&gt;</span> : { 
+        'synchronization' : true|false,
+        'operations' : {
+          <span class="nt">&lt;op-name&gt;</span> : { 'direction' : <span class="nt">&lt;direction&gt;</span>, 'mode' : <span class="nt">&lt;mode&gt;</span> },
+        },
+        'offlineMaxBuffer' : <span class="nt">&lt;offline-max-buffer&gt;</span>
+      }
+    }
+  }
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong><code>&lt;cluster-name&gt;</code></strong> is the cluster's name as string</li>
+<li>
+<strong><code>&lt;op-name</code></strong> can be:</li>
+<li>
+<strong><code>create</code></strong> for creation</li>
+<li>
+<strong><code>read</code></strong> for read by other nodes</li>
+<li>
+<strong><code>update</code></strong> for update</li>
+<li>
+<strong><code>delete</code></strong> for deletion</li>
+<li>
+<strong><code>&lt;direction&gt;</code></strong> can be:</li>
+<li>'**in**': if the operation can be executed on incoming requests from other nodes</li>
+<li>'**out**': if the operation can be executed on outgoing requests against other nodes</li>
+<li>'**in-out**': for both above</li>
+<li>
+<strong><code>&lt;mode&gt;</code></strong> is the execution mode and can be:</li>
+<li>
+<strong><code>synchronous</code></strong> when the requester (the client) waits until the execution is completed. This assure the data is physically persisted in multiple places when the client receives the ACK. In case of error a conflict will be created.</li>
+<li>
+<strong><code>asynchronous</code></strong> to don't wait for the replication because will be executed in background. In case of error a conflict will be created.</li>
+<li>
+<strong><code>fire_and_forget</code></strong> to don't wait for the replication because will be executed in background forgetting the result. In case of error a conflict will NOT be created.</li>
+<li>
+<strong><code>&lt;offline-max-buffer&gt;</code></strong> is the maximum size of log file before to mark the cluster as unaligned and therefore requiring a manual synchronization</li>
+</ul><p>The default cluster configuration is:
+</p><div class="highlight"><pre>  <span class="sc">'*'</span> <span class="o">:</span> <span class="o">{</span>
+    <span class="err">'</span><span class="n">operations</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+      <span class="err">'</span><span class="n">create</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">synchronous</span><span class="err">'</span> <span class="o">},</span>
+      <span class="err">'</span><span class="n">read</span><span class="err">'</span>   <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">in</span><span class="err">'</span> <span class="o">},</span>
+      <span class="err">'</span><span class="n">update</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">synchronous</span><span class="err">'</span> <span class="o">},</span>
+      <span class="err">'</span><span class="n">delete</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">synchronous</span><span class="err">'</span> <span class="o">}</span>
+    <span class="o">},</span>
+    <span class="err">'</span><span class="n">synchronization</span><span class="err">'</span> <span class="o">:</span> <span class="kc">true</span><span class="o">,</span> 
+    <span class="err">'</span><span class="n">offlineMaxBuffer</span><span class="err">'</span> <span class="o">:</span> <span class="mi">1000000</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h4>Record class configuration</h4>
+
+<p>The record class configuration specifies how to replicate a class. Syntax:
+</p><div class="highlight"><pre>  <span class="nt">&lt;node-id&gt;</span> : {
+    'classes' : {
+      <span class="nt">&lt;class-name&gt;</span> : {
+        'defaultCluster' : <span class="nt">&lt;default-cluster&gt;</span> }
+      }
+    }
+  }
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong><code>&lt;class-name&gt;</code></strong> is the class's name as string</li>
+<li>
+<strong><code>&lt;default-cluster&gt;</code></strong> is the default cluster for the class.</li>
+</ul><h4>Real world example</h4>
+
+<div class="highlight"><pre>  <span class="o">{</span>
+    <span class="err">'</span><span class="n">servers</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+  
+      <span class="sc">'*'</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="err">'</span><span class="n">clusters</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+          <span class="sc">'*'</span> <span class="o">:</span> <span class="o">{</span> 
+            <span class="err">'</span><span class="n">synchronization</span><span class="err">'</span> <span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+            <span class="err">'</span><span class="n">operations</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+              <span class="err">'</span><span class="n">create</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">synchronous</span><span class="err">'</span> <span class="o">},</span>
+              <span class="err">'</span><span class="n">read</span><span class="err">'</span>   <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">in</span><span class="err">'</span><span class="o">,</span>     <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">synchronous</span><span class="err">'</span> <span class="o">},</span>
+              <span class="err">'</span><span class="n">update</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">synchronous</span><span class="err">'</span> <span class="o">},</span>
+              <span class="err">'</span><span class="n">delete</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">in</span><span class="o">-</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">synchronous</span><span class="err">'</span> <span class="o">}</span>
+            <span class="o">}</span>
+          <span class="o">},</span>
+          <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">synch</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">offlineMaxBuffer</span><span class="err">'</span> <span class="o">:</span> <span class="mi">1000000</span> <span class="o">},</span>
+          <span class="err">'</span><span class="n">internal</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">synchronization</span><span class="err">'</span> <span class="o">:</span> <span class="kc">false</span> <span class="o">},</span>
+          <span class="err">'</span><span class="n">index</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">synchronization</span><span class="err">'</span> <span class="o">:</span> <span class="kc">false</span> <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="err">'</span><span class="n">classes</span><span class="err">'</span><span class="o">:</span> <span class="o">{}</span>
+      <span class="o">},</span>
+  
+      <span class="err">'</span><span class="n">china</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="err">'</span><span class="n">defaultCluster</span><span class="err">'</span> <span class="o">:</span> <span class="mi">2</span><span class="o">,</span>
+        <span class="err">'</span><span class="n">clusters</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+          <span class="err">'</span><span class="n">customer</span><span class="o">-</span><span class="n">china</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="err">'</span><span class="n">operations</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+              <span class="err">'</span><span class="n">create</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">asynchronous</span><span class="err">'</span> <span class="o">}</span>
+            <span class="o">}</span>
+          <span class="o">},</span>
+          <span class="err">'</span><span class="n">invoice</span><span class="o">-</span><span class="n">china</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="err">'</span><span class="n">operations</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+              <span class="err">'</span><span class="n">create</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">asynchronous</span><span class="err">'</span> <span class="o">}</span>
+            <span class="o">}</span>
+          <span class="o">},</span>
+        <span class="o">},</span>
+        <span class="err">'</span><span class="n">classes</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+          <span class="err">'</span><span class="n">customer</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">defaultCluster</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">customer</span><span class="o">-</span><span class="n">china</span><span class="err">'</span> <span class="o">},</span>
+          <span class="err">'</span><span class="n">invoice</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">defaultCluster</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">invoice</span><span class="o">-</span><span class="n">china</span><span class="err">'</span> <span class="o">}</span>
+        <span class="o">},</span>
+      <span class="o">},</span>
+  
+      <span class="err">'</span><span class="n">europe</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+        <span class="err">'</span><span class="n">defaultCluster</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="k">default</span><span class="o">-</span><span class="mi">2</span><span class="err">'</span><span class="o">,</span>
+        <span class="err">'</span><span class="n">clusters</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+          <span class="err">'</span><span class="n">customer</span><span class="o">-</span><span class="n">europe</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="err">'</span><span class="n">operations</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+              <span class="err">'</span><span class="n">create</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">asynchronous</span><span class="err">'</span> <span class="o">}</span>
+            <span class="o">}</span>
+          <span class="o">},</span>
+          <span class="err">'</span><span class="n">invoice</span><span class="o">-</span><span class="n">europe</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+            <span class="err">'</span><span class="n">operations</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+              <span class="err">'</span><span class="n">create</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">direction</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">out</span><span class="err">'</span><span class="o">,</span> <span class="err">'</span><span class="n">mode</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">asynchronous</span><span class="err">'</span> <span class="o">}</span>
+            <span class="o">}</span>
+          <span class="o">},</span>
+        <span class="o">},</span>
+        <span class="err">'</span><span class="n">classes</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span>
+          <span class="err">'</span><span class="n">customer</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">defaultCluster</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">customer</span><span class="o">-</span><span class="n">europe</span><span class="err">'</span> <span class="o">},</span>
+          <span class="err">'</span><span class="n">invoice</span><span class="err">'</span> <span class="o">:</span> <span class="o">{</span> <span class="err">'</span><span class="n">defaultCluster</span><span class="err">'</span> <span class="o">:</span> <span class="err">'</span><span class="n">invoice</span><span class="o">-</span><span class="n">europe</span><span class="err">'</span> <span class="o">}</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h4>Distributed 2nd Level cache</h4>
+
+<p>To enable the 2nd level cache using the distributed intra-JVM cache, set the <code>cache.level2.impl</code> parameter to <code>com.orientechnologies.orient.server.hazelcast.OHazelcastCache</code>.</p>
+
+<p>Note that this will slow down massive insertion but will improve query and lookup operations.</p>
+
+<p>Example in <strong>orientdb-cserver-config.xml</strong> file:
+</p><div class="highlight"><pre>  <span class="o">...</span>
+  <span class="o">&lt;</span><span class="n">properties</span><span class="o">&gt;</span>
+    <span class="o">&lt;!--</span> <span class="n">Uses</span> <span class="n">the</span> <span class="n">Hazelcast</span><span class="err">'</span><span class="n">s</span> <span class="n">distributed</span> <span class="n">cache</span> <span class="n">as</span> <span class="mi">2</span><span class="n">nd</span> <span class="n">level</span> <span class="n">cache</span> <span class="o">--&gt;</span>
+    <span class="o">&lt;</span><span class="n">entry</span> <span class="n">name</span><span class="o">=</span><span class="s">"cache.level2.impl"</span> <span class="n">value</span><span class="o">=</span><span class="s">"com.orientechnologies.orient.server.hazelcast.OHazelcastCache"</span> <span class="o">/&gt;</span>
+  <span class="o">&lt;/</span><span class="n">properties</span><span class="o">&gt;</span>
+</pre></div>
+
+<h3>Hazelcast configuration</h3>
+
+<p>A OrientDB cluster is composed by two or multiple servers that are the <strong>nodes</strong> of the cluster. All the server nodes that want to be part of the same cluster must to define the same group. By default "orientdb" is the group name. Look at the <code>hazelcast.xml</code> file below:
+</p><div class="highlight"><pre>  <span class="nt">&lt;group&gt;</span>
+    <span class="nt">&lt;name&gt;</span>orientdb<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;password&gt;</span>orientdb<span class="nt">&lt;/password&gt;</span>
+  <span class="nt">&lt;/group&gt;</span>
+</pre></div>
+<em>NOTE: Change the name and password of the group to avoid external nodes can join it!</em>
+
+<h3>Misc</h3>
+
+<h4>Load balancing</h4>
+
+<p>The simpler and most powerful way to achieve load balancing seems to use some hidden properties (hidden to someone) of DNS. The trick is to create a TXT record telling the list of servers.</p>
+
+<p>The format is:
+</p><div class="highlight"><pre><span class="n">v</span><span class="p">=</span><span class="n">opf</span><span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">s</span><span class="p">=</span><span class="o">&lt;</span><span class="n">hostname</span><span class="p">[:</span><span class="o">&lt;</span><span class="n">port</span><span class="o">&gt;</span><span class="p">]</span><span class="o">&gt;</span> <span class="p">)</span><span class="o">*</span>
+</pre></div>
+
+<p>Example of TXT record for domain <strong>test.nuvolabase.com</strong>:
+</p><div class="highlight"><pre><span class="n">v</span><span class="p">=</span><span class="n">opf1</span> <span class="n">s</span><span class="p">=</span><span class="n">s1</span><span class="p">.</span><span class="n">nuvolabase</span><span class="p">.</span><span class="n">com</span> <span class="n">s</span><span class="p">=</span><span class="n">s2</span><span class="p">.</span><span class="n">nuvolabase</span><span class="p">.</span><span class="n">com</span><span class="p">:</span>3434
+</pre></div>
+
+<p>In this way if you open a database against the URL <code>remote:test.nuvolabase.com/demo</code> the OrientDB client library will try to connect to the address <strong>s1.nuvolabase.com</strong> port 2424. If the connection fails, then the next address <strong>s2.nuvolabase.com</strong> port 3434 is tried.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

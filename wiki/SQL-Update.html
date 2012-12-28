@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>SQL Update |  OrientDB</title>
+  <title>SQL Update</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_SQL-Update">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        SQL Update
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/SQL.html" class="nr1">Sql</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>Update one or more records into the current database. Remember that Orient can work also in schema-less mode, so you can create any field at-the-fly. Furthermore OrientDB works on collection. This is the reason why the SQL has some extension to handle collections.</p>
+
+<h3>Syntax</h3>
+
+<div class="highlight"><pre>  UPDATE <span class="nt">&lt;class&gt;</span>|cluster:<span class="nt">&lt;cluster&gt;</span>&gt; SET|INCREMENT [= <span class="nt">&lt;field-value&gt;</span>](<span class="nt">&lt;field-name&gt;</span>)[<span class="nt">&lt;field-name&gt;</span> = <span class="nt">&lt;field-value&gt;</span>](,)* [<span class="nt">&lt;conditions&gt;</span>] (WHERE) [<span class="nt">&lt;max-records&gt;</span>](LIMIT)
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>SET</strong> updates the field</li>
+<li>
+<strong>INCREMENT</strong> increments the field by the value. If the record had 10 as value and "INCREMENT value = 3" is executed, then the new value will be 13. This is useful for atomic updates of counters. Use negative numbers to decrement.</li>
+</ul><p>For COLLECTIONS:</p>
+
+<div class="highlight"><pre>  UPDATE <span class="nt">&lt;class&gt;</span>|cluster:<span class="nt">&lt;cluster&gt;</span>&gt; [[<span class="nt">&lt;field-name&gt;</span> = <span class="nt">&lt;field-value&gt;</span>](ADD|REMOVE])[<span class="nt">&lt;field-name&gt;</span> = <span class="nt">&lt;field-value&gt;</span>](,)* [<span class="nt">&lt;conditions&gt;</span>](WHERE)
+</pre></div>
+
+<p>For MAPS:</p>
+
+<div class="highlight"><pre>  UPDATE <span class="nt">&lt;class&gt;</span>|cluster:<span class="nt">&lt;cluster&gt;</span>&gt; [[<span class="nt">&lt;field-name&gt;</span> = <span class="nt">&lt;map-key&gt;</span> [,<span class="nt">&lt;map-value&gt;</span>]](PUT|REMOVE])[<span class="nt">&lt;field-name&gt;</span> = <span class="nt">&lt;map-key&gt;</span> [,<span class="nt">&lt;map-value&gt;</span>]](,)* [<span class="nt">&lt;conditions&gt;</span>](WHERE)
+</pre></div>
+
+<p>Note that <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a> must be prefixed with '#'. Example: #12:3.</p>
+
+<p>To know more about conditions look at <a class="internal present" href="/wiki/SQL-Where.html">WHERE conditions</a>.</p>
+
+<h3>Examples</h3>
+
+<h4>Example 1: change the value of a field</h4>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">update</span> <span class="n">Profile</span> <span class="n">set</span> <span class="n">nick</span> <span class="o">=</span> <span class="err">'</span><span class="n">Luca</span><span class="err">'</span> <span class="n">where</span> <span class="n">nick</span> <span class="n">is</span> <span class="kc">null</span>
+  
+  <span class="n">Updated</span> <span class="mi">2</span> <span class="n">record</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="n">in</span> <span class="mi">0</span><span class="o">,</span><span class="mi">008000</span> <span class="n">sec</span><span class="o">(</span><span class="n">s</span><span class="o">).</span>
+</pre></div>
+
+<h4>Example 2: remove a field from all the records</h4>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">update</span> <span class="n">Profile</span> <span class="n">remove</span> <span class="n">nick</span>
+</pre></div>
+
+<h4>Example 3: Add a value into a collection</h4>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">update</span> <span class="n">Account</span> <span class="n">add</span> <span class="n">addresses</span> <span class="o">=</span> <span class="err">#</span><span class="mi">12</span><span class="o">:</span><span class="mi">0</span>
+</pre></div>
+
+<h4>Example 4: Remove a value from a collection</h4>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">update</span> <span class="n">Account</span> <span class="n">remove</span> <span class="n">addresses</span> <span class="o">=</span> <span class="err">#</span><span class="mi">12</span><span class="o">:</span><span class="mi">0</span>
+</pre></div>
+
+<h4>Example 5: Put a map entry into a map</h4>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">update</span> <span class="n">Account</span> <span class="n">put</span> <span class="n">addresses</span> <span class="o">=</span> <span class="err">'</span><span class="n">Luca</span><span class="err">'</span><span class="o">,</span> <span class="err">#</span><span class="mi">12</span><span class="o">:</span><span class="mi">0</span>
+</pre></div>
+
+<h4>Example 6: Remove a value from a map</h4>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">update</span> <span class="n">Account</span> <span class="n">remove</span> <span class="n">addresses</span> <span class="o">=</span> <span class="err">'</span><span class="n">Luca</span><span class="err">'</span>
+</pre></div>
+
+<h4>Example 7: Update an embedded document</h4>
+
+<p>Update command can take a JSON as value to update:</p>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">update</span> <span class="n">Account</span> <span class="n">set</span> <span class="n">address</span> <span class="o">=</span> <span class="o">{</span> <span class="s">"street"</span> <span class="o">:</span> <span class="s">"Melrose Avenue"</span><span class="o">,</span> <span class="s">"city"</span> <span class="o">:</span> <span class="o">{</span> <span class="s">"name"</span> <span class="o">:</span> <span class="s">"Beverly Hills"</span> <span class="o">}</span> <span class="o">}</span>
+</pre></div>
+
+<h4>Example 8: update only the first 20 records that satisfy a condition</h4>
+
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">update</span> <span class="n">Profile</span> <span class="n">set</span> <span class="n">nick</span> <span class="o">=</span> <span class="err">'</span><span class="n">Luca</span><span class="err">'</span> <span class="n">where</span> <span class="n">nick</span> <span class="n">is</span> <span class="kc">null</span> <span class="n">limit</span> <span class="mi">20</span>
+</pre></div>
+
+<p>To know more about the SQL syntax used in Orient take a look to: <a class="internal present" href="/wiki/SQL-Query.html">SQL-Query</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

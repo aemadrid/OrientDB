@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Rexster |  OrientDB</title>
+  <title>Rexster</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Rexster">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Rexster
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p><a href="/g:plusone">/g:plusone</a></p>
+
+<h4><a class="anchor" id="" href="#"></a></h4>
+
+<h3>Introduction</h3>
+
+<h4>Rexster</h4>
+
+<p><a href="https://github.com/tinkerpop/rexster/wiki/">Rexster</a> provides a RESTful shell to any Blueprints-complaint graph database. This HTTP web service provides: a set of standard low-level GET, POST, and DELETE methods, a flexible extension model which allows plug-in like development for external services (such as ad-hoc graph queries through Gremlin), and a browser-based interface called The Dog House.</p>
+
+<h4>OrientDB GraphEd</h4>
+
+<h4>The OrientDB Graph Edition, aka "Graph(Ed)", contains <a href="http://www.orientechnologies.com/orient-db.htm">OrientDB</a> server integrated with latest release of the <a href="http://www.tinkerpop.com">TinkerPop</a> Open Source technology stack as explained in <a href="http://code.google.com/p/orient/wiki/GraphEdTutorial">GraphEd Tutorial</a>. A graph database hosted in the GraphEd OrientDB server can be configured in Rexster and then accessed using the standard RESTful interface powered by the Rexster web server.</h4>
+
+<h3>Installation</h3>
+
+<p>You can get the latest stable release of Rexster at the <a href="https://github.com/tinkerpop/rexster/downloads">Download Page</a> (when writing the latest stable release is <em>0.4.1</em>) or you can build a snapshot by executing the following <a href="http://git-scm.com/">Git</a> and <a href="http://maven.apache.org/">Maven</a> commands:
+</p><div class="highlight"><pre>  <span class="n">git</span> <span class="n">clone</span> <span class="nl">https:</span><span class="c1">//github.com/tinkerpop/rexster.git</span>
+  <span class="n">cd</span> <span class="n">rexster</span>
+  <span class="n">mvn</span> <span class="n">clean</span> <span class="n">install</span>
+</pre></div>
+Rexster is distributed as a zip file (also the building process creates a zip file) hence the installation consist in unzipping the archive in a directory of your choice. In the following sections, such directory is referred to as <em>$REXSTER_HOME</em>.<br>
+After unzipping the archive, you should copy <em>orient-client.jar</em> and <em>orient-enterprise.jar</em> in <em>$REXSTER_HOME/target/rexster-0.5-SNAPSHOT-standalone/lib</em> picking the same release used in the Rexster distribution you have installed (for example Rexster 0.5-SNAPSHOT uses OrientDB 1.0rc3).<br><h4>You can find more details about Rexster installation at the <a href="https://github.com/tinkerpop/rexster/wiki/Getting-Started">Getting Started page</a>.</h4>
+
+<h3>Configuration</h3>
+
+<p>Rexster configuration file <em>rexster.xml</em> is used to configure parameters such as: TCP ports used by Rexster server modules to listen for incoming connections; character set supported by the Rexster REST requests and responses; connection parameters of graph instances.
+In order to configure Rexster to connect to your OrientDB graph, locate the <em>rexster.xml</em> in the Rexster directory (in the O.5-SNAPSHOT version, it is at <em>$REXSTER_HOME/target/rexster-0.5-SNAPSHOT-standalone/bin</em>) and add the following snippet of code:
+</p><div class="highlight"><pre>  <span class="nt">&lt;rexster&gt;</span>
+    ...
+    <span class="nt">&lt;graphs&gt;</span>
+      ...
+      <span class="nt">&lt;graph&gt;</span>
+        <span class="nt">&lt;graph-enabled&gt;</span>true<span class="nt">&lt;/graph-enabled&gt;</span>
+        <span class="nt">&lt;graph-name&gt;</span>my-orient-graph<span class="nt">&lt;/graph-name&gt;</span>
+        <span class="nt">&lt;graph-type&gt;</span>orientgraph<span class="nt">&lt;/graph-type&gt;</span>
+        <span class="nt">&lt;graph-file&gt;</span>url-to-your-db<span class="nt">&lt;/graph-file&gt;</span>
+        <span class="nt">&lt;properties&gt;</span>
+          <span class="nt">&lt;username&gt;</span>user<span class="nt">&lt;/username&gt;</span>
+          <span class="nt">&lt;password&gt;</span>pwd<span class="nt">&lt;/password&gt;</span>
+        <span class="nt">&lt;/properties&gt;</span>
+      <span class="nt">&lt;/graph&gt;</span>
+    ...
+    <span class="nt">&lt;/graphs&gt;</span>
+  <span class="nt">&lt;/rexster&gt;</span>
+</pre></div>
+In the configuration file, there could be a sample <code>graph</code> element for an OrientDB instance (<code>&lt;graph-name&gt;orientdbsample&lt;graph-name&gt;</code>): you might edit it according to your needs.
+
+<p>The <code>&lt;graph-name&gt;</code> element must be unique within the list of configured graphs and reports the name used to identify your graph.<br>
+The <code>&lt;graph-enabled&gt;</code> element states whether the graph should be loaded and managed by Rexster. Setting its contents to <code>false</code> will prevent that graph from loading to Rexster; setting explicitly to <code>true</code> the graph will be loaded.<br>
+The <code>&lt;graph-type&gt;</code> element reports the type of graph by using an identifier (<code>orientgraph</code> for an OrientDB Graph instance) or the full name of the class that implements the <a href="https://github.com/tinkerpop/rexster/blob/master/src/main/java/com/tinkerpop/rexster/config/GraphConfiguration.java">GraphConfiguration interface</a>
+(<code>[com.tinkerpop.rexster.config.OrientGraphConfiguration](https://github.com/tinkerpop/rexster/blob/master/src/main/java/com/tinkerpop/rexster/config/OrientGraphConfiguration.java)</code> for an OrientDB Graph).</p>
+
+<p>The <code>&lt;graph-file&gt;</code> element reports the URL to the OrientDB database Rexster is expected to connect to:</p>
+
+<ul>
+<li>
+<code>local:*path-to-db*</code>, if the graph can be accessed over the file system (e.g. <code>local:/tmp/graph/db</code>)</li>
+<li>
+<code>remote:*url-to-db*</code>, if the graph can be accessed over the network and/or if you want to enable multiple accesses to the graph (e.g. <code>remote:db-host/db</code>)</li>
+<li>
+<code>memory:*db-name*</code>, if the graph resides in memory only. Updates to this kind of graph are never persistent and when the OrientDB server ends the graph is lost</li>
+</ul><p>The <code>&lt;username&gt;</code> and <code>&lt;password&gt;</code> elements reports the credentials to access the graph (e.g. <code>admin</code> <code>admin</code>).<br>
+You should indicate the location of the Rexster configuration file in the startup script <em>$REXSTER_HOME/rexster-start.bat</em> or <em>$REXSTER_HOME/rexster-start.sh</em> by adding the following parameter: <code>-configuration</code> <em><code>path-to-rexster.xml</code></em>
+For example, you should edit the startup script for Windows <em>rexster-start.bat</em> in order to look as depicted in following snippet of code (the configuration parameter should be added to the last line of the script):
+</p><div class="highlight"><pre>  <span class="o">::</span> <span class="n">Windows</span> <span class="n">launcher</span> <span class="n">script</span> <span class="k">for</span> <span class="n">Rexster</span>
+  <span class="nd">@echo</span> <span class="n">on</span>
+  
+  <span class="n">cd</span> <span class="o">%</span><span class="n">CD</span><span class="o">%</span><span class="err">\</span><span class="n">target</span><span class="err">\</span>
+  
+  <span class="n">set</span> <span class="n">TARGET</span><span class="o">=</span>
+  
+  <span class="k">for</span> <span class="o">/</span><span class="n">f</span> <span class="s">"tokens=*"</span> <span class="o">%%</span><span class="n">a</span> <span class="n">in</span> <span class="o">(</span><span class="err">'</span><span class="n">dir</span> <span class="o">/</span><span class="n">b</span> <span class="o">/</span><span class="n">ad</span><span class="err">'</span><span class="o">)</span> <span class="k">do</span> <span class="o">(</span>
+  <span class="k">if</span> <span class="n">exist</span> <span class="s">"%%a\bin\rexster-start.bat"</span> <span class="n">set</span> <span class="n">TARGET</span><span class="o">=%%</span><span class="n">a</span>
+  <span class="o">)</span>
+  
+  <span class="n">cd</span> <span class="o">%</span><span class="n">TARGET</span><span class="o">%</span><span class="err">\</span><span class="n">bin</span><span class="err">\</span>
+  <span class="n">call</span> <span class="n">rexster</span><span class="o">-</span><span class="n">start</span><span class="o">.</span><span class="na">bat</span> <span class="o">-</span><span class="n">webroot</span> <span class="n">target</span><span class="o">/%</span><span class="n">TARGET</span><span class="o">%/</span><span class="n">bin</span><span class="o">/</span><span class="kd">public</span> <span class="o">%*</span> <span class="o">-</span><span class="n">configuration</span> <span class="nl">D:</span><span class="err">\</span><span class="n">rexster</span><span class="o">-</span><span class="mf">0.5</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="err">\</span><span class="n">target</span><span class="err">\</span><span class="n">rexster</span><span class="o">-</span><span class="mf">0.5</span><span class="o">-</span><span class="n">SNAPSHOT</span><span class="o">-</span><span class="n">standalone</span><span class="err">\</span><span class="n">bin</span><span class="err">\</span><span class="n">rexster</span><span class="o">.</span><span class="na">xml</span>
+</pre></div>
+
+<h4>You can find more details about Rexster configuration at the <a href="https://github.com/tinkerpop/rexster/wiki/Rexster-Configuration">Rexster Configuration page</a>.</h4>
+
+<h3>Run</h3>
+
+<p><strong>Note: <font color="RED">only Rexster 0.5-SNAPSHOT and further releases work with OrientDB GraphEd</font></strong><br>
+In this section we present a step-by-step guide to Rexster-ify an OrientDB graph.<br>
+We assume that:</p>
+
+<ul>
+<li>you created a Blueprints enabled graph called <em>orientGraph</em> using the class <code>com.tinkerpop.blueprints.pgm.impls.orientdb.OrientGraph</code>
+</li>
+<li>you inserted in the Rexster configuration file a <code>&lt;graph&gt;</code> element with the <code>&lt;graph-name&gt;</code> element set to <code>my-orient-graph</code> and the <code>graph-file</code> element set to <code>remote:orienthost/orientGraph</code> (if you do not remember how to do this, go back to the <a class="internal present" href="/wiki/Rexster.html#configuration">Configuration</a> section).</li>
+<li>Be sure that the OrientDB server is running and you have properly configured the <code>&lt;graph-file&gt;</code> location and the access credentials of your graph.</li>
+<li>Execute the startup script (_$REXSTER_HOME/rexster-start.bat_ or <em>$REXSTER_HOME/rexster-start.sh</em>)</li>
+<li>The shell console appears and you should see the following log message (line 10 states that the OrientDB graph instance has been loaded):
+<div class="highlight"><pre>  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">WebServer</span> <span class="o">-</span> <span class="o">.:</span><span class="n">Welcome</span> <span class="n">to</span> <span class="nl">Rexster:</span><span class="o">.</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">GraphConfigurationContainer</span> <span class="o">-</span> <span class="n">Graph</span> <span class="n">emptygraph</span> <span class="o">-</span> <span class="n">tinkergraph</span><span class="o">[</span><span class="nl">vertices:</span><span class="mi">0</span> <span class="nl">edges:</span><span class="mi">0</span><span class="o">]</span> <span class="n">loaded</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">RexsterApplicationGraph</span> <span class="o">-</span> <span class="n">Graph</span> <span class="o">[</span><span class="n">tinkergraph</span><span class="o">]</span> <span class="o">-</span> <span class="n">configured</span> <span class="n">with</span> <span class="n">allowable</span> <span class="n">namespace</span> <span class="o">[</span><span class="nl">tp:</span><span class="n">gremlin</span><span class="o">]</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">GraphConfigurationContainer</span> <span class="o">-</span> <span class="n">Graph</span> <span class="n">tinkergraph</span> <span class="o">-</span> <span class="n">tinkergraph</span><span class="o">[</span><span class="nl">vertices:</span><span class="mi">6</span> <span class="nl">edges:</span><span class="mi">6</span><span class="o">]</span> <span class="n">loaded</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">RexsterApplicationGraph</span> <span class="o">-</span> <span class="n">Graph</span> <span class="o">[</span><span class="n">tinkergraph</span><span class="o">-</span><span class="n">readonly</span><span class="o">]</span> <span class="o">-</span> <span class="n">configured</span> <span class="n">with</span> <span class="n">allowable</span> <span class="n">namespace</span> <span class="o">[</span><span class="nl">tp:</span><span class="n">gremlin</span><span class="o">]</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">GraphConfigurationContainer</span> <span class="o">-</span> <span class="n">Graph</span> <span class="n">tinkergraph</span><span class="o">-</span><span class="n">readonly</span> <span class="o">-</span> <span class="o">(</span><span class="n">readonly</span><span class="o">)</span><span class="n">tinkergraph</span><span class="o">[</span><span class="nl">vertices:</span><span class="mi">6</span> <span class="nl">edges:</span><span class="mi">6</span><span class="o">]</span> <span class="n">loaded</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">RexsterApplicationGraph</span> <span class="o">-</span> <span class="n">Graph</span> <span class="o">[</span><span class="n">gratefulgraph</span><span class="o">]</span> <span class="o">-</span> <span class="n">configured</span> <span class="n">with</span> <span class="n">allowable</span> <span class="n">namespace</span> <span class="o">[</span><span class="nl">tp:</span><span class="n">gremlin</span><span class="o">]</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">GraphConfigurationContainer</span> <span class="o">-</span> <span class="n">Graph</span> <span class="n">gratefulgraph</span> <span class="o">-</span> <span class="n">tinkergraph</span><span class="o">[</span><span class="nl">vertices:</span><span class="mi">809</span> <span class="nl">edges:</span><span class="mi">8049</span><span class="o">]</span> <span class="n">loaded</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">GraphConfigurationContainer</span> <span class="o">-</span> <span class="n">Graph</span> <span class="n">sailgraph</span> <span class="o">-</span> <span class="n">sailgraph</span><span class="o">[</span><span class="n">memorystore</span><span class="o">]</span> <span class="n">loaded</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">GraphConfigurationContainer</span> <span class="o">-</span> <span class="n">Graph</span> <span class="n">my</span><span class="o">-</span><span class="n">orient</span><span class="o">-</span><span class="n">graph</span> <span class="o">-</span> <span class="n">orientgraph</span><span class="o">[</span><span class="nl">remote:</span><span class="n">orienthost</span><span class="o">/</span><span class="n">orientGraph</span><span class="o">]</span> <span class="n">loaded</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">GraphConfigurationContainer</span> <span class="o">-</span> <span class="n">Graph</span> <span class="n">neo4jsample</span> <span class="o">-</span>  <span class="n">not</span> <span class="n">enabled</span> <span class="n">and</span> <span class="n">not</span> <span class="n">loaded</span><span class="o">.</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">GraphConfigurationContainer</span> <span class="o">-</span> <span class="n">Graph</span> <span class="n">dexsample</span> <span class="o">-</span>  <span class="n">not</span> <span class="n">enabled</span> <span class="n">and</span> <span class="n">not</span> <span class="n">loaded</span><span class="o">.</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">MapResultObjectCache</span> <span class="o">-</span> <span class="n">Cache</span> <span class="n">constructed</span> <span class="n">with</span> <span class="n">a</span> <span class="n">maximum</span> <span class="n">size</span> <span class="n">of</span> <span class="mi">1000</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">WebServer</span> <span class="o">-</span> <span class="n">Web</span> <span class="n">Server</span> <span class="n">configured</span> <span class="n">with</span> <span class="n">com</span><span class="o">..</span><span class="na">sun</span><span class="o">..</span><span class="na">jersey</span><span class="o">..</span><span class="na">config</span><span class="o">..</span><span class="na">property</span><span class="o">..</span><span class="na">packages</span><span class="o">:</span> <span class="n">com</span><span class="o">.</span><span class="na">tinkerpop</span><span class="o">.</span><span class="na">rexster</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">WebServer</span> <span class="o">-</span> <span class="n">No</span> <span class="n">servlet</span> <span class="n">initialization</span> <span class="n">parameters</span> <span class="n">passed</span> <span class="k">for</span> <span class="nl">configuration:</span> <span class="n">admin</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">configuration</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">WebServer</span> <span class="o">-</span> <span class="n">Rexster</span> <span class="n">Server</span> <span class="n">running</span> <span class="nl">on:</span> <span class="o">[</span><span class="nl">http:</span><span class="c1">//localhost:8182]</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">WebServer</span> <span class="o">-</span> <span class="n">Dog</span> <span class="n">House</span> <span class="n">Server</span> <span class="n">running</span> <span class="nl">on:</span> <span class="o">[</span><span class="nl">http:</span><span class="c1">//localhost:8183]</span>
+  <span class="o">[</span><span class="n">INFO</span><span class="o">]</span> <span class="n">ShutdownManager$ShutdownSocketListener</span> <span class="o">-</span> <span class="n">Bound</span> <span class="n">shutdown</span> <span class="n">socket</span> <span class="n">to</span> <span class="o">/</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">:</span><span class="mi">8184</span><span class="o">.</span> <span class="n">Starting</span> <span class="n">listener</span> <span class="n">thread</span> <span class="k">for</span> <span class="n">shutdown</span> <span class="n">requests</span><span class="o">.</span>
+</pre></div>
+</li>
+<li>Now you can use <a href="https://github.com/tinkerpop/rexster/wiki/Basic-REST-API">Rexster REST API</a> and <a href="https://github.com/tinkerpop/rexster/wiki/The-Dog-House">The Dog House web application</a> to retrieve and modify the data stored in the OrientDB graph.</li>
+</ul>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

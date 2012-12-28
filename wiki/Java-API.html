@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Java API |  OrientDB</title>
+  <title>Java API</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Java-API">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Java API
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Java APIs</h3>
+
+<p>OrientDB is written 100% in Java. You can use the native Java APIs without any driver or adapter.</p>
+
+<p>First of all need to choose the database type to use by checking what you need:</p>
+
+<p><img src="http://www.orientdb.org/images/orientdb-api-stack.png"></p>
+
+<h4>Database types</h4>
+
+<table>
+<tr>
+<th>Type</th>
+<th>Use this if</th>
+<th>Description</th>
+<th>Java class</th>
+<th>Query</th>
+<th>Dictionary</th>
+<th>Schema Less</th>
+<th>Schema full</th>
+<td>**Speed** <code>*</code>
+</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Object-Database.html">Object-Database</a></td>
+<td>If you need a full **Object Oriented** abstraction that binds all the database entities to **POJO** (Plain Old Java Object)</td>
+<td>The higher level database. Able to store and retrieve POJOs transparently. Under the hood, it uses the Document Database to store object information. Can be used in schema-less or schema-based modes</td>
+<td>[OObjectDatabaseTx](http://www.orientdb.org/releases/latest/javadoc/com/orientechnologies/orient/object/db/OObjectDatabaseTx.html)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>40%</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">TinkerPop Graph Database</a></td>
+<td>If you work with **graphs** and want your code **portable** across **TinkerPop Blueprints** implementations</td>
+<td>The bridge to use OrientDB with all [TinkerPop technologies](http://www.tinkerpop.com)</td>
+<td>OrientGraph</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>45%</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Graph-Database-Native.html">High-Level Graph Database</a></td>
+<td>Will be **deprecated** in future releases. Use GraphDatabaseRaw or GraphDatabaseTinkerpop  instead.</td>
+<td>The high level GraphDB API uses OGraphVertex and OGraphEdge classes.</td>
+<td>[ODatabaseGraphTx](http://www.orientechnologies.com/releases/latest/javadoc/index.html?com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.html)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>55%</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Graph-Database-Raw.html">Raw Graph Database</a></td>
+<td>If you work with **graphs** and need maximum **performance**.</td>
+<td>The lower level of GraphDB API. Directly uses ODocument objects.</td>
+<td>[OGraphDatabase](http://www.orientechnologies.com/releases/latest/javadoc/index.html?com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.html)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>70%</td>
+</tr>
+<tr>
+<td><a class="internal present" href="/wiki/Document-Database.html">Document-Database</a></td>
+<td>if you need **high performance** and/or work with **schema-less structures**.</td>
+<td>Handles records as documents. Documents are comprised of fields. Fields can be any of the types supported. Does not need a Java domain POJO, as required for the Object Database. Can be used as schema-less or schema-base modes</td>
+<td>[ODatabaseDocumentTx](http://www.orientechnologies.com/releases/latest/javadoc/index.html?com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.html)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>70%</td>
+</tr>
+<tr>
+<td><a class="internal absent" href="/wiki/Flat-Database.html">Flat Database</a></td>
+<td>If you need **maximum performance** at the cost of having all records represented merely  as Strings</td>
+<td>Flat record database that manages string contents. No Query capability at all, just direct access to records as strings</td>
+<td>[ODatabaseFlat](http://www.orientechnologies.com/releases/latest/javadoc/index.html?com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.html)</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>100%</td>
+</tr>
+</table><p><code>*</code> Speed comparison for generic CRUD operations such as query, insertion, update and deletion. Larger is better. 100% is fastest. In general the price of a high level of abstraction is a speed penalty, but remember that Orient is orders of magnitude faster than the classic RDBMS. So using the Object Database gives you a high level of abstraction with much less code to develop and mantain.</p>
+
+<h4>!JavaDoc</h4>
+
+<p>Browse the <a href="http://www.orientdb.org/releases/latest/javadoc/index.html">Orient DB API JavaDoc</a>.</p>
+
+<h4>Which library do I use?</h4>
+
+<p>OrientDB comes with some jar files contained in the lib directory</p>
+
+<table><tbody>
+<tr>
+<th>JAR name</th>
+<th>Description</th>
+<td> **When required?** </td>
+<th>Depends on 3rd party jars</th>
+</tr>
+<tr>
+<td>orient-commons-**.jar</td>
+<td>Library with some utility classes that are not part of OrientDB itself but usable with any kind of project</td>
+<td>Always</td>
+</tr>
+<tr>
+<td>orientdb-core-**.jar</td>
+<td>Core library</td>
+<td>Always</td>
+</tr>
+<tr>
+<td>orientdb-client-**.jar</td>
+<td>Remote client</td>
+<td>When your application talks with a remote server</td>
+</tr>
+<tr>
+<td>orientdb-enterprise-**.jar</td>
+<td>Base package with the protocol and network classes shared by client and server</td>
+<td>When your application talks with a remote server</td>
+</tr>
+<tr>
+<td>orientdb-server-**.jar</td>
+<td>Server component</td>
+<td>It's used by the server component. Include it only if you're embedding a server</td>
+</tr>
+<tr>
+<td>orientdb-tools-**.jar</td>
+<td>Contain the console and console commands</td>
+<td>Never, unless you want to execute console command directly by your application. Used by the console application</td>
+</tr>
+<tr>
+<td>orientdb-object-**.jar</td>
+<td>Contain the Object Database interface</td>
+<td>Include it if you're using this interface</td>
+<td>javassist.jar, persistence-api-1.0.jar</td>
+</tr>
+</tbody></table><h4>Engines</h4>
+
+<p>OrientDB supports pluggable engines. The engine is the first part of the <a class="internal present" href="/wiki/Concepts.html#database_url">database URL</a>. By default the "local" and "memory" are self-registered, while the "remote" requires to link the orient-client.jar library in your classpath.</p>
+
+<h4>Multi-threading</h4>
+
+<p>None of the database classes are thread-safe. For this reason use different Database instances in each thread. The local client cache is shared between all threads. When your client is connected to a remote OrientDB Server instance it is always best to work inside a <a class="internal present" href="/wiki/Transactions.html">transaction</a>. In this way local changes will only be transmitted at commit time while transactions continue to see local changes. For more information: <a class="internal present" href="/wiki/Java-Multi-Threading.html">Multi Threading</a>.</p>
+
+<h4>Schema APIs</h4>
+
+<p>If you are using a database that supports a schema (see the table above), check the <a href="JavaSchemaAPI">Schema APIs</a> page. Schema APIs are common to all databases that support this feature.</p>
+
+<h4>Hooks</h4>
+
+<p>Starting from v. 0.9.16 OrientDB supports <strong>hooks</strong>. Hook works like a trigger. Hook lets the user application intercept internal events. See <a class="internal present" href="/wiki/Hook.html">Hook API</a>.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

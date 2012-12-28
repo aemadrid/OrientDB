@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Troubleshooting |  OrientDB</title>
+  <title>Troubleshooting</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Troubleshooting">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Troubleshooting
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <p>This page aims to link all the guides to Problems and Troubleshooting.</p>
+
+<h3>Sub sections</h3>
+
+<ul>
+<li><a class="internal present" href="/wiki/Troubleshooting-Java.html">Troubleshooting Java API</a></li>
+</ul><h3>Topics</h3>
+
+<h4>[Error occurred while locking memory: Unable to lock JVM memory. This can result in part of the JVM being swapped out, especially if mmapping of files enabled. Increase RLIMIT_MEMLOCK or run OrientDB server as root(ENOMEM)</h4>
+
+<p>Don't be scared about it: your OrientDB installation will work perfectly, just it could be slower with database larger than memory.</p>
+
+<p>This lock is needed in case of you work on OS which uses aggressive swapping like Linux. If there is the case when amount of available RAM is not enough to cache all MMAP content OS can swap out rarely used parts of Java heap to the disk and when GC is started to collect garbage we will have performance degradation, to prevent such situation Java heap is locked into memory and prohibited to be flushed on the disk. </p>
+
+<h4>com.orientechnologies.orient.core.exception.OStorageException: Error on reading record from file 'default.0.oda', position 2333, size 122,14Mb: the record size is bigger then the file itself (233,99Kb)</h4>
+
+<p>This usually happens because the database has been corrupted by a hw/sw crash or a hard kill of the process during the writing to disk. If this happens on index clusters just rebuild indexes, otherwise re-import a previously exported database.</p>
+
+<h4>WARNIGN: Connection re-acquired transparently after XXXms and Y retries: no errors will be thrown at application level</h4>
+
+<p>This means that probably default timeouts are too low and server side operation need more time to complete. Follow these  <a class="internal present" href="/wiki/Performance-Tuning.html#remote_connections.suggestions">MemoryLocker.lockMemory]</a>.</p>
+
+<h4>Could not find artifact com.orientechnologies:orientdb-core:jar:1.0-SNAPSHOT in orientechnologies-repository(<a href="http://www.orientechnologies.com/listing/m2">http://www.orientechnologies.com/listing/m2</a>)</h4>
+
+<p>Your maven configuration points to the old Orient Technologies repository: <a href="http://www.orientechnologies.com/listing/m2">http://www.orientechnologies.com/listing/m2</a>. Follow this configuration: [### Record id invalid -1:-2</p>
+
+<p>This message is relative to a temporary <a class="internal present" href="/wiki/Download.html#via_maven_repository">Concepts#recordidrecordid</a>.]] generated inside a transaction. For more information look at <a class="internal present" href="/wiki/Transactions.html">Transactions</a>. This means that the record hasn't been correctly serialized.</p>
+
+<h4>Brand new records are created with version major than 0</h4>
+
+<p>This happens in graphs. Think to this graph of records:</p>
+
+<p>A -&gt; B -&gt; C -&gt; A</p>
+
+<p>When OrientDB starts to serialize records goes recursively from the root A. When A is encountered again to avoid loops it saves the record as empty just to get the RecordID to store into the record C. When the serialization stack ends the record A (that was the first of the stack) is updated because has been created as first but empty.</p>
+
+<h4>Why it's so slow with index and massive insertion?</h4>
+
+<p>Try to enable automatic flush of index nodes. Via API:
+</p><div class="highlight"><pre>  <span class="n">OGlobalConfiguration</span><span class="o">.</span><span class="na">MVRBTREE_LAZY_UPDATES</span><span class="o">.</span><span class="na">setValue</span><span class="o">(-</span><span class="mi">1</span><span class="o">);</span>
+</pre></div>
+or via configuration:
+<div class="highlight"><pre>  <span class="n">java</span> <span class="o">...</span> <span class="o">-</span><span class="n">Dmvrbtree</span><span class="o">.</span><span class="na">optimizeThreshold</span><span class="o">=-</span><span class="mi">1</span> <span class="o">...</span>
+</pre></div>
+
+<h4>Error: com.orientechnologies.orient.core.db.record.ORecordLazySet cannot be cast to com.orientechnologies.orient.core.db.record.OIdentifiable</h4>
+
+<p>This happens if you've migrated a database created with an old version of OrientDB where indexes were managed in different way. Just drop and recreate the indexes.</p>
+
+<h4>com.orientechnologies.common.concur.lock.OLockException: File '/tmp/databases/demo/default.0.oda' is locked by another process, maybe the database is in use by another process. Use the remote mode with a OrientDB server to allow multiple access to the same database</h4>
+
+<p>This is because the database is locked by another process is using it. To fix:</p>
+
+<ul>
+<li>check there's no a process is using OrientDB. Most of the times a OrientDB Server is running. Just shutdown it and retry</li>
+<li>set the <a href="http://code.google.com/p/orient/wiki/PerformanceTuning#Parameters">storage.keepOpen</a> setting to false</li>
+</ul><h4>012-04-20 11:29:56:132 SEVE Received unread response from /10.0.0.2:2434 for session=0, probably corrupted data from the network connection. Cleared dirty data in the buffer (330 bytes): [----7-c-o-m-.-o-r-i-e-n-t-e-c-h-n-o-l-o-g-i-e-s-.-c-o-m-m-o-n-.-c-o-n-c-u-r-.-l-o-c-k-.-O-L-o-c-k...] [OChannelBinaryClient</h4>
+
+<p>This is a message of an old version of OrientDB: upgrade it.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Transactions |  OrientDB</title>
+  <title>Transactions</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Transactions">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Transactions
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB is an <a href="http://en.wikipedia.org/wiki/ACID">ACID</a> compliant DBMS. By default no transaction is opened when you use Orient. </p>
+
+<p>In some situations transactions can improve performance, typically in the client/server scenario. If you use an Optimistic Transaction, the OrientDB engine optimizes the network transfer between the client and server, saving both CPU and bandwidth.</p>
+
+<h3>Record IDs</h3>
+
+<p>OrientDB uses temporary <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>s with transaction as scope that will be transformed to finals once the transactions is successfully committed to the database. This avoid to ask for a free slot every time a client creates a record.</p>
+
+<h3>Fail-over</h3>
+
+<p>An Orient instance can fail for several reasons:</p>
+
+<ul>
+<li>HW problems, such as loss of power or disk error</li>
+<li>SW problems, such as a Operating System crash</li>
+<li>Application problem, such as a bug that crashes your application that is  connected to the Orient engine.</li>
+</ul><p>You can use the OrientDB engine directly in the same process of your application. This gives superior performance due to the lac of inter-process communication. In this case, should your application crash (for any reason), the OrientDB Engine also crashes.</p>
+
+<p>If you're using an OrientDB Server connected remotely, if your application crashes the engine continue to work, but any pending transaction owned by the client will be rolled back.</p>
+
+<h3>Auto-recovery</h3>
+
+<p>At start-up the OrientDB Engine checks to if it is restarting from a crash. In this case, the auto-recovery phase starts which rolls back all pending transactions.</p>
+
+<h3>Transaction types</h3>
+
+<h4>No Transaction</h4>
+
+<p>Default mode. Each operation is executed instantly.</p>
+
+<p>Calls to <code>begin()</code>,  <code>commit()</code> and  <code>rollback()</code> have no effect.</p>
+
+<h4>Optimistic Transaction</h4>
+
+<p>This mode uses the well known <a href="http://en.wikipedia.org/wiki/Multiversion_concurrency_control">Multi Version Control System (MVCC)</a> by allowing multiple reads and writes on the same records. The integrity check is made on commit. If the record has been saved by another transaction in the interim, then a OConcurrentModificationException exception will be throw. The application can choose either to repeat the transaction or abort it.</p>
+
+<div class="highlight"><pre>  <span class="n">db</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"remote:localhost:7777/petshop"</span><span class="o">);</span>
+  
+  <span class="k">try</span><span class="o">{</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">begin</span><span class="o">(</span><span class="n">TXTYPE</span><span class="o">.</span><span class="na">OPTIMISTIC</span><span class="o">);</span>
+    <span class="o">...</span>
+    <span class="c1">// WRITE HERE YOUR TRANSACTION LOGIC</span>
+    <span class="o">...</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+  <span class="o">}</span><span class="k">catch</span><span class="o">(</span> <span class="n">Exception</span> <span class="n">e</span> <span class="o">){</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">rollback</span><span class="o">();</span>
+  <span class="o">}</span> <span class="k">finally</span><span class="o">{</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+  <span class="o">}</span>
+</pre></div>
+
+<p>In Optimistic transaction new records take temporary <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>s to avoid to ask to the server a new <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a> every time. Temporary <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>s have Cluster Id -1 and Cluster Position &lt; -1. When a new transaction begun the counter is reset to -1:-2. So if you create 3 new records you'll have:</p>
+
+<ul>
+<li>-1:-2</li>
+<li>-1:-3</li>
+<li>-1:-4</li>
+</ul><p>At commit time these record temporary <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>s will be converted in the final ones.</p>
+
+<h4>Pessimistic Transaction</h4>
+
+<p>This mode is not supported yet by the engine. Track <a href="http://code.google.com/p/orient/issues/detail?id=12">issue</a> for more information.</p>
+
+<h3>Improve reliability in case of hw/sw crash</h3>
+
+<p>By default OrientDB, uses the Operating System's capabilities to speed up access to the underlying file system.</p>
+
+<p>If you have a reliable IO system such as RAID hardware device this is not a problem. But if you run OrientDB on top of non-reliable HW (no RAID controller) or you want to reduce at the minimum database integrity problems on improvise crash of the Server machine then enable a synch for each transaction log operation.</p>
+
+<p>Via JVM configuration:
+</p><div class="highlight"><pre>  <span class="n">java</span> <span class="o">...</span> <span class="o">-</span><span class="n">Dtx</span><span class="o">.</span><span class="na">log</span><span class="o">.</span><span class="na">synch</span><span class="o">=</span><span class="kc">true</span> <span class="o">...</span>
+</pre></div>
+
+<p>or via API:
+</p><div class="highlight"><pre>  <span class="n">OGlobalConfiguration</span><span class="o">.</span><span class="na">TX_LOG_SYNCH</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</pre></div>
+
+<p>You can also execute a synch against every single database file once transaction commit is completed.</p>
+
+<p>Via JVM configuration:
+</p><div class="highlight"><pre>  <span class="n">java</span> <span class="o">...</span> <span class="o">-</span><span class="n">Dtx</span><span class="o">.</span><span class="na">commit</span><span class="o">.</span><span class="na">synch</span><span class="o">=</span><span class="kc">true</span> <span class="o">...</span>
+</pre></div>
+or via API:
+<div class="highlight"><pre>  <span class="n">OGlobalConfiguration</span><span class="o">.</span><span class="na">TX_COMMIT_SYNCH</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</pre></div>
+
+<h3>Tuning</h3>
+
+<p>For further information look at <a class="internal present" href="/wiki/Performance-Tuning.html#wise_use_of_transactions">Transaction tuning</a> to know more.</p>
+
+<h3>Distributed environment</h3>
+
+<p>Today transactions can't be distributed across multiple servers. The transaction semantic is not guarantee if the involved records come from different server nodes.</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Graph Database |  OrientDB</title>
+  <title>Graph Database</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Graph-Database">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Graph Database
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Java-API.html" class="nr1">Java Api</a></li>
+          
+            <li><a href="/wiki/Home.html" class="nr2">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB is a Document-Graph DBMS because has the features of both Document DBMS and Graph DBMS. This section explores the Graph capabilities of OrientDB. To better understand how OrientDB compares to other GraphDB in features and performance look at this <a class="internal present" href="/wiki/GraphDB-Comparison.html">comparison</a>. To know more about Graph Databases look at the following presentations:</p>
+
+<ul>
+<li>
+<a href="http://www.slideshare.net/ingdavidino/graph-db-inphp">GraphDB PHP</a> contains an amazing introduction to what GraphDB can do for you</li>
+<li><a href="http://www.slideshare.net/pierredewilde/a-walk-in-graph-databases-v10">A walk in Graph Databases</a></li>
+</ul><p>NOTE: _If you plan to use OrientDB as pure Graph Database look at the <a class="internal absent" href="/wiki/Graph%28Ed%29-tutorial.html">Graph Ed Tutorial</a>.</p>
+
+<p>The principal feature of a GraphDB is the ability to handle relationships. A GraphDB can traverse thousands of edges at a fraction of the cost of the Relational JOINs because relationships are direct links between document/nodes.</p>
+
+<p>The GraphDB has few but strong concepts:</p>
+
+<ul>
+<li>
+<strong>Vertex</strong> or Node, the linked entity. Vertexes can have properties</li>
+<li>
+<strong>Edge</strong> or Arc, as the link between Vertexes. Edges can have properties and can be unidirectional or bidirectional</li>
+<li>
+<strong>Property</strong>, is a value to assign to Vertexes and Edges. A property has a name and a value</li>
+</ul><p><img src="http://www.orientechnologies.com/images/graph-schema.png"></p>
+
+<p>In this diagram on the left we represent the simplified domain of a PetShop application using the UML class diagram notation following the Object Oriented paradigm. How to model it using the OrientDB's graph model?</p>
+
+<p>OrientDB supports a superset of <a href="http://blueprints.tinkerpop.com">TinkerPop Blueprints</a> model, the <a href="https://github.com/tinkerpop/blueprints/wiki/Property-Graph-Model">Property Graph Model</a>. The difference is that with OrientDB you can create custom types of vertices and edges. In this example the orange classes are Vertex types, while the green one is the Edge type.</p>
+
+<p>To cross the graph you can use the powerful <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> language, the OrientDB's SQL (an extended version of SQL with new operators to work with Trees and Graphs or a mix of both.</p>
+
+<p><img src="http://www.orientechnologies.com/images/graph-instance.png"></p>
+
+<p>Extract, per each food, the list of animals that eat that food:
+</p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">SELECT</span> <span class="n">name</span><span class="o">,</span> <span class="n">in</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">in</span><span class="o">.</span><span class="na">name</span> <span class="n">FROM</span> <span class="n">Food</span>
+  
+  <span class="n">Meat</span><span class="o">,</span> <span class="o">[</span><span class="n">Gaud</span><span class="err">ì</span><span class="o">,</span><span class="n">Kelly</span><span class="o">]</span>
+</pre></div>
+Extract the name of the animals that eat less than 1Kg of meat per day:
+<div class="highlight"><pre>  &gt; SELECT name FROM Animal WHERE out.kgPerDay <span class="nt">&lt; 1</span> <span class="err">AND</span> <span class="err">out[@</span><span class="na">class=</span><span class="s">'Eat'</span><span class="err">]</span><span class="na">.in.name =</span> <span class="s">'Meat'</span>
+  
+  <span class="err">Gaudì</span>
+</pre></div>
+Extract the name of the animals that eat at 10 AM:
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">Animal</span> <span class="n">WHERE</span> <span class="n">out</span><span class="o">[</span><span class="nd">@class</span><span class="o">=</span><span class="err">'</span><span class="n">Eat</span><span class="err">'</span><span class="o">].</span><span class="na">whenAsHours</span> <span class="n">CONTAINS</span> <span class="mi">10</span>
+  
+  <span class="n">Kelly</span>
+</pre></div>
+Usage of SQL + <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> to extract all the outgoing vertices connected to 'Gaudì' Animal:
+<div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">SELECT</span> <span class="n">GREMLIN</span><span class="o">(</span><span class="s">"current.out"</span><span class="o">)</span> <span class="n">FROM</span> <span class="n">Animal</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Gaud</span><span class="err">ì'</span>
+  
+  <span class="n">Kelly</span>
+</pre></div>
+
+<h3>Usage</h3>
+
+<p>You can work with graphs using three approaches: </p>
+
+<ul>
+<li>
+<strong><a class="internal present" href="/wiki/Graph-Database-Raw.html">Graph Database Raw</a></strong>: Raw native API, the fastest but not so fluent API</li>
+<li>
+<strong><a class="internal present" href="/wiki/Graph-Database-Native.html">Graph Database Native</a></strong>: Native APIs, built on top of core engine (deprecated)</li>
+<li>
+<strong><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">Graph Database Tinkerpop</a></strong>: APIs, using all the technologies buil on top of it such as Gremlin language and Pipes</li>
+</ul><h3>How is it implemented?</h3>
+
+<div class="highlight"><pre>  <span class="o">+--------------+</span>                                       <span class="o">+--------------+</span>
+  <span class="o">|</span>              <span class="o">|</span> <span class="n">out</span>       <span class="o">*</span> <span class="o">+------------+</span> <span class="n">in</span>         <span class="o">|</span>              <span class="o">|</span>
+  <span class="o">|</span>              <span class="o">|------------&gt;|</span>            <span class="o">|-----------&gt;|</span>              <span class="o">|</span>
+  <span class="o">|</span>   <span class="n">V</span><span class="o">(</span><span class="n">ertex</span><span class="o">)</span>   <span class="o">|</span>             <span class="o">|</span>   <span class="n">E</span><span class="o">(</span><span class="n">dge</span><span class="o">)</span>   <span class="o">|</span>            <span class="o">|</span>   <span class="n">V</span><span class="o">(</span><span class="n">ertex</span><span class="o">)</span>   <span class="o">|</span> 
+  <span class="o">|</span>              <span class="o">|&lt;------------|</span>            <span class="o">|&lt;-----------|</span>              <span class="o">|</span>
+  <span class="o">|</span>              <span class="o">|</span>         <span class="n">out</span> <span class="o">+------------+</span>         <span class="n">in</span> <span class="o">|</span>              <span class="o">|</span>
+  <span class="o">+--------------+</span>                                       <span class="o">+--------------+</span>
+</pre></div>
+Since the internal Document-Graph architecture of OrientDB is flexible and fast with links, the Object Database, Graph Database and Key/Value Database are all built on top of the Document Database interface (<a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.java">ODatabaseDocumentTx</a> class). In reality there are other layers behind the Document Database but that APIs are not yet documented and probably are too raw to be used for a real use case (unless you're writing a distributed file system)...
+
+<p>The GraphDB stores vertices in the class <strong><a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphVertex.java">OGraphVertex</a></strong> just called <strong>V</strong> and edges in <strong><a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphEdge.java">OGraphEdge</a></strong> just called <strong>E</strong>. Both classes extend <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphElement.java">OGraphElement</a> that extends <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/type/ODocumentWrapper.java">ODocumentWrapper</a>.</p>
+
+<p>So you can always query your graph using the OrientDB SQL language and act at lower level if you maintain the constraints of the GraphDB itself:</p>
+
+<ul>
+<li>Edges must be always bi-directionals</li>
+<li>
+<strong><a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphVertex.java">OGraphVertex</a></strong> (also called <strong>V</strong>) instances store outgoing edges in the property "out" and input edges in "in". Both the properties are declared as OType.LINKSET</li>
+<li>
+<strong><a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphEdge.java">OGraphEdge</a></strong> (also called <strong>E</strong>) instances store outgoing vertex in the property "out" and incoming vertex in "in". Both the properties are declared as OType.LINK</li>
+</ul><p>If you're using the <a href="https://github.com/tinkerpop/blueprints/wiki/Property-Graph-Model">Blueprints API</a> then:</p>
+
+<ul>
+<li>
+<a href="https://github.com/tinkerpop/blueprints/blob/master/blueprints-core/src/main/java/com/tinkerpop/blueprints/pgm/Vertex.java">Vertex</a> is a wrapper of <strong><a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphVertex.java">OGraphVertex</a></strong>
+</li>
+<li>
+<a href="https://github.com/tinkerpop/blueprints/blob/master/blueprints-core/src/main/java/com/tinkerpop/blueprints/pgm/Edge.java">Edge</a> is a wrapper of <strong><a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/OGraphEdge.java">OGraphEdge</a></strong>
+</li>
+<li>The "label" is stored as "label" property of the OGraphVertex and OGraphEdge</li>
+</ul><h3>Manipulate graphs as documents</h3>
+
+<p>Since the graph model has been built on top of OrientDB, you can use all the OrientDB features to manipulate graphs even without the graph API.</p>
+
+<h3>SQL</h3>
+
+<p>Simple query against vertexes:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">V</span> <span class="n">WHERE</span> <span class="n">out</span> <span class="nf">CONTAINS</span> <span class="o">(</span> <span class="n">label</span> <span class="o">=</span> <span class="err">'</span><span class="n">knows</span><span class="err">'</span> <span class="o">)</span>
+</pre></div>
+
+<p>Retrieves all the vertices connected to the outgoing edges.
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">out</span><span class="o">.</span><span class="na">in</span> <span class="n">AS</span> <span class="n">labels</span> <span class="n">FROM</span> <span class="n">V</span> <span class="n">WHERE</span> <span class="n">out</span> <span class="nf">CONTAINS</span> <span class="o">(</span> <span class="n">label</span> <span class="n">IS</span> <span class="n">NOT</span> <span class="n">NULL</span> <span class="o">)</span>
+</pre></div>
+
+<p>Traverse all the retrieved nodes with name "Tom". The traversal cross the out edges but only where the linked (in) Vertex has label "Ferrari" and then forward to the:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">out</span><span class="o">[</span><span class="n">in</span><span class="o">.</span><span class="na">label</span> <span class="o">=</span> <span class="err">'</span><span class="n">Ferrari</span><span class="err">'</span><span class="o">]</span> <span class="n">FROM</span> <span class="n">v</span> <span class="n">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Tom</span><span class="err">'</span>
+</pre></div>
+
+<p>To know more about crossing graph in SQL projections look at <a href="Document_Field_Part#Use_in_graphs">SQL Projections</a>.</p>
+
+<p>Or if you've installed the <a href="http://code.google.com/p/orient/wiki/GraphEdTutorial">Graph(Ed)</a> you can mix <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> and SQL together:</p>
+
+<p>Simple query against vertexes:
+</p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="nf">GREMLIN</span><span class="o">(</span> <span class="err">'</span><span class="n">current</span><span class="o">.</span><span class="na">outE</span><span class="o">.</span><span class="na">inV</span><span class="err">'</span> <span class="o">)</span> <span class="n">AS</span> <span class="n">labels</span> <span class="n">FROM</span> <span class="n">V</span> <span class="n">WHERE</span> <span class="n">out</span> <span class="n">CONTAINS</span> <span class="o">(</span> <span class="n">label</span> <span class="n">IS</span> <span class="n">NOT</span> <span class="n">NULL</span> <span class="o">)</span>
+</pre></div>
+
+<p>Get all the friends you know by traversing up 7th level the friends of your social network profile:
+</p><div class="highlight"><pre>  TRAVERSE friends FROM ( SELECT FROM Profile WHERE name = 'Jay Miner' ) WHERE $depth <span class="err">&lt;</span>= 7
+</pre></div>
+
+<p>Create a couple of vertices and connects them with an edge:
+</p><div class="highlight"><pre>  <span class="n">CREATE</span> <span class="n">VERTEX</span> <span class="n">driver</span> <span class="n">SET</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Magnum</span> <span class="n">PI</span><span class="err">'</span>
+  <span class="n">CREATE</span> <span class="n">VERTEX</span> <span class="n">car</span> <span class="n">SET</span> <span class="n">brand</span> <span class="o">=</span> <span class="err">'</span><span class="n">Ferrari</span><span class="err">'</span>
+  <span class="n">CREATE</span> <span class="n">EDGE</span> <span class="n">drive</span> <span class="n">FROM</span> <span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">2</span> <span class="n">TO</span> <span class="err">#</span><span class="mi">13</span><span class="o">:</span><span class="mi">6</span> <span class="n">SET</span> <span class="n">since</span> <span class="o">=</span> <span class="mi">1980</span>
+</pre></div>
+
+<p>For more information about TRAVERSE command look at <a class="internal present" href="/wiki/SQL-Traverse.html#using_traverse_with_graph_model_and_api">Traverse operator</a>.</p>
+
+<p>Do you have doubts if the Graph Model fits at the best your needs? Look at [<a href="http://code.google.com/p/orient/wiki/UseCases#Document_or_Graph_model?">http://code.google.com/p/orient/wiki/UseCases#Document_or_Graph_model?</a>]</p>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

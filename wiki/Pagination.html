@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Pagination |  OrientDB</title>
+  <title>Pagination</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Pagination">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Pagination
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>OrientDB supports pagination natively. Pagination doesn't consume server side resources because no cursors are used but only <a class="internal present" href="/wiki/Concepts.html#recordid">RecordIDs</a> as pointers to the physical position in the cluster. </p>
+
+<p>There are 2 ways to achieve pagination.</p>
+
+<h3>Use the SKIP-LIMIT</h3>
+
+<p>The first and simpler way to do pagination is to using the SKIP/LIMIT approach. This is the slower way because OrientDB repeats the query and just skip the first X records from the result.
+Syntax:
+</p><div class="highlight"><pre>  SELECT FROM <span class="nt">&lt;target&gt;</span> [WHERE ...] SKIP <span class="nt">&lt;records-to-skip&gt;</span> LIMIT <span class="nt">&lt;max-records&gt;</span>
+</pre></div>
+Where:
+
+<ul>
+<li>
+<strong>records-to-skip</strong> is the number of records to skip before to start collecting them as result set</li>
+<li>
+<strong>max-records</strong> is the maximum number of records returned by the query</li>
+</ul><p>Example</p>
+
+<h3>Use the RID-LIMIT</h3>
+
+<p>This method is faster then the SKIP-LIMIT because OrientDB will begin the scan from the starting RID. OrientDB can seek the first record in about O(1) time. The cons is that is more complex to use.</p>
+
+<p>The trick here is to execute the query multiple times setting the LIMIT as the page size and using the greater than &gt; operator against @rid. The <strong>lower-rid</strong> is the starting point where to start to search, for example #10:300.</p>
+
+<p>Syntax:
+</p><div class="highlight"><pre>  SELECT FROM <span class="nt">&lt;target&gt;</span> WHERE @rid &gt; <span class="nt">&lt;lower-rid&gt;</span> ... [LIMIT <span class="nt">&lt;max-records&gt;</span>]
+</pre></div>
+
+<p>Where:</p>
+
+<ul>
+<li>
+<strong>lower-rid</strong> is the exclusive lower bound of the range as <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>
+</li>
+<li>
+<strong>max-records</strong> is the maximum number of records returned by the query</li>
+</ul><p>In this way OrientDB will start to scan the cluster from the given position <strong>lower-rid</strong> + 1. After the first call the <strong>lower-rid</strong> will be the rid of the last record returned by the previous call. To scan cluster form beginning use #-1:-1 as <strong>lower-rid</strong> .</p>
+
+<h4>Handle it by hand</h4>
+
+<div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="s">"admin"</span><span class="o">,</span> <span class="s">"admin"</span><span class="o">);</span>
+  <span class="kd">final</span> <span class="n">OSQLSynchQuery</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OSQLSynchQuery</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;(</span><span class="s">"select from Customer where @rid &gt; ? LIMIT 20"</span><span class="o">);</span>
+  <span class="n">ORID</span> <span class="n">last</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ORecordId</span><span class="o">();</span>
+  
+  <span class="n">List</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">resultset</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="n">last</span><span class="o">);</span>
+  
+  <span class="k">while</span> <span class="o">(!</span><span class="n">resultset</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+      <span class="n">last</span> <span class="o">=</span> <span class="n">resultset</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">resultset</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">).</span><span class="na">getIdentity</span><span class="o">();</span>
+      <span class="n">resultset</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="n">query</span><span class="o">,</span> <span class="n">last</span><span class="o">);</span>
+  <span class="o">}</span>
+  <span class="n">database</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre></div>
+
+<h4>Automatic management</h4>
+
+<p>In order to simplify the pagination the OSQLSynchQuery object (usually used in queries) keeps track of the current page and if executed multiple times it advances by page to page automatically without using the "&gt;" operator.</p>
+
+<p>Example:</p>
+
+<div class="highlight"><pre>  OSQLSynchQuery<span class="nt">&lt;ODocument&gt;</span> query = new OSQLSynchQuery<span class="nt">&lt;ODocument&gt;</span>("select from Customer LIMIT 20");
+  for (List<span class="nt">&lt;ODocument&gt;</span> resultset = database.query(query); !resultset.isEmpty(); resultset = database.query(query)) {
+    ...
+  }
+</pre></div>
+
+<h3>Usage of indexes</h3>
+
+<p>This is the faster way to achieve pagination with large clusters.</p>
+
+<p>If you've defined an index you can use it to paginate results. Example to get all the names next to "Jay" limiting it to 20:
+</p><div class="highlight"><pre>  Collection<span class="nt">&lt;ODocument&gt;</span> indexEntries = (Collection<span class="nt">&lt;ODocument&gt;</span>) index.getEntriesMajor("Jay", true, 20);
+</pre></div>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>

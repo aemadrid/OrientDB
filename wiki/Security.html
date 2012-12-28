@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"><!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <title>Security |  OrientDB</title>
+  <title>Security</title>
+  <link href="../stylesheets/foundation.min.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="../stylesheets/app.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="../javascripts/modernizr.foundation.js" type="text/javascript"></script>
+  
+</head>
+<body class="wiki wiki_Security">
+
+<header>
+  <div class="row">
+    <div class="five columns">
+      <h1>
+        <a href="/">
+          Orient<span class="highl">DB</span>
+        </a>
+        <span class="subtitle">The Document/Graph NoSQL Database</span>
+      </h1>
+    </div>
+    <div class="seven columns right">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+<div class="page-header">
+  <div class="row">
+    <div class="twelve columns">
+      <h2>
+        <i class="icon-wiki"></i>
+        Security
+        
+          <ul class="bcs">
+          
+            <li><a href="/wiki/Home.html" class="nr1">Home</a></li>
+          
+          </ul>
+        
+        
+      </h2>
+    </div>
+  </div>
+</div>
+
+<div id="main" class="row wiki">
+
+  <div class="twelve columns content" role="content">
+
+    <h3>Introduction</h3>
+
+<p>The security model of OrientDB is based on well known concepts built on users and roles. A database has <strong>"users"</strong>. Each <a href="#User">User</a> has one or more <strong>"roles"</strong>. <a href="#Role">Role</a> is compound by the mode of working (more later) and the set of permission rules.</p>
+
+<h3>Database security</h3>
+
+<p><img src="http://www.orientechnologies.com/images/orientdb-dbsecurity.png"></p>
+
+<h4>User</h4>
+
+<p>A User is an actor of the database. When you open a database you need to specify the user name and password used. Each user has own credentials and permissions.</p>
+
+<p>By convention 3 users are always created by default every time you create a new database. Passwords are the same as the user name. Default users are:</p>
+
+<ul>
+<li>
+<strong>Admin</strong>, all access to all the functions without limitation</li>
+<li>
+<strong>Reader</strong>, classic read-only user. Can read any records but can't modify or delete them. Can't access to internal information such as user and role themselves.</li>
+<li>
+<strong>Writer</strong>, like the "reader" but can also create, update and delete records.</li>
+</ul><p>Users are themselves records stored inside the cluster "OUser". The passwords are stored in hash format using the strong algorithm <a href="http://en.wikipedia.org/wiki/SHA-2">SHA-256</a>.</p>
+
+<p>The user status is stored in the field "status" and can be: "SUSPENDED" and "ACTIVE". Only ACTIVE users can log in.</p>
+
+<h5>Work with users</h5>
+
+<p>To browse all the database's users use:
+</p><div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">ouser</span>
+</pre></div>
+
+<p>To create a new user use the SQL INSERT remembering to assign the status 'ACTIVE' and a valid role as in this example:
+</p><div class="highlight"><pre>  <span class="n">insert</span> <span class="n">into</span> <span class="n">ouser</span> <span class="n">set</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">jay</span><span class="err">'</span><span class="o">,</span> <span class="n">password</span> <span class="o">=</span> <span class="err">'</span><span class="n">JaY</span><span class="err">'</span><span class="o">,</span> <span class="n">status</span> <span class="o">=</span> <span class="err">'</span><span class="n">ACTIVE</span><span class="err">'</span><span class="o">,</span> <span class="n">roles</span> <span class="o">=</span> <span class="o">(</span><span class="n">select</span> <span class="n">from</span> <span class="n">ORole</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">reader</span><span class="err">'</span><span class="o">)</span>
+</pre></div>
+
+<p>To change the user name use:
+</p><div class="highlight"><pre>  <span class="n">update</span> <span class="n">ouser</span> <span class="n">set</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">jay</span><span class="err">'</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">reader</span><span class="err">'</span>
+</pre></div>
+
+<p>In the same way to change the user password use:
+</p><div class="highlight"><pre>  <span class="n">update</span> <span class="n">ouser</span> <span class="n">set</span> <span class="n">password</span> <span class="o">=</span> <span class="err">'</span><span class="n">hello</span><span class="err">'</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">reader</span><span class="err">'</span>
+</pre></div>
+
+<p>The password will be saved in hash format using the algorithm SHA-256. The trigger "OUserTrigger" will encrypt the password transparently before the record is saved.</p>
+
+<p>To disable a user change the status from 'ACTIVE' to 'SUSPENDED'. In this example we disable all the users but "admin":
+</p><div class="highlight"><pre>  update ouser set status= 'SUSPENDED' where name <span class="err">&lt;</span>&gt; 'admin'
+</pre></div>
+
+<h4>Role</h4>
+
+<p>A role decides if it's allowed to execute an operation against a resource. Mainly this decision depends by the "working mode" and by the "rules". Rules work differently based on the "working mode".</p>
+
+<h5>Working with roles</h5>
+
+<h5>= Create a new role =</h5>
+
+<p>To create a new role use the SQL INSERT remembering to assign the status 'ACTIVE' and a valid role as in this example:
+</p><div class="highlight"><pre>  <span class="n">insert</span> <span class="n">into</span> <span class="n">orole</span> <span class="n">set</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">developer</span><span class="err">'</span><span class="o">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+
+<h5>Working modes</h5>
+
+<p>The supported "working modes" are:</p>
+
+<h5>= 1: allow all but (the rules) =</h5>
+
+<p>By default is a super user and exceptions are enlisted in the rules. If no rule is found for the requested resource, then it's allowed to execute the operation. Use this mainly for power users. "Admin" default role uses this mode and has no exception rules. This mode is written as "1" in database.</p>
+
+<h5>= 0: deny all but (the rules) =</h5>
+
+<p>By default it can't make nothing but the exceptions enlisted in the rules. This should be the default mode for all classic users. "Reader" and "Writer" default roles use this mode. This mode is written as "0" in database.</p>
+
+<h5>Operations</h5>
+
+<p>The supported operations are the classic CRUD operations:</p>
+
+<ul>
+<li>(**C**)reate</li>
+<li>(**R**)ead</li>
+<li>(**U**)pdate</li>
+<li>(**D**)elete</li>
+</ul><p>A role can have none or all the permissions above.</p>
+
+<h5>Resources</h5>
+
+<p>Resources are strings bound to OrientDB concepts:</p>
+
+<ul>
+<li><code>database</code></li>
+<li><code>database.class</code></li>
+<li><code>database.class.&lt;class-name&gt;</code></li>
+<li><code>database.cluster</code></li>
+<li><code>database.cluster.&lt;cluster-name&gt;</code></li>
+<li><code>database.query</code></li>
+<li><code>database.command</code></li>
+<li><code>database.config</code></li>
+<li><code>database.hook.record</code></li>
+<li><code>server.admin</code></li>
+</ul><p>Example:</p>
+
+<p>Enable to the role "motorcyclist" the access to all the classes but the "Car" class:
+</p><div class="highlight"><pre>  <span class="n">update</span> <span class="n">orole</span> <span class="n">put</span> <span class="n">rules</span> <span class="o">=</span> <span class="s">"database.class.*"</span><span class="o">,</span> <span class="s">"ALL"</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"motorcyclist"</span>
+  <span class="n">update</span> <span class="n">orole</span> <span class="n">put</span> <span class="n">rules</span> <span class="o">=</span> <span class="s">"database.class.Car"</span><span class="o">,</span> <span class="s">"NONE"</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"motorcyclist"</span>
+</pre></div>
+
+<h4>Grant and revoke permissions</h4>
+
+<p>To grant and revoke permissions use the [and <a href="SQLGrant%5D">SQLRevoke</a> commands.</p>
+
+<h4>Record level security</h4>
+
+<p>Since v. 1.2.0 OrientDB supports security at record level. This is also called "horizontal security" because doesn't act to the schema (vertically) but per single record. This feature is so powerful we can totally separate database's records as sand-boxes where each "Restricted" records can't be accessed by non authorized users.</p>
+
+<p>To activate this kind of advanced security let the <a class="internal present" href="/wiki/Concepts.html#class">classes</a> you want to have such kind of security system to extends the <strong>ORestricted</strong> super class.</p>
+
+<p>Every time a class extends the <strong>ORestricted</strong> class, OrientDB, by a hook, injects a check before each CRUD operation:</p>
+
+<ul>
+<li>
+<strong>CREATE</strong> new document: set the current database's user in the <strong><code>_allow</code></strong> field. To change this behavior look at <a href="#Customize_on_creation">Customize on creation</a>
+</li>
+<li>
+<strong>READ</strong> a document: check if the current user or its roles are enlisted in the <strong><code>_allow</code></strong> or <strong><code>_allowRead</code></strong> fields. If not the record is skipped. This let each queries to work per user basis</li>
+<li>
+<strong>UPDATE</strong> a document: check if the current user or its roles are enlisted in the <strong><code>_allow</code></strong> or <strong><code>_allowUpdate</code></strong> field. If not a OSecurityException is thrown</li>
+<li>
+<strong>DELETE</strong> a document: check if the current user or its roles are enlisted in the <strong><code>_allow</code></strong> or <strong><code>_allowDelete</code></strong> field. If not a OSecurityException is thrown</li>
+</ul><p>The "allow" fields (**<code>_allow</code><strong>, **<code>_allowRead</code></strong>, <strong><code>_allowUpdate</code></strong>, <strong><code>_allowDelete</code></strong>) can contain instances of <strong>OUser</strong> and <strong>ORole</strong> records (both classes extends OIdentity). Use <strong>OUser</strong> to allow single <a href="#User">users</a> and <strong>ORole</strong> to allow all the users that are part of these <a href="#Role">roles</a>.</p>
+
+<h5>Customize on creation</h5>
+
+<p>By default everytime someone creates a Restricted record (when its class extends the ORestricted class) the current user is inserted in the "<code>_allow</code>" field. This can be changed by setting custom properties in the class schema supporting these properties:</p>
+
+<ul>
+<li>
+<strong>onCreate.fields</strong>, to specify the names of the fields to set. By default is "<code>_allow</code>" but you can specify here "<code>_allowRead</code>", "<code>_allowUpdate</code>" and "<code>_allowDelete</code>" or a combination of them. Use the comma to separate multiple fields</li>
+<li>
+<strong>onCreate.identityType</strong>, to specify if the user's object will be inserted or its role (the first one). By default is set "user", but you can also use "role"</li>
+</ul><p>Example to avoid the user can delete a new post:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">alter</span> <span class="kd">class</span> <span class="nc">Post</span> <span class="n">custom</span> <span class="n">onCreate</span><span class="o">.</span><span class="na">fields</span><span class="o">=</span><span class="n">_allowRead</span><span class="o">,</span><span class="n">_allowUpdate</span>
+</pre></div>
+
+<p>Example to assign its role instead of user to the new Post instances created:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">alter</span> <span class="kd">class</span> <span class="nc">Post</span> <span class="n">custom</span> <span class="n">onCreate</span><span class="o">.</span><span class="na">identityType</span><span class="o">=</span><span class="n">role</span>
+</pre></div>
+
+<h5>Use case</h5>
+
+<p>You want to enable this security in a BLOG like application. First create the document class, like "Post" that extends "ORestricted". Then if the user "Luke" creates a new post and the user "Steve" make the same each user can't access the Post instances created by each other.</p>
+
+<div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">blog</span> <span class="n">admin</span> <span class="n">admin</span>
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">create</span> <span class="kd">class</span> <span class="nc">Post</span> <span class="kd">extends</span> <span class="n">ORestricted</span>
+  <span class="n">Class</span> <span class="err">'</span><span class="n">Post</span><span class="err">'</span> <span class="n">created</span> <span class="n">successfully</span>
+</pre></div>
+
+<p>The user "Luke", registered as OUser "luke" having RID #5:5, logs in and create a new Post:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">blog</span> <span class="n">luke</span> <span class="n">luke</span>
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">insert</span> <span class="n">into</span> <span class="n">Post</span> <span class="n">set</span> <span class="n">title</span> <span class="o">=</span> <span class="s">"Yesterday in Italy"</span>
+  <span class="n">Created</span> <span class="n">document</span> <span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span>
+  
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">select</span> <span class="n">from</span> <span class="n">Post</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  <span class="o">|</span> <span class="n">RID</span> <span class="o">|</span> <span class="n">_allow</span>       <span class="o">|</span> <span class="n">title</span>                 <span class="o">|</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  <span class="o">|</span><span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span><span class="o">|</span> <span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">5</span><span class="o">]</span>       <span class="o">|</span> <span class="n">Yesterday</span> <span class="n">in</span> <span class="n">Italy</span>    <span class="o">|</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+</pre></div>
+
+<p>Then the user Steve, registered as OUser "steve" having RID #5:6, logs in too and create a new Post:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">blog</span> <span class="n">steve</span> <span class="n">steve</span>
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">insert</span> <span class="n">into</span> <span class="n">Post</span> <span class="n">set</span> <span class="n">title</span> <span class="o">=</span> <span class="s">"My Nutella cake"</span>
+  <span class="n">Created</span> <span class="n">document</span> <span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">1</span>
+  
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">select</span> <span class="n">from</span> <span class="n">Post</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  <span class="o">|</span> <span class="n">RID</span> <span class="o">|</span> <span class="n">_allow</span>       <span class="o">|</span> <span class="n">title</span>                 <span class="o">|</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  <span class="o">|</span><span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">1</span><span class="o">|</span> <span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span><span class="o">]</span>       <span class="o">|</span> <span class="n">My</span> <span class="n">Nutella</span> <span class="n">cake</span>       <span class="o">|</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+</pre></div>
+
+<p>Each user can see only the record where they have access. Now try to allow the user Steve (rid #5:6) to access to the first Luke's post adding the Steve's RID in the <strong><code>_allow</code></strong> field:</p>
+
+<div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">blog</span> <span class="n">luke</span> <span class="n">luke</span>
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">update</span> <span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span> <span class="n">add</span> <span class="n">_allow</span> <span class="o">=</span> <span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span>
+</pre></div>
+
+<p>Now if Steve executes the same query as before, the result changes:
+</p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">blog</span> <span class="n">steve</span> <span class="n">steve</span>
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">select</span> <span class="n">from</span> <span class="n">Post</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  <span class="o">|</span> <span class="n">RID</span> <span class="o">|</span> <span class="n">_allow</span>       <span class="o">|</span> <span class="n">title</span>                 <span class="o">|</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  <span class="o">|</span><span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span><span class="o">|</span> <span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">5</span><span class="o">]</span>       <span class="o">|</span> <span class="n">Yesterday</span> <span class="n">in</span> <span class="n">Italy</span>    <span class="o">|</span>
+  <span class="o">|</span><span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">1</span><span class="o">|</span> <span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span><span class="o">]</span>       <span class="o">|</span> <span class="n">My</span> <span class="n">Nutella</span> <span class="n">cake</span>       <span class="o">|</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+</pre></div>
+
+<p>Now we would like to let to Steve to only read posts by Luke but not to modify them. So we're going to remove Steve from the generic "_allow" field to insert into the "_allowRead":</p>
+
+<div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">blog</span> <span class="n">luke</span> <span class="n">luke</span>
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">update</span> <span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span> <span class="n">remove</span> <span class="n">_allow</span> <span class="o">=</span> <span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span>
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">update</span> <span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span> <span class="n">add</span> <span class="n">_allowRead</span> <span class="o">=</span> <span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span>
+</pre></div>
+
+<p>Now if Steve connects and displays all the Post instances he will continue to display the Luke's post but can't update or delete them.</p>
+
+<div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">blog</span> <span class="n">steve</span> <span class="n">steve</span>
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">select</span> <span class="n">from</span> <span class="n">Post</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  <span class="o">|</span> <span class="n">RID</span> <span class="o">|</span> <span class="n">_allow</span>       <span class="o">|</span> <span class="n">title</span>                 <span class="o">|</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  <span class="o">|</span><span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span><span class="o">|</span> <span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">5</span><span class="o">]</span>       <span class="o">|</span> <span class="n">Yesterday</span> <span class="n">in</span> <span class="n">Italy</span>    <span class="o">|</span>
+  <span class="o">|</span><span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">1</span><span class="o">|</span> <span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span><span class="o">]</span>       <span class="o">|</span> <span class="n">My</span> <span class="n">Nutella</span> <span class="n">cake</span>       <span class="o">|</span>
+  <span class="o">+-----+--------------+-----------------------+</span>
+  
+  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">delete</span> <span class="n">from</span> <span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span>
+  <span class="o">!</span><span class="nl">Error:</span> <span class="n">Cannot</span> <span class="n">delete</span> <span class="n">record</span> <span class="err">#</span><span class="mi">18</span><span class="o">:</span><span class="mi">0</span> <span class="n">because</span> <span class="n">the</span> <span class="n">access</span> <span class="n">to</span> <span class="n">the</span> <span class="n">resource</span> <span class="n">is</span> <span class="n">restricted</span>
+</pre></div>
+
+<p>You can enable this feature even on graphs. Follow this tutorial to look how to create a <a class="internal present" href="/wiki/Partitioned-Graphs.html">partitioned graph</a>.</p>
+
+<h3>OrientDB Server security</h3>
+
+<p>A single OrientDB server can manage several databases per time, each one with its users. In HTTP protocol is handled by using different realms. This is the reason why OrientDB Server instance has its own users to handle the server instance itself.</p>
+
+<p>When the OrientDB Server starts check if there is configured the "root" user. If not creates it into the config/server-config.xml file with an automatic generated very long password. Feel free to change the password, but restart the server to get the changes.</p>
+
+<p>Since the passwords are in clear, who is installing OrientDB have to protect the entire directory (not only config folder) to avoid any access to the not authorized users.</p>
+
+<h4>Server's resources</h4>
+
+<p>This section contains all the available server's resources. Each user can declare what resources has access. Wildcard <code><em></em></code> means any resources. **root* server user, by default, has all the privileges, so it can access to all the managed databases.</p>
+
+<table>
+<tr>
+<th>Resource</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>server.info</td>
+<td>Retrieves the server information and statistics</td>
+</tr>
+<tr>
+<td>server.listDatabases</td>
+<td>Lists the available databases on the server</td>
+</tr>
+<tr>
+<td>database.create</td>
+<td>Creates a new database in the server</td>
+</tr>
+<tr>
+<td>database.drop</td>
+<td>Drops a database</td>
+</tr>
+<tr>
+<td>database.passthrough</td>
+<td>Starting from 1.0rc7 the server's user can access to all the managed databases if has the resource **database.passthrough** defined. Example:<code>&lt;user name="replicator" password="repl" resources="database.passthrough" /&gt;</code>
+</td>
+</tr>
+</table>
+
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="row">
+    <div class="six columns">
+      <ul class="inline-list">
+        <li><a href="/"> Home</a></li>
+<li><a href="/about.html"> About</a></li>
+<li class="active"><a href="/wiki/Home.html"> Documentation</a></li>
+<li><a href="/wiki/Download.html"> Downloads</a></li>
+<li><a href="/community.html"> Community</a></li>
+      </ul>
+    </div>
+    <div class="six columns">
+      <p class="copyright">
+        Copyright &copy; 2011-2012 NuvolaBase Ltd. <br/>
+        <span class="small">NuvolaBase is a registered trademark. All Rights Reserved.</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="../javascripts/app.js" type="text/javascript"></script>
+
+</body>
+</html>
