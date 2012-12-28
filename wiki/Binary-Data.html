@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -67,7 +67,7 @@
 
 <p>Sometimes it's better to store binary records in a different path then default database directory to benefit of faster HD (like a SSD) or just to go in parallel if the OS and HW configuration allow this.</p>
 
-<p>In this case create a new <a class="internal present" href="/wiki/Concepts.html#data_segment">data-segment</a> and <a class="internal present" href="/wiki/Concepts.html#cluster">cluster</a> in a different path (available since v1.0):
+<p>In this case create a new <a class="internal present" href="/orientdb/wiki/Concepts.html#data_segment">data-segment</a> and <a class="internal present" href="/orientdb/wiki/Concepts.html#cluster">cluster</a> in a different path (available since v1.0):
 </p><div class="highlight"><pre>  <span class="n">db</span><span class="o">.</span><span class="na">addDataSegment</span><span class="o">(</span><span class="s">"binary"</span><span class="o">,</span> <span class="s">"/mnt/ssd"</span><span class="o">);</span>
   <span class="n">db</span><span class="o">.</span><span class="na">addCluster</span><span class="o">(</span><span class="s">"physical"</span><span class="o">,</span> <span class="s">"binary"</span><span class="o">,</span> <span class="s">"/mnt/ssd"</span><span class="o">,</span> <span class="s">"binary"</span> <span class="o">);</span>
 </pre></div>
@@ -142,7 +142,7 @@ Cons:</li>
 
 <p>Continuing from the last example we could handle not a single reference against one ORecordBytes record but multiple references. A One-To-Many relationship. For this purpose the LINKLIST type fits perfect because maintains the order.</p>
 
-<p>To avoid OrientDB caches in memory large records use the massive insert intent and keep in the collection the <a class="internal present" href="/wiki/Concepts.html#rid">RID</a>, not the entire records.</p>
+<p>To avoid OrientDB caches in memory large records use the massive insert intent and keep in the collection the <a class="internal present" href="/orientdb/wiki/Concepts.html#rid">RID</a>, not the entire records.</p>
 
 <p>Example to store in OrientDB the file content:
 </p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">declareIntent</span><span class="o">(</span> <span class="k">new</span> <span class="n">OIntentMassiveInsert</span><span class="o">()</span> <span class="o">);</span>

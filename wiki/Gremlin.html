@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -69,7 +69,7 @@
 <li><a href="http://gremlindocs.com">Gremlin Documentation</a></li>
 <li><a href="https://github.com/tinkerpop/gremlin/wiki">Gremlin WiKi</a></li>
 <li><a href="https://github.com/tinkerpop/blueprints/wiki/OrientDB-Implementation">OrientDB adapter to use it inside Gremlin</a></li>
-<li><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">OrientDB implementation of TinkerPop Blueprints</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">OrientDB implementation of TinkerPop Blueprints</a></li>
 </ul><p>To know more about <a href="http://gremlindocs.com">Gremlin</a> and <a href="http://www.tinkerpop.com">TinkerPop</a>'s products subscribe to the <a href="http://groups.google.com/forum/#!forum/gremlin-users">Gremlin Group</a>.</p>
 
 <h3>Get Started</h3>
@@ -84,11 +84,11 @@
 
 <h3>Open the graph database</h3>
 
-<p>Before to play with <a href="http://gremlindocs.com">Gremlin</a> you need a valid <strong><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html#work_with_graphdb">OrientGraph</a></strong> instance that points to a OrientDB database. To know all the database types look at <a class="internal present" href="/wiki/Concepts.html#storage">Storage types</a>.</p>
+<p>Before to play with <a href="http://gremlindocs.com">Gremlin</a> you need a valid <strong><a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html#work_with_graphdb">OrientGraph</a></strong> instance that points to a OrientDB database. To know all the database types look at <a class="internal present" href="/orientdb/wiki/Concepts.html#storage">Storage types</a>.</p>
 
 <p>When you're working with a local or memory database if the database not exists it's created automatically. Using the remote connection you need to create the database on the target server before to use it. This is due to security restrictions.</p>
 
-<p>Once created the <strong><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html#work_with_graphdb">OrientGraph</a></strong> instance with a proper URL is necessary to assign it to a variable. <a href="http://gremlindocs.com">Gremlin</a> is written in Groovy, so it supports all the Groovy syntax and both can be mixed to create very powerful scripts!</p>
+<p>Once created the <strong><a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html#work_with_graphdb">OrientGraph</a></strong> instance with a proper URL is necessary to assign it to a variable. <a href="http://gremlindocs.com">Gremlin</a> is written in Groovy, so it supports all the Groovy syntax and both can be mixed to create very powerful scripts!</p>
 
 <p>Example with a local database (see below for more information about it):
 </p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"local:/home/gremlin/db/demo"</span><span class="o">);</span>
@@ -109,7 +109,7 @@
 
 <h4>Working with remote database</h4>
 
-<p>Open a database on a remote server. Assure the server is up and running. To start the server just launch <strong>server.sh</strong> (or server.bat on Windows OS) script. For more information look at <a class="internal present" href="/wiki/DB-Server.html">OrientDB Server</a>
+<p>Open a database on a remote server. Assure the server is up and running. To start the server just launch <strong>server.sh</strong> (or server.bat on Windows OS) script. For more information look at <a class="internal present" href="/orientdb/wiki/DB-Server.html">OrientDB Server</a>
 </p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"remote:localhost/demo"</span><span class="o">);</span>
   <span class="o">==&gt;</span><span class="n">orientgraph</span><span class="o">[</span><span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">demo</span><span class="o">]</span>
 </pre></div>
@@ -123,7 +123,7 @@
 
 <h4>Use the security</h4>
 
-<p>OrientDB supports the security by creating multiple users and roles to associate privileges. To know more look at <a class="internal present" href="/wiki/Security.html">Security</a>. To open the graph database with a different user than default pass user and password as additional parameters:</p>
+<p>OrientDB supports the security by creating multiple users and roles to associate privileges. To know more look at <a class="internal present" href="/orientdb/wiki/Security.html">Security</a>. To open the graph database with a different user than default pass user and password as additional parameters:</p>
 
 <div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"memory:demo"</span><span class="o">,</span> <span class="s">"reader"</span><span class="o">,</span> <span class="s">"reader"</span><span class="o">);</span>
   <span class="o">==&gt;</span><span class="n">orientgraph</span><span class="o">[</span><span class="nl">memory:</span><span class="n">demo</span><span class="o">]</span>
@@ -153,7 +153,7 @@
 
 <h3>Retrieve a vertex</h3>
 
-<p>To retrieve a vertex by its ID, use the <strong>v(id)</strong> method passing the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordId</a> as argument (with or without the prefix '#'). This example retrieves the first vertex created in the upon example.
+<p>To retrieve a vertex by its ID, use the <strong>v(id)</strong> method passing the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordId</a> as argument (with or without the prefix '#'). This example retrieves the first vertex created in the upon example.
 </p><div class="highlight"><pre>  <span class="n">gremlin</span><span class="o">&gt;</span> <span class="n">g</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="err">'</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="err">'</span><span class="o">)</span>
   <span class="o">==&gt;</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">]</span>
 </pre></div>

@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -63,7 +63,7 @@
 
     <h3>Introduction</h3>
 
-<p>OrientDB Server (DB-Server from now) is a multi-thread Java application that listen remote commands and execute them against the Orient databases. OrientDB Server supports both binary and HTTP protocols. The first one is used by Orient native client and Orient Console. The second one can be used by any languages since it's based on <a href="OrientDB_REST">HTTP RESTful API</a>. The HTTP protocol is used also by the <a class="internal present" href="/wiki/OrientDB-Studio.html">OrientDB Studio application</a>.</p>
+<p>OrientDB Server (DB-Server from now) is a multi-thread Java application that listen remote commands and execute them against the Orient databases. OrientDB Server supports both binary and HTTP protocols. The first one is used by Orient native client and Orient Console. The second one can be used by any languages since it's based on <a href="OrientDB_REST">HTTP RESTful API</a>. The HTTP protocol is used also by the <a class="internal present" href="/orientdb/wiki/OrientDB-Studio.html">OrientDB Studio application</a>.</p>
 
 <h3>Start the server</h3>
 
@@ -79,7 +79,7 @@
 
 <h4>Console</h4>
 
-<p>The OrientDB distribution provides the <a class="internal present" href="/wiki/Console-Commands.html">Orient Console</a> tool as a console Java application that uses the binary protocol to work with the database.</p>
+<p>The OrientDB distribution provides the <a class="internal present" href="/orientdb/wiki/Console-Commands.html">Orient Console</a> tool as a console Java application that uses the binary protocol to work with the database.</p>
 
 <h4>OrientDB Studio</h4>
 
@@ -87,11 +87,11 @@
 
 <h4>Write your application</h4>
 
-<p>To start writing your first application with Orient you need to consider the language to use. If you plan to use Java you can use the <a class="internal present" href="/wiki/Java-API.html">native APIs</a>. For all the other languages you can use the <a href="OrientDB_REST">HTTP RESTful protocol</a>.</p>
+<p>To start writing your first application with Orient you need to consider the language to use. If you plan to use Java you can use the <a class="internal present" href="/orientdb/wiki/Java-API.html">native APIs</a>. For all the other languages you can use the <a href="OrientDB_REST">HTTP RESTful protocol</a>.</p>
 
 <h3>Cluster</h3>
 
-<p>To know more about the usage of a configuration of multiple servers in cluster look at <a class="internal absent" href="/wiki/Clustering.html">Clustering</a>.</p>
+<p>To know more about the usage of a configuration of multiple servers in cluster look at <a class="internal absent" href="/orientdb/wiki/Clustering.html">Clustering</a>.</p>
 
 <h3>Configuration</h3>
 
@@ -176,7 +176,7 @@
 
 <h4>Disable distributed configuration</h4>
 
-<p>If you don't want to run multiple OrientDB server instances in cluster you can disable it by removing the <a class="internal present" href="/wiki/Distributed-Server-Manager.html">Distributed Server Manager</a> handler and change the default listen protocol from "distributed" in "binary".</p>
+<p>If you don't want to run multiple OrientDB server instances in cluster you can disable it by removing the <a class="internal present" href="/orientdb/wiki/Distributed-Server-Manager.html">Distributed Server Manager</a> handler and change the default listen protocol from "distributed" in "binary".</p>
 
 <p>Example of single server configuration:
 </p><div class="highlight"><pre>  <span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span>
@@ -265,11 +265,11 @@
 <p>Available plugins:</p>
 
 <ul>
-<li><a class="internal present" href="/wiki/Automatic-Backup.html">Automatic-Backup</a></li>
-<li><a class="internal present" href="/wiki/Mail-Plugin.html">EMail Plugin</a></li>
-<li><a class="internal present" href="/wiki/JMX-Plugin.html">JMX Plugin</a></li>
-<li><a class="internal present" href="/wiki/Distributed-Server-Manager.html">Distributed-Server-Manager</a></li>
-<li><a class="internal present" href="/wiki/Javascript-Command.html#enable_server_side_scripting">Server-side script interpreter</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Automatic-Backup.html">Automatic-Backup</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Mail-Plugin.html">EMail Plugin</a></li>
+<li><a class="internal present" href="/orientdb/wiki/JMX-Plugin.html">JMX Plugin</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Distributed-Server-Manager.html">Distributed-Server-Manager</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Javascript-Command.html#enable_server_side_scripting">Server-side script interpreter</a></li>
 </ul><h4>Protocols</h4>
 
 <p>Contains the list of protocols used by the <a href="#Listeners">listeners section</a>.
@@ -307,7 +307,7 @@ By default the Server configuration activates connections from both the protocol
              <span class="na">loaded-at-startup=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
 </pre></div>
 
-<p>To create a new database use the <a href="http://code.google.com/p/orient/wiki/ConsoleCommandCreateDb">CREATE DATABASE console command</a> or create it dinamically using the <a class="internal present" href="/wiki/Java-API.html">Java-API</a>.</p>
+<p>To create a new database use the <a href="http://code.google.com/p/orient/wiki/ConsoleCommandCreateDb">CREATE DATABASE console command</a> or create it dinamically using the <a class="internal present" href="/orientdb/wiki/Java-API.html">Java-API</a>.</p>
 
 <h4>Users</h4>
 
@@ -361,7 +361,7 @@ By default the Server configuration activates connections from both the protocol
 
 <h3>Extend the server</h3>
 
-<p>To extend the server's features look at <a class="internal present" href="/wiki/Extend-Server.html">Extends the server</a>.</p>
+<p>To extend the server's features look at <a class="internal present" href="/orientdb/wiki/Extend-Server.html">Extends the server</a>.</p>
 
 <h3>Debug the server</h3>
 
@@ -383,7 +383,7 @@ By default the Server configuration activates connections from both the protocol
 
 <h3>Benchmarks</h3>
 
-<p><a class="internal present" href="/wiki/Database-Benchmarks.html">Benchmarks</a>.</p>
+<p><a class="internal present" href="/orientdb/wiki/Database-Benchmarks.html">Benchmarks</a>.</p>
 
 <h3>Roadmap</h3>
 

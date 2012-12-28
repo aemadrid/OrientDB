@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -63,9 +63,9 @@
 
     <h3>Introduction</h3>
 
-<p><em>NOTE: This API will be deprecated soon. Use <a class="internal present" href="/wiki/Graph-Database-Raw.html">Graph Database Raw</a> or <a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">Graph Database Tinkerpop</a>.</em></p>
+<p><em>NOTE: This API will be deprecated soon. Use <a class="internal present" href="/orientdb/wiki/Graph-Database-Raw.html">Graph Database Raw</a> or <a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">Graph Database Tinkerpop</a>.</em></p>
 
-<p>OrientDB provides natively the class <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/ODatabaseGraphTx.java">ODatabaseGraphTx</a> to handle graphs in easy way. Furthermore, starting from v. 0.9.22, OrientDB provides an implementation of the <a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">Tinkerpop stack</a>. You can use both APIs together.</p>
+<p>OrientDB provides natively the class <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/ODatabaseGraphTx.java">ODatabaseGraphTx</a> to handle graphs in easy way. Furthermore, starting from v. 0.9.22, OrientDB provides an implementation of the <a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">Tinkerpop stack</a>. You can use both APIs together.</p>
 
 <p>Main graph classes:</p>
 
@@ -80,7 +80,7 @@
 
 <h4>Create an empty database</h4>
 
-<p>Launch the <a class="internal present" href="/wiki/Console-Commands.html">console</a> and type:
+<p>Launch the <a class="internal present" href="/orientdb/wiki/Console-Commands.html">console</a> and type:
 </p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">create</span> <span class="n">database</span> <span class="nl">local:C:</span><span class="o">/</span><span class="n">temp</span><span class="o">/</span><span class="n">graph</span><span class="o">/</span><span class="n">graph</span> <span class="n">admin</span> <span class="n">admin</span> <span class="n">local</span>
 </pre></div>
 
@@ -193,13 +193,13 @@
 <p>Query can start from one or multiple root nodes. In SQL the queries can have as target only tables. In OrientDB you can use:</p>
 
 <ul>
-<li>the entire <a class="internal present" href="/wiki/Concepts.html#class">Class</a> (the closest concept to a Relational Table). Example: <code>SELECT FROM OGraphVertex WHERE name = 'test'</code>
+<li>the entire <a class="internal present" href="/orientdb/wiki/Concepts.html#class">Class</a> (the closest concept to a Relational Table). Example: <code>SELECT FROM OGraphVertex WHERE name = 'test'</code>
 </li>
-<li>the entire <a class="internal present" href="/wiki/Concepts.html#cluster">Cluster</a> (the physical place where records reside). Example: <code>select from cluster:OGraphVertex WHERE outEdges.size() &gt; 0</code>
+<li>the entire <a class="internal present" href="/orientdb/wiki/Concepts.html#cluster">Cluster</a> (the physical place where records reside). Example: <code>select from cluster:OGraphVertex WHERE outEdges.size() &gt; 0</code>
 </li>
-<li>a single <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>. Example: <code>select from 11:4 where any() traverse(0,10) (@class='Profile' &amp;&amp; address.city = 'Rome')</code>
+<li>a single <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a>. Example: <code>select from 11:4 where any() traverse(0,10) (@class='Profile' &amp;&amp; address.city = 'Rome')</code>
 </li>
-<li>multiple <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s. Example: <code>select from [where outEdge.size() &gt; 0</code>
+<li>multiple <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a>s. Example: <code>select from [where outEdge.size() &gt; 0</code>
 </li>
 </ul><h4>Traverse operator</h4>
 

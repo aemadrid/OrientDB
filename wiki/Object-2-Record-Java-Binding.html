@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -71,7 +71,7 @@
 
 <p>OrientDB uses Java reflection and <a href="http://www.javassist.org/">Javassist</a> Proxy to bound POJOs to Records directly. Those proxied instances take care about the synchronization between the POJO and the underlying record. Every time you invoke a setter method against the POJO, the value is early bound into the record. Every time you call a getter method the value is retrieved from the record if the POJO's field value is null. Lazy loading works in this way too.</p>
 
-<p>So the Object Database class works as wrapper of the underlying <a class="internal present" href="/wiki/Document-Database.html">Document-Database</a>.</p>
+<p>So the Object Database class works as wrapper of the underlying <a class="internal present" href="/orientdb/wiki/Document-Database.html">Document-Database</a>.</p>
 
 <p><em>NOTE: In case a non-proxied object is found it will be serialized, proxied and bounded to a corresponding Record.</em></p>
 
@@ -175,7 +175,7 @@ Field '<code>String name</code>' -&gt; <code>getName()</code> and <code>setName(
 <ul>
 <li>The custom implementation must provide the <code>public boolean isHandled(Method m)</code> to let Orient know what methods will be managed by the ProxyHandler and what methods won't.</li>
 <li>The custom implementation must provide the <code>public String getFieldName(Method m)</code> to let orient know how to parse a field name starting from the accessing method name.
-In the case those two methods are not provided the <a class="internal present" href="/wiki/Object-2-Record-Java-Binding.html#default_binding">default binding</a> will be used</li>
+In the case those two methods are not provided the <a class="internal present" href="/orientdb/wiki/Object-2-Record-Java-Binding.html#default_binding">default binding</a> will be used</li>
 </ul><p>The custom MethodFilter can be registered by calling <code>OObjectEntityEnhancer.getInstance().registerClassMethodFilter(Class&lt;?&gt;, customMethodFilter);</code></p>
 
 <p>Domain class example:
@@ -245,7 +245,7 @@ In the case those two methods are not provided the <a class="internal present" h
 
 <h3>Fetching strategies</h3>
 
-<p>Starting from release 0.9.20, OrientDB supports <a class="internal present" href="/wiki/Fetching-Strategies.html">Fetching-Strategies</a> by using the <strong>Fetch Plans</strong>. Fetch Plans are used to customize how OrientDB must load linked records. The <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/object/ODatabaseObjectTx.java">ODatabaseObjectTx</a> uses the Fetch Plan also to determine how to bind the linked records to the POJO by building an object tree.</p>
+<p>Starting from release 0.9.20, OrientDB supports <a class="internal present" href="/orientdb/wiki/Fetching-Strategies.html">Fetching-Strategies</a> by using the <strong>Fetch Plans</strong>. Fetch Plans are used to customize how OrientDB must load linked records. The <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/object/ODatabaseObjectTx.java">ODatabaseObjectTx</a> uses the Fetch Plan also to determine how to bind the linked records to the POJO by building an object tree.</p>
 
 <h3>Custom types</h3>
 
@@ -319,11 +319,11 @@ In case of registering a custom type that is already register as a domain class 
 
 <p>In a typical Front-End application you need to load objects, display them to the user, capture the changes and save them back to the database. Usually this is implemented by using a database pool in order to avoid leaving a database instance open for the entire life cycle of the user session.</p>
 
-<p>The database pool manages a configurable number of database instances. These instances are recycled for all database operations, so the list of connected POJOs is cleared at every release of the database pool instance. This is why the database instance doesn't know the POJO used by the application and in this mode if you save a previously loaded POJO it will appear as a NEW one and is therefore created as new instance in the database with a new <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>.</p>
+<p>The database pool manages a configurable number of database instances. These instances are recycled for all database operations, so the list of connected POJOs is cleared at every release of the database pool instance. This is why the database instance doesn't know the POJO used by the application and in this mode if you save a previously loaded POJO it will appear as a NEW one and is therefore created as new instance in the database with a new <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a>.</p>
 
 <p>This is why OrientDB needs to store the record information inside the POJO itself. This is retrieved when the POJO is saved so it is known if the POJO already has own identity (has been previously loaded) or not (it's new).</p>
 
-<p>To save the <a class="internal present" href="/wiki/Concepts.html#recordid">Record Identity</a> you can use the <a href="http://java.sun.com/developer/technicalArticles/J2EE/jpa">JPA</a> <strong><a href="http://download.oracle.com/javaee/5/api/javax/persistence/Id.html">@Id</a></strong> annotation above the property interested. You can declare it as:</p>
+<p>To save the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">Record Identity</a> you can use the <a href="http://java.sun.com/developer/technicalArticles/J2EE/jpa">JPA</a> <strong><a href="http://download.oracle.com/javaee/5/api/javax/persistence/Id.html">@Id</a></strong> annotation above the property interested. You can declare it as:</p>
 
 <ul>
 <li>
@@ -331,7 +331,7 @@ In case of registering a custom type that is already register as a domain class 
 <li>
 <strong>String</strong>, in this case OrientDB will store the string representation of the ORecordId</li>
 <li>
-<strong>Long</strong>, in this case OrientDB will store the right part of the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>. This works only if you've a schema for the class. The left side will be rebuilt at save time by getting the class id.</li>
+<strong>Long</strong>, in this case OrientDB will store the right part of the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a>. This works only if you've a schema for the class. The left side will be rebuilt at save time by getting the class id.</li>
 </ul><p>Example:</p>
 
 <div class="highlight"><pre>  <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Customer</span><span class="o">{</span>
@@ -358,7 +358,7 @@ In case of registering a custom type that is already register as a domain class 
   <span class="o">}</span>
 </pre></div>
 
-<p>OrientDB will save the <a class="internal present" href="/wiki/Concepts.html#recordid">Record Identity</a> in the <strong>id</strong> property even if getter/setter methods are not created.</p>
+<p>OrientDB will save the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">Record Identity</a> in the <strong>id</strong> property even if getter/setter methods are not created.</p>
 
 <p>If you work with transactions you also need to store the Record Version in the POJO to allow MVCC. Use the <a href="http://java.sun.com/developer/technicalArticles/J2EE/jpa">JPA</a> <strong><a href="http://download.oracle.com/javaee/5/api/javax/persistence/Version.html">@Version</a></strong> annotation above the property interested. You can declare it as:</p>
 
@@ -532,7 +532,7 @@ Field '<code>String name</code>' -&gt; <code>getName()</code> and <code>setName(
 
 <p>== Fetching strategies =v</p>
 
-<p>Starting from release 0.9.20, OrientDB supports <a class="internal present" href="/wiki/Fetching-Strategies.html">Fetching-Strategies</a> by using the <strong>Fetch Plans</strong>. Fetch Plans are used to customize how OrientDB must load linked records. The <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/object/ODatabaseObjectTx.java">ODatabaseObjectTx</a> uses the Fetch Plan also to determine how to bind the linked records to the POJO by building an object tree.</p>
+<p>Starting from release 0.9.20, OrientDB supports <a class="internal present" href="/orientdb/wiki/Fetching-Strategies.html">Fetching-Strategies</a> by using the <strong>Fetch Plans</strong>. Fetch Plans are used to customize how OrientDB must load linked records. The <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/object/ODatabaseObjectTx.java">ODatabaseObjectTx</a> uses the Fetch Plan also to determine how to bind the linked records to the POJO by building an object tree.</p>
 
 <h4>Custom types</h4>
 

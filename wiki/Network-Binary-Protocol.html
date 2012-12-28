@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -85,7 +85,7 @@
 
 <ul>
 <li>
-<strong><a class="internal present" href="/wiki/Concepts.html#record">Record</a></strong> is an abstraction of <strong><a class="internal present" href="/wiki/Concepts.html#document">Document</a></strong>. However, keep in mind that in OrientDB you can handle structures at a lower level than Documents. These include positional records, raw strings, raw bytes, etc. Look at <a class="internal present" href="/wiki/Concepts.html#record_types">Record</a> for more information.</li>
+<strong><a class="internal present" href="/orientdb/wiki/Concepts.html#record">Record</a></strong> is an abstraction of <strong><a class="internal present" href="/orientdb/wiki/Concepts.html#document">Document</a></strong>. However, keep in mind that in OrientDB you can handle structures at a lower level than Documents. These include positional records, raw strings, raw bytes, etc. Look at <a class="internal present" href="/orientdb/wiki/Concepts.html#record_types">Record</a> for more information.</li>
 </ul><p>For more in-depth information please look at the Java classes:</p>
 
 <ul>
@@ -262,7 +262,7 @@ These are the rules:
 - **Dates** must be in the POSIX format (also called UNIX format: http://en.wikipedia.org/wiki/Unix_time). Are always stored as longs but end with:
 - the 't' character when it's DATETIME type (default in schema-less mode when a Date object is used). Datetime handles the maximum precision up to milliseconds. E.g. <code>lastUpdate:1296279468000t</code> is read as 2011-01-29 05:37:48
 - the 'a' character when it's DATE type. Date handles up to day as precision. E.g. <code>lastUpdate:1306281600000a</code> is read as 2011-05-25 00:00:00 (Available since 1.0rc2)
-- **<a class="internal present" href="/wiki/Concepts.html#recordid">Record Id</a>** (link) must be prefixed by <code>#</code>. A Record Id always has the format <code>&lt;cluster-id&gt;:&lt;cluster-position&gt;</code>. E.g. <code>location:#3:2</code>
+- **<a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">Record Id</a>** (link) must be prefixed by <code>#</code>. A Record Id always has the format <code>&lt;cluster-id&gt;:&lt;cluster-position&gt;</code>. E.g. <code>location:#3:2</code>
 - **Embedded** documents are enclosed by parenthesis <code>(</code> and <code>)</code> characters. E.g. <code>(name:"rules")</code>. *Note: before SVN revision 2007 (0.9.24-snapshot) only <code>*</code> characters were used to begin and end the embedded document.*
 - **Collections** (array, list and sets) must be enclosed by <code>[and <code>](</code>)</code> characters. E.g.<code>[<code>[#10:3,#10:4](1,2,3]</code>,)</code> and <code>[There is a special case when use LINKSET type reported in detail in [#Special_use_of_LINKSET_types Special use of LINKSET types]((name:"Luca")]</code>.) section.
 - **Maps** (as a collection of entries with key/value) must be enclosed in <code>{</code> and <code></code>} characters. E.g. <code>rules:{"database":2,"database.cluster.internal":2</code>} (NB. to set a value part of a key/value pair, set it to the text "null", without quotation marks. Eg. <code>rules:{"database_name":"fred","database_alias":null</code>})
@@ -575,7 +575,7 @@ Where:
 <em>user-password</em> as string. Example: "kdsjkkasjad"
 Typically the credentials are those of the OrientDB server administrator. This is not the same as the <em>admin</em> user for individual databases. It returns the <a href="(1">#Session-Id Session-Id</a>(exception-class:string)(exception-message:string)]*(0)}}}) to being reused for all the next calls.
 ## DB_OPEN</li>
-</ul><p>This is the first operation the client should call. It opens a database on the remote OrientDB Server. Returns the <a href="#Session-Id">Session-Id</a> to being reused for all the next calls and the list of configured <a class="internal present" href="/wiki/Concepts.html#cluster">clusters</a>.</p>
+</ul><p>This is the first operation the client should call. It opens a database on the remote OrientDB Server. Returns the <a href="#Session-Id">Session-Id</a> to being reused for all the next calls and the list of configured <a class="internal present" href="/orientdb/wiki/Concepts.html#cluster">clusters</a>.</p>
 
 <div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">driver</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">driver</span><span class="o">-</span><span class="nl">version:</span><span class="n">string</span><span class="o">)(</span><span class="n">protocol</span><span class="o">-</span><span class="nl">version:</span><span class="kt">short</span><span class="o">)(</span><span class="n">client</span><span class="o">-</span><span class="nl">id:</span><span class="n">string</span><span class="o">)(</span><span class="n">database</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">database</span><span class="o">-</span><span class="nl">type:</span><span class="n">string</span><span class="o">)(</span><span class="n">user</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">user</span><span class="o">-</span><span class="nl">password:</span><span class="n">string</span><span class="o">)</span>
   <span class="nl">Response:</span> <span class="o">(</span><span class="n">session</span><span class="o">-</span><span class="nl">id:</span><span class="kt">int</span><span class="o">)(</span><span class="n">num</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="nl">clusters:</span><span class="kt">short</span><span class="o">)[(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">name:</span><span class="n">string</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">type:</span><span class="n">string</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">dataSegmentId:</span><span class="kt">short</span><span class="o">)](</span><span class="n">cluster</span><span class="o">-</span><span class="nl">config:</span><span class="n">bytes</span><span class="o">)</span>
@@ -611,7 +611,7 @@ Where:
 <li>
 <strong>database-type</strong> as string, can be 'document' or 'graph' (since version 8). Example: "document"</li>
 <li>
-<strong>storage-type</strong> can be one of the <a class="internal present" href="/wiki/Concepts.html#database_url">supported types</a>:</li>
+<strong>storage-type</strong> can be one of the <a class="internal present" href="/orientdb/wiki/Concepts.html#database_url">supported types</a>:</li>
 <li>local, as a persistent database</li>
 <li>memory, as a volatile database
 NB. It doesn't make sense to use "remote" in this context
@@ -743,7 +743,7 @@ Where:
 <strong>succeeded</strong>, is true if the data segment has been removed, otherwise false</li>
 </ul><h4>RECORD_LOAD</h4>
 
-<p>Load a record by <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>, according to a <a class="internal present" href="/wiki/Fetching-Strategies.html">fetch plan</a></p>
+<p>Load a record by <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a>, according to a <a class="internal present" href="/orientdb/wiki/Fetching-Strategies.html">fetch plan</a></p>
 
 <div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">position:</span><span class="kt">long</span><span class="o">)(</span><span class="n">fetch</span><span class="o">-</span><span class="nl">plan:</span><span class="n">string</span><span class="o">)(</span><span class="n">ignore</span><span class="o">-</span><span class="nl">cache:</span><span class="kt">byte</span><span class="o">)</span>
   <span class="nl">Response:</span> <span class="o">[(</span><span class="n">payload</span><span class="o">-</span><span class="nl">status:</span><span class="kt">byte</span><span class="o">)[(</span><span class="n">record</span><span class="o">-</span><span class="nl">content:</span><span class="n">bytes</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">version:</span><span class="kt">int</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">type:</span><span class="kt">byte</span><span class="o">)]*]+</span>
@@ -752,7 +752,7 @@ Where:
 
 <ul>
 <li>
-<strong>fetch-plan</strong>, the <a class="internal present" href="/wiki/Fetching-Strategies.html">fetch plan</a> to use or an empty string</li>
+<strong>fetch-plan</strong>, the <a class="internal present" href="/orientdb/wiki/Fetching-Strategies.html">fetch plan</a> to use or an empty string</li>
 <li>
 <strong>ignore-cache</strong>, tells if the cache must be ignored: 1 = ignore the cache, 0 = not ignore. since protocol v.9 (introduced in release 1.0rc9)</li>
 <li>
@@ -812,7 +812,7 @@ Where <strong>record-type</strong> is:
 <li>1 = asynchronous (don't need an answer)</li>
 </ul><h4>RECORD_DELETE</h4>
 
-<p>Delete a record by its <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>. During the optimistic transaction the record will be deleted only if the versions match. Returns true if has been deleted otherwise false.</p>
+<p>Delete a record by its <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a>. During the optimistic transaction the record will be deleted only if the versions match. Returns true if has been deleted otherwise false.</p>
 
 <div class="highlight"><pre>  <span class="nl">Request:</span>  <span class="o">(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">id:</span><span class="kt">short</span><span class="o">)(</span><span class="n">cluster</span><span class="o">-</span><span class="nl">position:</span><span class="kt">long</span><span class="o">)(</span><span class="n">record</span><span class="o">-</span><span class="nl">version:</span><span class="kt">int</span><span class="o">)(</span><span class="nl">mode:</span><span class="kt">byte</span><span class="o">)</span>
   <span class="nl">Response:</span> <span class="o">(</span><span class="n">payload</span><span class="o">-</span><span class="nl">status:</span><span class="kt">byte</span><span class="o">)</span>
@@ -934,7 +934,7 @@ Where:
 </li>
 </ul><p>This response contains two parts: a map of 'temporary' client-generated record ids to 'real' server-provided record ids for each CREATED record, and a  map of UPDATED record ids to update record-versions.</p>
 
-<p>Look at <a class="internal present" href="/wiki/Transactions.html#optimistic_transaction">Optimistic Transaction</a> to know how temporary <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>s are managed.</p>
+<p>Look at <a class="internal present" href="/orientdb/wiki/Transactions.html#optimistic_transaction">Optimistic Transaction</a> to know how temporary <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a>s are managed.</p>
 
 <h3>Special use of LINKSET types</h3>
 
@@ -971,13 +971,13 @@ b8c64fea51e84fc68a92c017a44f9f94</p>
 <em>COLOR</em> as 1 byte containing 1=Black, 0=Red. To know more about the meaning of this look at <a>http://en.wikipedia.org/wiki/Red%E2%80%93black_tree Red-Black Trees</a>
 </li>
 <li>
-<strong>PARENT RID</strong> as <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the parent node record</li>
+<strong>PARENT RID</strong> as <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the parent node record</li>
 <li>
-<strong>LEFT RID</strong> as <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the left node record</li>
+<strong>LEFT RID</strong> as <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the left node record</li>
 <li>
-<strong>RIGHT RID</strong> as <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the right node record</li>
+<strong>RIGHT RID</strong> as <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a> (10 bytes) of the right node record</li>
 <li>
-<strong>RID LIST</strong> as the list of <a class="internal present" href="/wiki/Concepts.html#recordid">RIDs</a> containing the references to the records. This is pre-allocated to the configured page-size. Since each <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> takes 10 bytes, a page-size of 16 means 16 x 10bytes = 160bytes</li>
+<strong>RID LIST</strong> as the list of <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RIDs</a> containing the references to the records. This is pre-allocated to the configured page-size. Since each <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a> takes 10 bytes, a page-size of 16 means 16 x 10bytes = 160bytes</li>
 </ul><p>The size of the tree-node on disk (and memory) is fixed to avoid fragmentation. To compute it: 39 bytes + 10 * PAGE-SIZE bytes. For a page-size = 16 you'll have 39 + 160 = 199 bytes.</p>
 
 <h3>History</h3>

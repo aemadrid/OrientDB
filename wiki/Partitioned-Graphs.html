@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -63,7 +63,7 @@
 
     <h3>Introduction</h3>
 
-<p>This tutorial explains step-by-step how to create partitioned graphs using the <a class="internal present" href="/wiki/Security.html#record_level_security">Record Level Security</a> feature introduced in OrientDB 1.2.0. This feature is so powerful we can totally separate database's records as sand-boxes where each "Restricted" records can't be accessed by non authorized users. This tutorial demonstrates this sand-boxes works well also with the GraphDB API and the <a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">TinkerPop stack</a>. Partitioning graphs allows to build real <a href="http://en.wikipedia.org/wiki/Multitenancy">Multi-tenant</a> applications in a breeze.</p>
+<p>This tutorial explains step-by-step how to create partitioned graphs using the <a class="internal present" href="/orientdb/wiki/Security.html#record_level_security">Record Level Security</a> feature introduced in OrientDB 1.2.0. This feature is so powerful we can totally separate database's records as sand-boxes where each "Restricted" records can't be accessed by non authorized users. This tutorial demonstrates this sand-boxes works well also with the GraphDB API and the <a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">TinkerPop stack</a>. Partitioning graphs allows to build real <a href="http://en.wikipedia.org/wiki/Multitenancy">Multi-tenant</a> applications in a breeze.</p>
 
 <p>Requirements:</p>
 
@@ -219,9 +219,9 @@ Now check the graph just created:
 
 <h3>!TinkerPop Stack</h3>
 
-<p><a class="internal present" href="/wiki/Security.html#record_level_security">Record Level Security</a> feature is very powerful because acts at low level inside the OrientDB engine. This is why everything works like a charm, even the <a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">TinkerPop stack</a>.</p>
+<p><a class="internal present" href="/orientdb/wiki/Security.html#record_level_security">Record Level Security</a> feature is very powerful because acts at low level inside the OrientDB engine. This is why everything works like a charm, even the <a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">TinkerPop stack</a>.</p>
 
-<p>Now try to display all the vertices and edges using <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a>:
+<p>Now try to display all the vertices and edges using <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a>:
 </p><div class="highlight"><pre>  <span class="n">orientdb</span><span class="o">&gt;</span> <span class="n">gremlin</span> <span class="n">g</span><span class="o">.</span><span class="na">V</span>
   
   <span class="o">[</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">9</span><span class="o">:</span><span class="mi">2</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">9</span><span class="o">:</span><span class="mi">3</span><span class="o">]]</span>

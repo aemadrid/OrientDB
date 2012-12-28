@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -134,7 +134,7 @@
 <strong><code>limit</code></strong>, optional, set the limit of the result set. If not defined 20 is taken by default. <code>-1</code> means no limits</li>
 </ul><h4>SQL Graph language</h4>
 
-<p>To use the OrientDB's SQL language use <strong><code>sql</code></strong> as language. For more information look at the <a class="internal present" href="/wiki/SQL-Query.html">SQL-Syntax</a>.</p>
+<p>To use the OrientDB's SQL language use <strong><code>sql</code></strong> as language. For more information look at the <a class="internal present" href="/orientdb/wiki/SQL-Query.html">SQL-Syntax</a>.</p>
 
 <p>For example, to return the first 1,000 vertices (class V) with outgoing connections the query would be:
 </p><div class="highlight"><pre>  <span class="n">select</span> <span class="n">from</span> <span class="n">V</span> <span class="n">where</span> <span class="n">out</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
@@ -149,7 +149,7 @@
 
 <h4>GREMLIN language</h4>
 
-<p>To use the powerful GREMLIN language to retrieve the graph or a portion of it use <strong><code>gremlin</code></strong> as language. For more information look at the <a class="internal present" href="/wiki/Gremlin.html">GREMLIN syntax</a>.</p>
+<p>To use the powerful GREMLIN language to retrieve the graph or a portion of it use <strong><code>gremlin</code></strong> as language. For more information look at the <a class="internal present" href="/orientdb/wiki/Gremlin.html">GREMLIN syntax</a>.</p>
 
 <p>For example, to return the first 100 vertices:
 </p><div class="highlight"><pre>  <span class="n">g</span><span class="o">.</span><span class="na">V</span><span class="o">[</span><span class="mi">0</span><span class="o">..</span><span class="mi">99</span><span class="o">]</span>

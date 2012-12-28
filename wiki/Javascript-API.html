@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -415,7 +415,7 @@ See <a href="fetchPlan%5D">http://code.google.com/p/orient/wiki/FetchingStrategi
 
 <h3>Server Information</h3>
 
-<p>Method that retrieves server informations, it returns the server informations in JSON format.<br><em>Note: Server information needs <a class="internal present" href="/wiki/Security.html#orientdb_server_security">root</a> username and password.</em></p>
+<p>Method that retrieves server informations, it returns the server informations in JSON format.<br><em>Note: Server information needs <a class="internal present" href="/orientdb/wiki/Security.html#orientdb_server_security">root</a> username and password.</em></p>
 
 <p>Syntax: <code>&lt;databaseInstance&gt;.serverInfo()</code></p>
 
@@ -657,7 +657,7 @@ Return types will be JSON plain text.
 
 <h3>Cross-site scripting</h3>
 
-<p>To invoke OrientDB cross-site you can use the <a class="internal absent" href="/wiki/Query.html">Query</a> command in GET and the JSONP protocol. Example:
+<p>To invoke OrientDB cross-site you can use the <a class="internal absent" href="/orientdb/wiki/Query.html">Query</a> command in GET and the JSONP protocol. Example:
 </p><div class="highlight"><pre>  <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text/javascript"</span> <span class="nx">src</span><span class="o">=</span><span class="s1">'http://127.0.0.1:2480/query/database/sql/select+from+XXXX?jsoncallback=var datajson='</span><span class="o">&gt;&lt;</span><span class="err">/script&gt;</span>
 </pre></div>
 

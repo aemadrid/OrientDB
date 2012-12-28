@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -205,14 +205,14 @@
 </tr>
 <tr>
 <td>Link</td>
-<td>Link to another Record. It's a common <a class="internal present" href="/wiki/Concepts.html#onetooneonetoonerelationship">]}}}</a>
+<td>Link to another Record. It's a common <a class="internal present" href="/orientdb/wiki/Concepts.html#onetooneonetoonerelationship">]}}}</a>
 </td>
 <td>variable</td>
 <td>0</td>
 <td>2,147,483,647</td>
 <td>String</td>
 <td></td>
-<td>Value. Only the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordId</a> is stored</td>
+<td>Value. Only the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordId</a> is stored</td>
 <td><code>ORecord&lt;?&gt; instance</code></td>
 <td>0-24 variable (it's transformed in String)</td>
 <td>-1:-1</td>
@@ -223,7 +223,7 @@
 </tr>
 <tr>
 <td>Link list</td>
-<td>Links to other Records. It's a common <a class="internal present" href="/wiki/Concepts.html#onetomany">One-to-Many relationship</a>. Only the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordId</a>s are stored</td>
+<td>Links to other Records. It's a common <a class="internal present" href="/orientdb/wiki/Concepts.html#onetomany">One-to-Many relationship</a>. Only the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordId</a>s are stored</td>
 <td><code>List&lt;? extends ORecord&lt;?&gt;&gt;</code></td>
 <td>variable</td>
 <td>0</td>
@@ -235,7 +235,7 @@
 <tr>
 <td>Link set</td>
 <td>Links to other Records. It's a common [Concepts#One-to-Many One-to-Many relationship](#10:3,#10:6]</td>
-</tr>). Only the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordId</a>s are stored<td><code>Set&lt;? extends ORecord&lt;?&gt;&gt;</code></td>
+</tr>). Only the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordId</a>s are stored<td><code>Set&lt;? extends ORecord&lt;?&gt;&gt;</code></td>
 <td>variable</td>
 <td>0</td>
 <td>41,000,000 items</td>
@@ -244,7 +244,7 @@
 <td><code>[#10:3,)</code></td>
   <tr>
 <td>Link map</td>
-<td>Links to other Records as value of the entries, while keys can only be Strings. It's a common <a class="internal present" href="/wiki/Concepts.html#onetomany">One-to-Many relationship</a>. Only the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordId</a>s are stored</td>
+<td>Links to other Records as value of the entries, while keys can only be Strings. It's a common <a class="internal present" href="/orientdb/wiki/Concepts.html#onetomany">One-to-Many relationship</a>. Only the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordId</a>s are stored</td>
 <td><code>Map&lt;String, ? extends ORecord&lt;?&gt;&gt;</code></td>
 <td>variable</td>
 <td>0</td>
@@ -255,7 +255,7 @@
 </tr>
 <tr>
 <td>Embedded</td>
-<td>The Record is contained inside the owner. The contained Record has no <a class="internal present" href="/wiki/Concepts.html#recordid">RecordId</a>
+<td>The Record is contained inside the owner. The contained Record has no <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordId</a>
 </td>
 <td><code>ORecord&lt;?&gt; instance</code></td>
 <td>variable (it's transformed in String)</td>
@@ -267,7 +267,7 @@
 </tr>
 <tr>
 <td>Embedded list</td>
-<td>The Records are contained inside the owner. The contained Records have no <a class="internal present" href="/wiki/Concepts.html#recordid">RecordId</a>s and are reachable only by navigating the owner Record</td>
+<td>The Records are contained inside the owner. The contained Records have no <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordId</a>s and are reachable only by navigating the owner Record</td>
 <td><code>List&lt;Object&gt;</code></td>
 <td>variable</td>
 <td>0</td>

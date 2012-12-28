@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -61,11 +61,11 @@
 
   <div class="twelve columns content" role="content">
 
-    <p>This guide is specific for the Graph Database. Please be sure to read the generic guide to the <a class="internal present" href="/wiki/Performance-Tuning.html">Performance-Tuning</a>.</p>
+    <p>This guide is specific for the Graph Database. Please be sure to read the generic guide to the <a class="internal present" href="/orientdb/wiki/Performance-Tuning.html">Performance-Tuning</a>.</p>
 
 <h3>Massive Insertion</h3>
 
-<p>See <a class="internal present" href="/wiki/Performance-Tuning.html#massive_insertion">Generic improvement on massive insertion</a>.</p>
+<p>See <a class="internal present" href="/orientdb/wiki/Performance-Tuning.html#massive_insertion">Generic improvement on massive insertion</a>.</p>
 
 <h4>Reduce vertex objects</h4>
 
@@ -90,7 +90,7 @@
 
 <h4>Cache management</h4>
 
-<p>Graph Database, by default, caches the most used elements. For massive insertion is strongly suggested to disable cache to avoid to keep all the element in memory. <a class="internal present" href="/wiki/Performance-Tuning.html#use_the_massive_insert_intent">Massive Insert Intent</a> automatically sets it to false.
+<p>Graph Database, by default, caches the most used elements. For massive insertion is strongly suggested to disable cache to avoid to keep all the element in memory. <a class="internal present" href="/orientdb/wiki/Performance-Tuning.html#use_the_massive_insert_intent">Massive Insert Intent</a> automatically sets it to false.
 </p><div class="highlight"><pre>  <span class="n">graph</span><span class="o">.</span><span class="na">setRetainObjects</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
 </pre></div>
 

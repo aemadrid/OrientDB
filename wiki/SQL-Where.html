@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -90,7 +90,7 @@
 </tr>
 <tr>
 <td><code>field[&lt;indexes&gt;](&lt;item&gt;])</code></td>
-<td>Document field part. To know more about field part look at the full syntax: <a class="internal present" href="/wiki/Document-Field-Part.html">Document_Field_Part</a>
+<td>Document field part. To know more about field part look at the full syntax: <a class="internal present" href="/orientdb/wiki/Document-Field-Part.html">Document_Field_Part</a>
 </td>
 <td>where **<code>tags[= 'Hi' or *<code>tags[0-3](1]</code>*)</code>** IN ('Hello') and *{{{employees[IS NOT NULL</td>
 <td>1.0rc5</td>
@@ -148,7 +148,7 @@
 </tr>
 <tr>
 <td>@rid</td>
-<td>returns the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a> in the form <code>&lt;cluster:position&gt;</code>. It's null for embedded records. *NOTE: using @rid in where condition slow down queries. Much better to use the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a> as target. Example: change this: <code>select from Profile where @rid = #10:44</code> with this: <code>select from #10:44</code> *</td>
+<td>returns the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a> in the form <code>&lt;cluster:position&gt;</code>. It's null for embedded records. *NOTE: using @rid in where condition slow down queries. Much better to use the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a> as target. Example: change this: <code>select from Profile where @rid = #10:44</code> with this: <code>select from #10:44</code> *</td>
 <td>**@rid** = #11:0</td>
 <td>0.9.21</td>
 </tr>
@@ -310,7 +310,7 @@
 <td>any</td>
 <td>{{{TRAVERSE[( [, [,]](A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b'</td>
 <td>0.9.22</td>
-</tr>))]}}}<td>*This function was born before the SQL Traverse statement and today it's pretty limited. Look at <a class="internal present" href="/wiki/Java-Traverse.html">Traversing graphs</a> to know more about traversing in better ways.* <br>true if traversing the declared field(s) at the level from <code>&lt;minDepth&gt;</code> to <code>&lt;maxDepth&gt;</code> matches the condition. A minDepth = 0 means the root node, maxDepth = -1 means no limit: traverse all the graph recursively. If <code>&lt;minDepth&gt;</code> and <code>&lt;maxDepth&gt;</code> are not used, then (0, -1) will be taken. If <code>&lt;fields&gt;</code> is not passed, than <code>any()</code> will be used.</td>
+</tr>))]}}}<td>*This function was born before the SQL Traverse statement and today it's pretty limited. Look at <a class="internal present" href="/orientdb/wiki/Java-Traverse.html">Traversing graphs</a> to know more about traversing in better ways.* <br>true if traversing the declared field(s) at the level from <code>&lt;minDepth&gt;</code> to <code>&lt;maxDepth&gt;</code> matches the condition. A minDepth = 0 means the root node, maxDepth = -1 means no limit: traverse all the graph recursively. If <code>&lt;minDepth&gt;</code> and <code>&lt;maxDepth&gt;</code> are not used, then (0, -1) will be taken. If <code>&lt;fields&gt;</code> is not passed, than <code>any()</code> will be used.</td>
 <td>select from profile where any() **traverse(0,7,'followers,followings')** ( address.city.name = 'Rome' )</td>
 <td>0.9.10 and 0.9.24 for <code>&lt;fields&gt;</code> parameter</td>
 </table><h4>Logical Operators</h4>
@@ -561,7 +561,7 @@
 </tr>
 </table><h3>Functions</h3>
 
-<p>Since v.1.3.0 any <a class="internal present" href="/wiki/Functions.html">database function</a> can be called in SQL Select and Traverse statements.</p>
+<p>Since v.1.3.0 any <a class="internal present" href="/orientdb/wiki/Functions.html">database function</a> can be called in SQL Select and Traverse statements.</p>
 
 <h4>Bundled functions</h4>
 
@@ -710,7 +710,7 @@
 
 <h5>Database's function</h5>
 
-<p>Look at the <a class="internal present" href="/wiki/Functions.html">Functions</a> page.</p>
+<p>Look at the <a class="internal present" href="/orientdb/wiki/Functions.html">Functions</a> page.</p>
 
 <h5>Custom functions in Java</h5>
 
@@ -771,30 +771,30 @@
 <td>Current record to use in sub-queries to refer from the parent's variable</td>
 <td>[SQLQuery SELECT](SQLTraverse</td>
 <td>1.2.0</td>
-</tr>) and <a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a><td>1.2.0</td>
+</tr>) and <a class="internal present" href="/orientdb/wiki/SQL-Traverse.html">TRAVERSE</a><td>1.2.0</td>
   <tr>
 <td>$depth</td>
 <td>The current depth of nesting</td>
-<td><a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a></td>
+<td><a class="internal present" href="/orientdb/wiki/SQL-Traverse.html">TRAVERSE</a></td>
 <td>1.1.0</td>
 </tr>
 <tr>
 <td>$path</td>
 <td>The string representation of the current path. Example:  #6:0.in.#5:0#.out. You can also display it with -&gt; select $path from (traverse * from V)</td>
-<td><a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a></td>
+<td><a class="internal present" href="/orientdb/wiki/SQL-Traverse.html">TRAVERSE</a></td>
 <td>1.1.0</td>
 </tr>
 <tr>
 <td>$stack</td>
 <td>The List of operation in the stack. Use it to access to the history of the traversal</td>
-<td><a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a></td>
+<td><a class="internal present" href="/orientdb/wiki/SQL-Traverse.html">TRAVERSE</a></td>
 <td>1.1.0</td>
 </tr>
 <tr>
 <td>$history</td>
 <td>The set of all the records traversed as a <code>Set&lt;ORID&gt;</code>
 </td>
-<td><a class="internal present" href="/wiki/SQL-Traverse.html">TRAVERSE</a></td>
+<td><a class="internal present" href="/orientdb/wiki/SQL-Traverse.html">TRAVERSE</a></td>
 <td>1.1.0</td>
 </tr>
 </table><p>To set custom variable use the <a href="http://code.google.com/p/orient/wiki/SQLQuery#LET_block">LET</a> keyword.</p>

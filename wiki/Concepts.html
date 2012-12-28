@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -61,7 +61,7 @@
 
   <div class="twelve columns content" role="content">
 
-    <h3>Storage</h3>
+    <h3><u>Storage</u></h3>
 
 <p>It's the real physical database. It can be:</p>
 
@@ -76,7 +76,7 @@
 
 <p><img src="http://www.orientechnologies.com/images/orientdb-storage.png"></p>
 
-<h3>Cluster</h3>
+<h3><u>Cluster</u></h3>
 
 <p>OrientDB uses <strong>clusters</strong> to store links to the data. A cluster is a very generic way to group records and it is a concept that does not exists in the Relational world. You can use a cluster to group all the record of a certain type, or by a specific value. Example:</p>
 
@@ -216,7 +216,7 @@ This is much faster because OrientDB doesn't need to browse all the cluster but 
 
 <h3>Relationships</h3>
 
-<p>OrientDB supports two kind of relationships: <em>referenced</em> and <em>embedded</em>. OrientDB can manage relationships in a <a class="internal present" href="/wiki/SQL-Create-Class.html#abstract_class">http://code.google.com/p/orient/wiki/Schema#Define_relationships Schema</a>.]] or in Schema-less scenario.</p>
+<p>OrientDB supports two kind of relationships: <em>referenced</em> and <em>embedded</em>. OrientDB can manage relationships in a <a class="internal present" href="/orientdb/wiki/SQL-Create-Class.html#abstract_class">http://code.google.com/p/orient/wiki/Schema#Define_relationships Schema</a>.]] or in Schema-less scenario.</p>
 
 <h4>Referenced relationships</h4>
 
@@ -280,7 +280,7 @@ Example:
 
 <h3>Database</h3>
 
-<p>A database is an interface to access to the real <a href="http://code.google.com/p/orient/issues/detail?id=7%5D">#Storage Storage</a>.). The database knows all the high-level concepts such as Query, Schema, Metadata, Indexes, etc. OrientDB provides multiple database types. Take a look to the <a class="internal present" href="/wiki/Java-API.html#database_types">Database types</a> to know more about it.</p>
+<p>A database is an interface to access to the real <a href="http://code.google.com/p/orient/issues/detail?id=7%5D">#Storage Storage</a>.). The database knows all the high-level concepts such as Query, Schema, Metadata, Indexes, etc. OrientDB provides multiple database types. Take a look to the <a class="internal present" href="/orientdb/wiki/Java-API.html#database_types">Database types</a> to know more about it.</p>
 
 <p>Each server or JVM can handle multiple database instance, but the database name must be UNIQUE. So you can't manage at the same time 2 databases named "customer" in 2 different paths. To handle this case use the $ (dollar) as separator instead of / (slash). OrientDB will bind the entire name, so it will be unique, but at the file system level it will convert $ with / allowing multiple databases with the same name in different paths. Example:
 </p><div class="highlight"><pre>  <span class="n">test$customers</span> <span class="o">-&gt;</span> <span class="n">test</span><span class="o">/</span><span class="n">customers</span>

@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -77,11 +77,11 @@
 
 <h3>Introduction</h3>
 
-<p>The Orient Document DB is the base of higher-level implementation like <a class="internal present" href="/wiki/Object-Database.html">Object-Database</a> and <a class="internal present" href="/wiki/Graph-Database.html">Graph-Database</a>. The Document Database API has the following features:</p>
+<p>The Orient Document DB is the base of higher-level implementation like <a class="internal present" href="/orientdb/wiki/Object-Database.html">Object-Database</a> and <a class="internal present" href="/orientdb/wiki/Graph-Database.html">Graph-Database</a>. The Document Database API has the following features:</p>
 
 <ul>
 <li>supports <a href="#Multi-threading">Multi threads</a> access</li>
-<li>supports <a class="internal present" href="/wiki/Transactions.html">#Transactions</a>
+<li>supports <a class="internal present" href="/orientdb/wiki/Transactions.html">#Transactions</a>
 </li>
 <li>supports <a href="#Query">queries</a>
 </li>
@@ -103,13 +103,13 @@
   
   <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
 </pre></div>
-This is the very first example. While the code is pretty clear and easy to understand please note that we haven't declared the type "Person" before now. When an ODocument instance is saved, the declared type "Person" will be created without constraints. To declare persistent classes look at the <a class="internal present" href="/wiki/Schema.html">Schema management</a>.
+This is the very first example. While the code is pretty clear and easy to understand please note that we haven't declared the type "Person" before now. When an ODocument instance is saved, the declared type "Person" will be created without constraints. To declare persistent classes look at the <a class="internal present" href="/orientdb/wiki/Schema.html">Schema management</a>.
 
 <h3>Use the database</h3>
 
 <p>Before to execute any operation you need an opened database instance. You can <a href="#Open_a_database">open an existent database</a> or <a href="#Create_a_new_database">create a new one</a>. Databases instances aren't thread safe, so use one database per thread.</p>
 
-<p>Before to open or create a database instance you need a valid URL. URL is where the database is available. URL says what kind of <a class="internal present" href="/wiki/Concepts.html#storage">will be used. for example *memory:* means in-memory only database, *local:* is for embedded ones and *remote:* to use a remote database hosted on a up &amp; running [[DBServer OrientDB Server</a>] instance. For more information look at <a class="internal present" href="/wiki/Concepts.html#database_url">Database URL</a>.</p>
+<p>Before to open or create a database instance you need a valid URL. URL is where the database is available. URL says what kind of <a class="internal present" href="/orientdb/wiki/Concepts.html#storage">will be used. for example *memory:* means in-memory only database, *local:* is for embedded ones and *remote:* to use a remote database hosted on a up &amp; running [[DBServer OrientDB Server</a>] instance. For more information look at <a class="internal present" href="/orientdb/wiki/Concepts.html#database_url">Database URL</a>.</p>
 
 <p>Database instances must be closed once finished to release precious resources. To assure it the most common usage is to enclose all the database operations inside a try/finally block:
 </p><div class="highlight"><pre>  <span class="n">ODatabaseDocumentTx</span> <span class="n">db</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODatabaseDocumentTx</span><span class="o">(</span><span class="s">"local:/temp/test"</span><span class="o">);</span>
@@ -125,7 +125,7 @@ If you are using a remote storage (url starts with <strong>"remote:"</strong>) a
 
 <h4>Multi-threading</h4>
 
-<p>The ODatabaseDocumentTx class is non thread-safe. For this reason use different ODatabaseDocumentTx instances by multiple threads. They will share the same Storage instance (with the same URL) and the same level-2 cache. For more information look at <a class="internal present" href="/wiki/Java-Multi-Threading.html">Multi-Threading with Java</a>.</p>
+<p>The ODatabaseDocumentTx class is non thread-safe. For this reason use different ODatabaseDocumentTx instances by multiple threads. They will share the same Storage instance (with the same URL) and the same level-2 cache. For more information look at <a class="internal present" href="/orientdb/wiki/Java-Multi-Threading.html">Multi-Threading with Java</a>.</p>
 
 <h4>Create a new database</h4>
 
@@ -176,13 +176,13 @@ Remember to always close the database instance using the <code>close()</code> da
 
 <h3>Schema</h3>
 
-<p>OrientDB can work in schema-full (like RDBMS), schema-less (like many NoSQL Document databases) and in schema-hybrid mode. For more information about the Schema look at the <a class="internal present" href="/wiki/Schema.html">Schema</a> page.</p>
+<p>OrientDB can work in schema-full (like RDBMS), schema-less (like many NoSQL Document databases) and in schema-hybrid mode. For more information about the Schema look at the <a class="internal present" href="/orientdb/wiki/Schema.html">Schema</a> page.</p>
 
 <p>To use the schema with documents create the ODocument instance using the <code>ODocument(String className)</code> constructor passing the class name. If the class hasn't been declared, it's created automatically with no fields. This can't work during transaction because schema changes can't be applied in transactional context.</p>
 
 <h3>Security</h3>
 
-<p>Few NoSQL solutions supports security. OrientDB does it. To know more about it look at <a class="internal present" href="/wiki/Security.html">Security</a>.</p>
+<p>Few NoSQL solutions supports security. OrientDB does it. To know more about it look at <a class="internal present" href="/orientdb/wiki/Security.html">Security</a>.</p>
 
 <p>To manage the security get the Security Manager and use it to work with users and roles. Example:
 </p><div class="highlight"><pre>  <span class="n">OSecurity</span> <span class="n">sm</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getSecurity</span><span class="o">();</span>
@@ -194,7 +194,7 @@ To get the reference to the current user use:
 
 <h3>Create a new document</h3>
 
-<p>ODocument instances can be saved by calling the save() method against the object itself. Note that the behaviour depends on the running transaction, if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.
+<p>ODocument instances can be saved by calling the save() method against the object itself. Note that the behaviour depends on the running transaction, if any. See <a class="internal present" href="/orientdb/wiki/Transactions.html">Transactions</a>.
 </p><div class="highlight"><pre>  <span class="n">ODocument</span> <span class="n">animal</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ODocument</span><span class="o">(</span><span class="s">"Animal"</span><span class="o">);</span>
   <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"name"</span><span class="o">,</span> <span class="s">"Gaudi"</span> <span class="o">);</span>
   <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"location"</span><span class="o">,</span> <span class="s">"Madrid"</span> <span class="o">);</span>
@@ -248,7 +248,7 @@ v= Count records of a cluster ==
 
 <p>Although OrientDB is part of the NoSQL database community, it supports a subset of SQL that allows it to process links to documents and graphs.</p>
 
-<p>To know more about the SQL syntax supported go to: <a class="internal present" href="/wiki/SQL-Query.html">SQL-Query</a>.</p>
+<p>To know more about the SQL syntax supported go to: <a class="internal present" href="/orientdb/wiki/SQL-Query.html">SQL-Query</a>.</p>
 
 <p>Example of a SQL query:
 </p><div class="highlight"><pre>  <span class="n">List</span><span class="o">&lt;</span><span class="n">ODocument</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">query</span><span class="o">(</span>
@@ -280,7 +280,7 @@ Example of named parameters:
 
 <h5>== Right usage of the graph ==</h5>
 
-<p>OrientDB is a graph database. This means that traversing is very efficient. You can use this feature to optimize queries. A common technique is the <a class="internal present" href="/wiki/Pivoting-With-Query.html">Pivoting</a>.</p>
+<p>OrientDB is a graph database. This means that traversing is very efficient. You can use this feature to optimize queries. A common technique is the <a class="internal present" href="/orientdb/wiki/Pivoting-With-Query.html">Pivoting</a>.</p>
 
 <h5>= SQL Commands =</h5>
 
@@ -288,11 +288,11 @@ Example of named parameters:
 </p><div class="highlight"><pre>  <span class="kt">int</span> <span class="n">recordsUpdated</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="na">command</span><span class="o">(</span>
     <span class="k">new</span> <span class="nf">OCommandSQL</span><span class="o">(</span><span class="s">"update Animal set sold = false"</span><span class="o">)).</span><span class="na">execute</span><span class="o">();</span>
 </pre></div>
-See all the <a class="internal present" href="/wiki/SQL.html">SQL Commands</a>.
+See all the <a class="internal present" href="/orientdb/wiki/SQL.html">SQL Commands</a>.
 
 <h4>Traverse records</h4>
 
-<p>Traversing is the operation to cross documents by links (relationships). OrientDB is a graph database so this operation is much much more efficient than executing a JOIN in the relational databases. To kwow more about traversing look at the <a class="internal present" href="/wiki/Java-Traverse.html">Java traverse API</a>.</p>
+<p>Traversing is the operation to cross documents by links (relationships). OrientDB is a graph database so this operation is much much more efficient than executing a JOIN in the relational databases. To kwow more about traversing look at the <a class="internal present" href="/orientdb/wiki/Java-Traverse.html">Java traverse API</a>.</p>
 
 <p>The example below traverses, for each movies, all the connected records up to the 5th depth level.
 </p><div class="highlight"><pre>  <span class="k">for</span> <span class="o">(</span><span class="n">OIdentifiable</span> <span class="n">id</span> <span class="o">:</span> <span class="k">new</span> <span class="n">OTraverse</span><span class="o">()</span>
@@ -311,7 +311,7 @@ See all the <a class="internal present" href="/wiki/SQL.html">SQL Commands</a>.
 
 <h3>Update a document</h3>
 
-<p>Any persistent document can be updated using the Java API then calling the db.save() method, or by calling save() method against the document to synchronize the changes to the repository. Behaviour depends on the transaction begun if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.
+<p>Any persistent document can be updated using the Java API then calling the db.save() method, or by calling save() method against the document to synchronize the changes to the repository. Behaviour depends on the transaction begun if any. See <a class="internal present" href="/orientdb/wiki/Transactions.html">Transactions</a>.
 </p><div class="highlight"><pre>  <span class="n">animal</span><span class="o">.</span><span class="na">field</span><span class="o">(</span> <span class="s">"location"</span><span class="o">,</span> <span class="s">"Nairobi"</span> <span class="o">);</span>
   <span class="n">animal</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
 </pre></div>
@@ -326,7 +326,7 @@ OrientDB will update only the fields really changed.
 
 <h3>Delete a document</h3>
 
-<p>To delete a document call the delete() method against the document instance loaded. Behaviour depends by the transaction begun if any. See <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.
+<p>To delete a document call the delete() method against the document instance loaded. Behaviour depends by the transaction begun if any. See <a class="internal present" href="/orientdb/wiki/Transactions.html">Transactions</a>.
 </p><div class="highlight"><pre>  <span class="n">animal</span><span class="o">.</span><span class="na">delete</span><span class="o">();</span>
 </pre></div>
 Example of deletion of all the documents of class "Animal".
@@ -336,7 +336,7 @@ Example of deletion of all the documents of class "Animal".
 
 <h3>Transactions</h3>
 
-<p>Transactions are a practical way to group a set of operations all together. OrientDB supports <a href="http://en.wikipedia.org/wiki/ACID">ACID</a> transactions so or all the operations succeed or no one. The database remains always consistent. For more information look at <a class="internal present" href="/wiki/Transactions.html">Transactions</a>.</p>
+<p>Transactions are a practical way to group a set of operations all together. OrientDB supports <a href="http://en.wikipedia.org/wiki/ACID">ACID</a> transactions so or all the operations succeed or no one. The database remains always consistent. For more information look at <a class="internal present" href="/orientdb/wiki/Transactions.html">Transactions</a>.</p>
 
 <p>Transactions are managed at database level. No nested transactions are supported. A database instance can have only one transaction running. The database's methods to handle transactions are:</p>
 
@@ -349,7 +349,7 @@ Example of deletion of all the documents of class "Animal".
 <strong><code>rollback()</code></strong> abort a transaction. All the changes will be lost</li>
 </ul><h4>Optimistic approach</h4>
 
-<p>Current release only supports the <a class="internal present" href="/wiki/Transactions.html#optimistic_transaction">OPTIMISTIC transaction</a> where no lock is kept and all is checked at commit time. This improves concurrency but could throw a <code>OConcurrentModificationException</code> exception in case involved records were modified by concurrent clients/threads. In this case the client code can reload updated records and repeat the transaction.</p>
+<p>Current release only supports the <a class="internal present" href="/orientdb/wiki/Transactions.html#optimistic_transaction">OPTIMISTIC transaction</a> where no lock is kept and all is checked at commit time. This improves concurrency but could throw a <code>OConcurrentModificationException</code> exception in case involved records were modified by concurrent clients/threads. In this case the client code can reload updated records and repeat the transaction.</p>
 
 <p>Optimistic transaction keeps all the changes in memory at client-side level, so if you're a remote storage no messages are sent to the server until commit where all the changes will be transferred in block. This reduce network latency, speed-up the execution and increase the concurrency level. This is a big difference with the Relational DBMS where, during a transaction, changes are early sent to the server.</p>
 
@@ -370,7 +370,7 @@ Example of deletion of all the documents of class "Animal".
 
 <h3>Index API</h3>
 
-<p>Even though you can use <a class="internal present" href="/wiki/Indexes.html">Indexes</a> through SQL the best and most efficient way is using the Java API.</p>
+<p>Even though you can use <a class="internal present" href="/orientdb/wiki/Indexes.html">Indexes</a> through SQL the best and most efficient way is using the Java API.</p>
 
 <p>The main class to work against indexes is the <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/index/OIndexManager.java">IndexManager</a>. To get the implementation of the <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/index/OIndexManager.java">IndexManager</a> use:
 </p><div class="highlight"><pre>  <span class="n">OIndexManager</span> <span class="n">idxManager</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">().</span><span class="na">getIndexManager</span><span class="o">();</span>

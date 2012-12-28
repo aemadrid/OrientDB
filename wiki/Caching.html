@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -73,7 +73,7 @@
 <li>
 <strong>Level-2 cache</strong> is one per storage. This means that is shared by all database instances</li>
 <li>
-<strong><a class="internal present" href="/wiki/Concepts.html#storage">Storage</a></strong>, depending by the implementation could cache. This is the case for the <em>Local Storage</em> (disk based) that caches file reads to reduce I/O requests</li>
+<strong><a class="internal present" href="/orientdb/wiki/Concepts.html#storage">Storage</a></strong>, depending by the implementation could cache. This is the case for the <em>Local Storage</em> (disk based) that caches file reads to reduce I/O requests</li>
 <li>
 <strong>OS File</strong> Operative System caches I/O when using Memory Mapping techniques</li>
 </ul><h3>How cache works?</h3>
@@ -167,7 +167,7 @@ or via code before to open the database:
 <li>1 = <strong>copy</strong> the record</li>
 </ul><p>So by default the record is moved (pop) from Level2 cache to Level1 cache till the database close. In the case of "copy" (value=1) the record remains in Level2 cache for further concurrent threads. On high concurrency environment the "copy" strategy could improve performance at the cost of copy in terms of CPU + RAM.</p>
 
-<p>To change default strategy act globally changing the global parameter. Look at <a class="internal present" href="/wiki/Performance-Tuning.html#parameters">all the parameters</a> for more information.</p>
+<p>To change default strategy act globally changing the global parameter. Look at <a class="internal present" href="/orientdb/wiki/Performance-Tuning.html#parameters">all the parameters</a> for more information.</p>
 
 <p>You can also set it per database cache via Java API calling:
 </p><div class="highlight"><pre>  <span class="n">database</span><span class="o">.</span><span class="na">getLevel2Cache</span><span class="o">().</span><span class="na">setStrategy</span><span class="o">(</span><span class="n">STRATEGY</span><span class="o">.</span><span class="na">COPY_RECORD</span><span class="o">);</span>

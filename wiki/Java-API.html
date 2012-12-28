@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -85,7 +85,7 @@
 </td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Object-Database.html">Object-Database</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Object-Database.html">Object-Database</a></td>
 <td>If you need a full **Object Oriented** abstraction that binds all the database entities to **POJO** (Plain Old Java Object)</td>
 <td>The higher level database. Able to store and retrieve POJOs transparently. Under the hood, it uses the Document Database to store object information. Can be used in schema-less or schema-based modes</td>
 <td>[OObjectDatabaseTx](http://www.orientdb.org/releases/latest/javadoc/com/orientechnologies/orient/object/db/OObjectDatabaseTx.html)</td>
@@ -96,7 +96,7 @@
 <td>40%</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">TinkerPop Graph Database</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">TinkerPop Graph Database</a></td>
 <td>If you work with **graphs** and want your code **portable** across **TinkerPop Blueprints** implementations</td>
 <td>The bridge to use OrientDB with all [TinkerPop technologies](http://www.tinkerpop.com)</td>
 <td>OrientGraph</td>
@@ -107,7 +107,7 @@
 <td>45%</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Graph-Database-Native.html">High-Level Graph Database</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Graph-Database-Native.html">High-Level Graph Database</a></td>
 <td>Will be **deprecated** in future releases. Use GraphDatabaseRaw or GraphDatabaseTinkerpop  instead.</td>
 <td>The high level GraphDB API uses OGraphVertex and OGraphEdge classes.</td>
 <td>[ODatabaseGraphTx](http://www.orientechnologies.com/releases/latest/javadoc/index.html?com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.html)</td>
@@ -118,7 +118,7 @@
 <td>55%</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Graph-Database-Raw.html">Raw Graph Database</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Graph-Database-Raw.html">Raw Graph Database</a></td>
 <td>If you work with **graphs** and need maximum **performance**.</td>
 <td>The lower level of GraphDB API. Directly uses ODocument objects.</td>
 <td>[OGraphDatabase](http://www.orientechnologies.com/releases/latest/javadoc/index.html?com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.html)</td>
@@ -129,7 +129,7 @@
 <td>70%</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Document-Database.html">Document-Database</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Document-Database.html">Document-Database</a></td>
 <td>if you need **high performance** and/or work with **schema-less structures**.</td>
 <td>Handles records as documents. Documents are comprised of fields. Fields can be any of the types supported. Does not need a Java domain POJO, as required for the Object Database. Can be used as schema-less or schema-base modes</td>
 <td>[ODatabaseDocumentTx](http://www.orientechnologies.com/releases/latest/javadoc/index.html?com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.html)</td>
@@ -140,7 +140,7 @@
 <td>70%</td>
 </tr>
 <tr>
-<td><a class="internal absent" href="/wiki/Flat-Database.html">Flat Database</a></td>
+<td><a class="internal absent" href="/orientdb/wiki/Flat-Database.html">Flat Database</a></td>
 <td>If you need **maximum performance** at the cost of having all records represented merely  as Strings</td>
 <td>Flat record database that manages string contents. No Query capability at all, just direct access to records as strings</td>
 <td>[ODatabaseFlat](http://www.orientechnologies.com/releases/latest/javadoc/index.html?com/orientechnologies/orient/core/db/document/ODatabaseDocumentTx.html)</td>
@@ -205,11 +205,11 @@
 </tr>
 </tbody></table><h4>Engines</h4>
 
-<p>OrientDB supports pluggable engines. The engine is the first part of the <a class="internal present" href="/wiki/Concepts.html#database_url">database URL</a>. By default the "local" and "memory" are self-registered, while the "remote" requires to link the orient-client.jar library in your classpath.</p>
+<p>OrientDB supports pluggable engines. The engine is the first part of the <a class="internal present" href="/orientdb/wiki/Concepts.html#database_url">database URL</a>. By default the "local" and "memory" are self-registered, while the "remote" requires to link the orient-client.jar library in your classpath.</p>
 
 <h4>Multi-threading</h4>
 
-<p>None of the database classes are thread-safe. For this reason use different Database instances in each thread. The local client cache is shared between all threads. When your client is connected to a remote OrientDB Server instance it is always best to work inside a <a class="internal present" href="/wiki/Transactions.html">transaction</a>. In this way local changes will only be transmitted at commit time while transactions continue to see local changes. For more information: <a class="internal present" href="/wiki/Java-Multi-Threading.html">Multi Threading</a>.</p>
+<p>None of the database classes are thread-safe. For this reason use different Database instances in each thread. The local client cache is shared between all threads. When your client is connected to a remote OrientDB Server instance it is always best to work inside a <a class="internal present" href="/orientdb/wiki/Transactions.html">transaction</a>. In this way local changes will only be transmitted at commit time while transactions continue to see local changes. For more information: <a class="internal present" href="/orientdb/wiki/Java-Multi-Threading.html">Multi Threading</a>.</p>
 
 <h4>Schema APIs</h4>
 
@@ -217,7 +217,7 @@
 
 <h4>Hooks</h4>
 
-<p>Starting from v. 0.9.16 OrientDB supports <strong>hooks</strong>. Hook works like a trigger. Hook lets the user application intercept internal events. See <a class="internal present" href="/wiki/Hook.html">Hook API</a>.</p>
+<p>Starting from v. 0.9.16 OrientDB supports <strong>hooks</strong>. Hook works like a trigger. Hook lets the user application intercept internal events. See <a class="internal present" href="/orientdb/wiki/Hook.html">Hook API</a>.</p>
 
 
   </div>

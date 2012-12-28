@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -76,7 +76,7 @@
 <a href="http://wiki.github.com/tinkerpop/gremlin">Gremlin</a> is a Turing-complete, graph-based programming language designed for key/value-pair multi-relational graphs. Gremlin makes use of an XPath-like syntax to support complex graph traversals. This language has application in the areas of graph query, analysis, and manipulation.</li>
 <li>
 <a href="http://pipes.tinkerpop.com">Pipes</a> is a graph-based data flow framework for Java 1.6+. A process graph is composed of a set of process vertices connected to one another by a set of communication edges. Pipes supports the splitting, merging, and transformation of data from input to output.</li>
-</ul><p>No more pains when work with <a href="http://www.tinkerpop.com">TinkerPop</a> stuff on top of OrientDB. This integration allows (finally!) to use both the power of OrientDB SQL engine and <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> language. You can finally have the best of both worlds!</p>
+</ul><p>No more pains when work with <a href="http://www.tinkerpop.com">TinkerPop</a> stuff on top of OrientDB. This integration allows (finally!) to use both the power of OrientDB SQL engine and <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> language. You can finally have the best of both worlds!</p>
 
 <h3>Download</h3>
 
@@ -110,7 +110,7 @@
   <span class="n">Java</span> <span class="nf">HotSpot</span><span class="o">(</span><span class="n">TM</span><span class="o">)</span> <span class="n">Client</span> <span class="n">VM</span> <span class="o">(</span><span class="n">build</span> <span class="mf">16.3</span><span class="o">-</span><span class="n">b01</span><span class="o">,</span> <span class="n">mixed</span> <span class="n">mode</span><span class="o">,</span> <span class="n">sharing</span><span class="o">)</span>
 </pre></div>
 
-<p>To know more follow the <a class="internal present" href="/wiki/Installation.html">Installation</a> of OrientDB server.</p>
+<p>To know more follow the <a class="internal present" href="/orientdb/wiki/Installation.html">Installation</a> of OrientDB server.</p>
 
 <h3>Run!</h3>
 
@@ -163,7 +163,7 @@
   
   <span class="o">&gt;</span>
 </pre></div>
-Type <strong>?</strong> to show all the commands supported by the console. For more information about them, go to <a class="internal present" href="/wiki/Console-Commands.html">Console Commands</a>. By typing <strong>?</strong> command, output will be the following:
+Type <strong>?</strong> to show all the commands supported by the console. For more information about them, go to <a class="internal present" href="/orientdb/wiki/Console-Commands.html">Console Commands</a>. By typing <strong>?</strong> command, output will be the following:
 <div class="highlight"><pre>  <span class="o">&gt;</span> <span class="o">?</span>
   <span class="n">AVAILABLE</span> <span class="nl">COMMANDS:</span>
   
@@ -175,10 +175,10 @@ Type <strong>?</strong> to show all the commands supported by the console. For m
 
 <h4>Connect to the tinkerpop database</h4>
 
-<p>You can now open the "tinkerpop" database shipped with the OrientDB Graph Edition by using the <a class="internal present" href="/wiki/Console-Command-Connect.html">connect</a> command:
+<p>You can now open the "tinkerpop" database shipped with the OrientDB Graph Edition by using the <a class="internal present" href="/orientdb/wiki/Console-Command-Connect.html">connect</a> command:
 </p><div class="highlight"><pre>  <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">tinkerpop</span> <span class="n">admin</span> <span class="n">admin</span>
 </pre></div>
-This will open the database located on the server just started using the administrator account. To know more about security look at <a class="internal present" href="/wiki/Security.html">Security</a>.
+This will open the database located on the server just started using the administrator account. To know more about security look at <a class="internal present" href="/orientdb/wiki/Security.html">Security</a>.
 
 <p>OrientDB can run also in embedded mode. In this case turn off the server and open it using the "local" protocol, but remember that OrientDB Studio can't be used if no server is running.</p>
 
@@ -187,11 +187,11 @@ This will open the database located on the server just started using the adminis
 <div class="highlight"><pre>  <span class="n">connect</span> <span class="nl">local:</span><span class="o">../</span><span class="n">databases</span><span class="o">/</span><span class="n">tinkerpop</span> <span class="n">admin</span> <span class="n">admin</span>
 </pre></div>
 
-<p>For more information about the databases and the proper formats of URLs go <a class="internal present" href="/wiki/Concepts.html#database">here</a>. The output of the previous command should be the following:
+<p>For more information about the databases and the proper formats of URLs go <a class="internal present" href="/orientdb/wiki/Concepts.html#database">here</a>. The output of the previous command should be the following:
 </p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">connect</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">tinkerpop</span> <span class="n">admin</span> <span class="n">admin</span>
   <span class="n">Connecting</span> <span class="n">to</span> <span class="n">database</span> <span class="o">[</span> <span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">tinkerpop</span><span class="o">]</span> <span class="n">with</span> <span class="n">user</span> <span class="err">'</span><span class="n">admin</span><span class="err">'</span><span class="o">...</span><span class="na">OK</span>
 </pre></div>
-Once connected, you may view the information about the database by typing <a class="internal present" href="/wiki/Console-Command-Info.html">info</a> command:
+Once connected, you may view the information about the database by typing <a class="internal present" href="/orientdb/wiki/Console-Command-Info.html">info</a> command:
 <div class="highlight"><pre><span class="o">&gt;</span> <span class="n">info</span>
 <span class="n">Current</span> <span class="nl">database:</span> <span class="n">tinkerpop</span> <span class="o">(</span><span class="n">url</span><span class="o">=</span><span class="nl">remote:</span><span class="n">localhost</span><span class="o">/</span><span class="n">tinkerpop</span><span class="o">)</span>
 
@@ -240,7 +240,7 @@ Once connected, you may view the information about the database by typing <a cla
 
 <h4>Execute the first GREMLIN script</h4>
 
-<p>To execute <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> scripts you can use the gremlin console (gremlin.sh/gremlin.bat) or OrientDB console by prefixing "gremlin" at the statement. Example to retrieve the first 10 vertices:
+<p>To execute <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> scripts you can use the gremlin console (gremlin.sh/gremlin.bat) or OrientDB console by prefixing "gremlin" at the statement. Example to retrieve the first 10 vertices:
 </p><div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">gremlin</span> <span class="n">g</span><span class="o">.</span><span class="na">V</span><span class="o">[</span><span class="mi">0</span><span class="o">..</span><span class="mi">9</span><span class="o">]</span>
   
   <span class="o">[</span><span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">1</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">2</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">3</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">4</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">5</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">6</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">7</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">8</span><span class="o">],</span> <span class="n">v</span><span class="o">[</span><span class="err">#</span><span class="mi">5</span><span class="o">:</span><span class="mi">9</span><span class="o">]]</span>
@@ -248,7 +248,7 @@ Once connected, you may view the information about the database by typing <a cla
   <span class="n">Script</span> <span class="n">executed</span> <span class="n">in</span> <span class="mi">0</span><span class="o">,</span><span class="mi">049000</span> <span class="n">sec</span><span class="o">(</span><span class="n">s</span><span class="o">).</span>
 </pre></div>
 
-<p>Want to know more about <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a>? Follow this tutorial by <a href="http://markorodriguez.com/">Marko Rodriguez</a>:</p>
+<p>Want to know more about <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a>? Follow this tutorial by <a href="http://markorodriguez.com/">Marko Rodriguez</a>:</p>
 
 
 
@@ -284,7 +284,7 @@ Once connected, you may view the information about the database by typing <a cla
 
 <h4>Command</h4>
 
-<p>If you want to use raw <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> click on the "**Command**" tab, select <strong>GREMLIN</strong> as language and type this text:
+<p>If you want to use raw <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> click on the "**Command**" tab, select <strong>GREMLIN</strong> as language and type this text:
 </p><div class="highlight"><pre>  <span class="n">g</span><span class="o">.</span><span class="na">V</span><span class="o">[</span><span class="mi">0</span><span class="o">..</span><span class="mi">9</span><span class="o">]</span>
 </pre></div>
 
@@ -292,25 +292,25 @@ Once connected, you may view the information about the database by typing <a cla
 
 <p>[<a href="http://www.orientechnologies.com/images/graphed-tutorial-command.png">http://www.orientechnologies.com/images/graphed-tutorial-command.png</a>]</p>
 
-<p>In this case raw <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> engine will be called.</p>
+<p>In this case raw <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> engine will be called.</p>
 
 <h3>Java API</h3>
 
 <h4>GREMLIN() function</h4>
 
-<p>This function enriches the OrientDB's SQL language to execute a <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> statement for projections.</p>
+<p>This function enriches the OrientDB's SQL language to execute a <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> statement for projections.</p>
 
 <p>Example: retrieve the first 3 out edges of the first 2 vertexes:</p>
 
 <div class="highlight"><pre>  List<span class="nt">&lt;ODocument&gt;</span> resultset = db.query(new OSQLSynchQuery("SELECT GREMLIN( 'current.out[0..3]' ) as value from V limit 2"));
 </pre></div>
-The <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> result will be contained inside the "value" field of the document retrieved.
+The <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> result will be contained inside the "value" field of the document retrieved.
 <div class="highlight"><pre>  <span class="n">resultset</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">).</span><span class="na">field</span><span class="o">(</span> <span class="s">"value"</span> <span class="o">);</span>
 </pre></div>
 
 <h4>GREMLIN command</h4>
 
-<p>The OCommandGremlin is a new class to execute <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> script. The usage is the same of SQL commands:</p>
+<p>The OCommandGremlin is a new class to execute <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> script. The usage is the same of SQL commands:</p>
 
 <div class="highlight"><pre>  <span class="n">db</span><span class="o">.</span><span class="na">command</span><span class="o">(</span><span class="k">new</span> <span class="n">OCommandGremlin</span><span class="o">(</span><span class="s">"g.V[0..10]"</span><span class="o">)).</span><span class="na">execute</span><span class="o">();</span>
 </pre></div>
@@ -319,15 +319,15 @@ The <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> result wil
 
 <h3>Gephi</h3>
 
-<p>For advanced analysis against graphs use the <a class="internal present" href="/wiki/Gephi.html">Gephi</a> visual tool.</p>
+<p>For advanced analysis against graphs use the <a class="internal present" href="/orientdb/wiki/Gephi.html">Gephi</a> visual tool.</p>
 
 <h3>Conclusion</h3>
 
 <p>To continue learning OrientDB Graph Edition look at these links:</p>
 
 <ul>
-<li><a class="internal present" href="/wiki/Gremlin.html">Gremlin usage</a></li>
-<li><a class="internal present" href="/wiki/Console-Commands.html">Get acquainted with the console</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin usage</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Console-Commands.html">Get acquainted with the console</a></li>
 </ul>
 
 

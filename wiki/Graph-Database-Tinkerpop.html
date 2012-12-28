@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -86,7 +86,7 @@
 
 <h3>Introduction</h3>
 
-<p>Even if OrientDB already provides <a class="internal present" href="/wiki/Graph-Database-Raw.html">own APIs</a> to handle graphs in easy way, starting from release 0.9.22 OrientDB provides an implementation of the <a href="http://wiki.github.com/tinkerpop/blueprints">Tinkerpop Blueprints</a> APIs. <a href="http://www.tinkerpop.com">Tinkerpop</a> is a complete stack of projects to handle Graphs:</p>
+<p>Even if OrientDB already provides <a class="internal present" href="/orientdb/wiki/Graph-Database-Raw.html">own APIs</a> to handle graphs in easy way, starting from release 0.9.22 OrientDB provides an implementation of the <a href="http://wiki.github.com/tinkerpop/blueprints">Tinkerpop Blueprints</a> APIs. <a href="http://www.tinkerpop.com">Tinkerpop</a> is a complete stack of projects to handle Graphs:</p>
 
 <ul>
 <li>
@@ -94,14 +94,14 @@
 <li>
 <a href="http://wiki.github.com/tinkerpop/gremlin">Gremlin</a> is a Turing-complete, graph-based programming language designed for key/value-pair multi-relational graphs. Gremlin makes use of an XPath-like syntax to support complex graph traversals. This language has application in the areas of graph query, analysis, and manipulation.</li>
 <li>
-<a href="http://rexster.tinkerpop.com">Rexster</a> is a RESTful graph shell that exposes any Blueprints graph as a standalone server. Extensions support standard traversal goals such as search, score, rank, and, in concert, recommendation. Rexster makes extensive use of Blueprints, Pipes, and Gremlin. In this way its possible to run Rexster over various graph systems. To configure Rexster to work with OrientDB follow this guide: <a class="internal present" href="/wiki/Rexster.html">configuration</a>.</li>
+<a href="http://rexster.tinkerpop.com">Rexster</a> is a RESTful graph shell that exposes any Blueprints graph as a standalone server. Extensions support standard traversal goals such as search, score, rank, and, in concert, recommendation. Rexster makes extensive use of Blueprints, Pipes, and Gremlin. In this way its possible to run Rexster over various graph systems. To configure Rexster to work with OrientDB follow this guide: <a class="internal present" href="/orientdb/wiki/Rexster.html">configuration</a>.</li>
 <li>
 <a href="http://pipes.tinkerpop.com">Pipes</a> is a graph-based data flow framework for Java 1.6+. A process graph is composed of a set of process vertices connected to one another by a set of communication edges. Pipes supports the splitting, merging, and transformation of data from input to output.</li>
 </ul><h3>Get started</h3>
 
-<p>Download the <a class="internal absent" href="/wiki/Graph%28Ed%29-and-follow-this-tutorial.html">Graph Ed Tutorial</a>.</p>
+<p>Download the <a class="internal absent" href="/orientdb/wiki/Graph%28Ed%29-and-follow-this-tutorial.html">Graph Ed Tutorial</a>.</p>
 
-<p>The kind of database used depends by the <a class="internal present" href="/wiki/Concepts.html#database_url">Database URL</a> used.</p>
+<p>The kind of database used depends by the <a class="internal present" href="/orientdb/wiki/Concepts.html#database_url">Database URL</a> used.</p>
 
 <ul>
 <li>
@@ -121,7 +121,7 @@
 
 <h3>Work with GraphDB</h3>
 
-<p>Before to work with a graph you need an instance of <a href="https://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/impls/orient/OrientGraph.java">OrientGraph</a> class. The constructor gets a <a class="internal present" href="/wiki/Concepts.html#database_url">URL</a> that is the location of database. If the database already exists, it will be opened, otherwise will be created.</p>
+<p>Before to work with a graph you need an instance of <a href="https://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/impls/orient/OrientGraph.java">OrientGraph</a> class. The constructor gets a <a class="internal present" href="/orientdb/wiki/Concepts.html#database_url">URL</a> that is the location of database. If the database already exists, it will be opened, otherwise will be created.</p>
 
 <p>Remember always to close the graph once done using the <code>.shutdown()</code> method.</p>
 
@@ -145,7 +145,7 @@
 
 <h4>Security</h4>
 
-<p>If you want to use the OrientDB security use the constructor that get the <a class="internal present" href="/wiki/Concepts.html#database_url">URL</a>, user and password. To know more about OrientDB security visit <a class="internal present" href="/wiki/Security.html">Security</a>.</p>
+<p>If you want to use the OrientDB security use the constructor that get the <a class="internal present" href="/orientdb/wiki/Concepts.html#database_url">URL</a>, user and password. To know more about OrientDB security visit <a class="internal present" href="/orientdb/wiki/Security.html">Security</a>.</p>
 
 <h3>Transactions</h3>
 
@@ -217,7 +217,7 @@ Example:
 
 <h4>Set and get properties</h4>
 
-<p>Vertexes and Edges can have multiple properties where the key is a String and the value can be any <a class="internal present" href="/wiki/Types.html">supported OrientDB types</a>.</p>
+<p>Vertexes and Edges can have multiple properties where the key is a String and the value can be any <a class="internal present" href="/orientdb/wiki/Types.html">supported OrientDB types</a>.</p>
 
 <ul>
 <li>To set a property use the method <code>void setProperty(String key, Object value)</code>.</li>
@@ -243,7 +243,7 @@ Example:
 <li>Count incoming and outgoing edges without browsing them all</li>
 <li>Get incoming and outgoing vertexes without browsing the edges</li>
 <li>Execute a query using SQL-like language integrated in the engine</li>
-</ul><p>The <a href="http://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/pgm/impls/orientdb/OrientGraph.java">OrientGraph</a> class provides the method <code>.getRawGraph()</code> to return the underlying native root Graph class: <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/ODatabaseGraphTx.java">ODatabaseGraphTx</a>. Follow the <a class="internal present" href="/wiki/Graph-Database-Native.html">Graph Database Native APIs</a> to know its usage.</p>
+</ul><p>The <a href="http://github.com/tinkerpop/blueprints/blob/master/blueprints-orient-graph/src/main/java/com/tinkerpop/blueprints/pgm/impls/orientdb/OrientGraph.java">OrientGraph</a> class provides the method <code>.getRawGraph()</code> to return the underlying native root Graph class: <a href="http://code.google.com/p/orient/source/browse/trunk/core/src/main/java/com/orientechnologies/orient/core/db/graph/ODatabaseGraphTx.java">ODatabaseGraphTx</a>. Follow the <a class="internal present" href="/orientdb/wiki/Graph-Database-Native.html">Graph Database Native APIs</a> to know its usage.</p>
 
 <p>Example:
 </p><div class="highlight"><pre>    <span class="kd">final</span> <span class="n">OrientGraph</span> <span class="n">graph</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrientGraph</span><span class="o">(</span><span class="s">"local:C:/temp/graph/db"</span><span class="o">);</span>
@@ -257,7 +257,7 @@ Example:
 <h3>Use the Gremlin language</h3>
 
 <ul>
-<li><a class="internal present" href="/wiki/Gremlin.html">How to use the Gremlin language with OrientDB</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Gremlin.html">How to use the Gremlin language with OrientDB</a></li>
 <li><a href="http://github.com/tinkerpop/gremlin/wiki/Getting-Started">Getting started with Gremlin</a></li>
 <li>
 <a href="https://github.com/tinkerpop/rexster/wiki/Using-Gremlin">Usage of Gremlin through HTTP/RESTful API using the Rexter project</a>.</li>

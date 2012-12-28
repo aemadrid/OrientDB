@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -63,7 +63,7 @@
 
   <div class="twelve columns content" role="content">
 
-    <p>Orient supports the SQL language to execute queries against the engine. Look at the <a class="internal present" href="/wiki/SQL-Where.html#operators">operators</a> and <a class="internal present" href="/wiki/SQL-Where.html#functions">Functions</a>.</p>
+    <p>Orient supports the SQL language to execute queries against the engine. Look at the <a class="internal present" href="/orientdb/wiki/SQL-Where.html#operators">operators</a> and <a class="internal present" href="/orientdb/wiki/SQL-Where.html#functions">Functions</a>.</p>
 
 <h3>Syntax =</h3>
 
@@ -74,9 +74,9 @@
 <li>
 <strong><a href="#Projections">Projections</a></strong>, optionals, are what you want to extract from the query as result set. Look at <a href="#Projections">Projections</a>. Available since 0.9.25.</li>
 <li>
-<strong>Target</strong> can be a class, a cluster, a single <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a> or a set of <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s. <strong>Class</strong> is the class name where to execute the query, while specyfing <strong>cluster</strong> with the 'cluster:' prefix is the cluster name where to execute the query. Use one or more <a class="internal present" href="/wiki/Concepts.html#recordid">RID</a>s to specify one or a small set of record. Useful to navigate graphs starting from some root nodes</li>
+<strong>Target</strong> can be a class, a cluster, a single <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a> or a set of <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a>s. <strong>Class</strong> is the class name where to execute the query, while specyfing <strong>cluster</strong> with the 'cluster:' prefix is the cluster name where to execute the query. Use one or more <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RID</a>s to specify one or a small set of record. Useful to navigate graphs starting from some root nodes</li>
 <li>
-<strong><a class="internal present" href="/wiki/SQL-Where.html">WHERE</a></strong> condition is common to the other SQL commands and it's described apart.</li>
+<strong><a class="internal present" href="/orientdb/wiki/SQL-Where.html">WHERE</a></strong> condition is common to the other SQL commands and it's described apart.</li>
 <li>
 <strong><a href="#LET_block">LET</a></strong> is the part that bind context variables to be used in projections, conditions or sub-queries</li>
 <li>
@@ -84,10 +84,10 @@
 <li>
 <strong>ORDER BY</strong> is the same of the SQL standard syntax specifying fields with optionally the versus (default is ASCending)</li>
 <li>
-<strong>SKIP</strong> skips <code>&lt;SkipRecords&gt;</code> records from the result set. This is useful in <a class="internal present" href="/wiki/Pagination.html">Pagination</a> together with LIMIT.</li>
+<strong>SKIP</strong> skips <code>&lt;SkipRecords&gt;</code> records from the result set. This is useful in <a class="internal present" href="/orientdb/wiki/Pagination.html">Pagination</a> together with LIMIT.</li>
 <li>
-<strong>LIMIT</strong> sets the maximum record the query can return to <code>&lt;MaxRecords&gt;</code>. This is useful in <a class="internal present" href="/wiki/Pagination.html">Pagination</a> together with SKIP.</li>
-</ul><p><em>NOTE: Starting from 1.0rc7 the **RANGE</em>* keyword has been removed. To execute range queries use the BETWEEN operator against @rid as explained  in <a class="internal present" href="/wiki/Pagination.html">Pagination</a>.*</p>
+<strong>LIMIT</strong> sets the maximum record the query can return to <code>&lt;MaxRecords&gt;</code>. This is useful in <a class="internal present" href="/orientdb/wiki/Pagination.html">Pagination</a> together with SKIP.</li>
+</ul><p><em>NOTE: Starting from 1.0rc7 the **RANGE</em>* keyword has been removed. To execute range queries use the BETWEEN operator against @rid as explained  in <a class="internal present" href="/orientdb/wiki/Pagination.html">Pagination</a>.*</p>
 
 <h4>Projections</h4>
 
@@ -246,7 +246,7 @@ or
 
 <h3>Conclusion</h3>
 
-<p>To know more about other SQL commands look at <a class="internal present" href="/wiki/SQL.html">SQL commands</a>.</p>
+<p>To know more about other SQL commands look at <a class="internal present" href="/orientdb/wiki/SQL.html">SQL commands</a>.</p>
 
 
   </div>

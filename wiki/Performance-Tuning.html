@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -66,10 +66,10 @@
 <p>This guide contains the general tips to optimize your application that use the OrientDB. Below you can find links for the specific guides different per database type used.</p>
 
 <ul>
-<li><a class="internal present" href="/wiki/Performance-Tuning-Document.html">Document Database performance tuning</a></li>
-<li><a class="internal present" href="/wiki/Performance-Tuning-Object.html">Object Database performance tuning</a></li>
-<li><a class="internal present" href="/wiki/Performance-Tuning-Graph.html">Graph Database performance tuning</a></li>
-<li><a class="internal present" href="/wiki/Performance-Tuning-Blueprints.html">TinkerPop Blueprints Graph Database performance tuning</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Performance-Tuning-Document.html">Document Database performance tuning</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Performance-Tuning-Object.html">Object Database performance tuning</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Performance-Tuning-Graph.html">Graph Database performance tuning</a></li>
+<li><a class="internal present" href="/orientdb/wiki/Performance-Tuning-Blueprints.html">TinkerPop Blueprints Graph Database performance tuning</a></li>
 </ul><h3>General settings</h3>
 
 <h4>JVM settings</h4>
@@ -80,7 +80,7 @@
 
 <h4>Configuration</h4>
 
-<p>OrientDB can be configured in several ways. To know the current configuration use the console with the <a class="internal present" href="/wiki/Console-Command-Config.html">config command</a>.</p>
+<p>OrientDB can be configured in several ways. To know the current configuration use the console with the <a class="internal present" href="/orientdb/wiki/Console-Command-Config.html">config command</a>.</p>
 
 <p>To dump the OrientDB configuration you can set a parameter at JVM launch:</p>
 
@@ -290,14 +290,14 @@
 <td>Synchronizes the storage after transaction commit (see [Disable the disk synch](#Disable_the_disk_synch))</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">TinkerPop Blueprints</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">TinkerPop Blueprints</a></td>
 <td><code>blueprints.graph.txMode</code></td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>0 or 1</td>
-<td>Transaction mode used in <a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">TinkerPop Blueprints</a> implementation. 0 = Automatic (default), 1 = Manual</td>
+<td>Transaction mode used in <a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">TinkerPop Blueprints</a> implementation. 0 = Automatic (default), 1 = Manual</td>
 </tr>
 <tr>
 <td>Index</td>
@@ -651,7 +651,7 @@
 <td>Timeout to consider a http session expired in seconds</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Profiler.html">Profiler</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Profiler.html">Profiler</a></td>
 <td><code>profiler.enabled</code></td>
 <td>false</td>
 <td>false</td>
@@ -661,7 +661,7 @@
 <td>Enable the recording of statistics and counters</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Profiler.html">Profiler</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Profiler.html">Profiler</a></td>
 <td><code>profiler.autoDump.interval</code></td>
 <td>0</td>
 <td>0</td>
@@ -672,7 +672,7 @@
 <td>1.0rc8</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Profiler.html">Profiler</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Profiler.html">Profiler</a></td>
 <td><code>profiler.autoDump.reset</code></td>
 <td>true</td>
 <td>true</td>
@@ -683,7 +683,7 @@
 <td>1.0rc8</td>
 </tr>
 <tr>
-<td><a class="internal present" href="/wiki/Profiler.html">Profiler</a></td>
+<td><a class="internal present" href="/orientdb/wiki/Profiler.html">Profiler</a></td>
 <td><code>profiler.config</code></td>
 <td>null</td>
 <td>null</td>
@@ -868,7 +868,7 @@ means that probably default timeouts are too low and server side operation need 
 
 <h4>Use of indexes</h4>
 
-<p>The first improvement to speed up queries is to create <a class="internal present" href="/wiki/Indexes.html">Indexes</a> against the fields used in WHERE conditions. For example this query:
+<p>The first improvement to speed up queries is to create <a class="internal present" href="/orientdb/wiki/Indexes.html">Indexes</a> against the fields used in WHERE conditions. For example this query:
 </p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">Profile</span> <span class="n">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Jay</span><span class="err">'</span> 
 </pre></div>
 Browses the entire "profile" cluster looking for records that satisfy the conditions. The solution is to create an index against the 'name' property with:
@@ -895,11 +895,11 @@ Moreover, because of partial match searching, this index will be used for optimi
 
 <h4>Right usage of the graph</h4>
 
-<p>OrientDB is a graph database. This means that traversing is very efficient. You can use this feature to optimize queries. A common technique is the <a class="internal present" href="/wiki/Pivoting-With-Query.html">Pivoting</a>.</p>
+<p>OrientDB is a graph database. This means that traversing is very efficient. You can use this feature to optimize queries. A common technique is the <a class="internal present" href="/orientdb/wiki/Pivoting-With-Query.html">Pivoting</a>.</p>
 
 <h4>Avoid use of @rid in WHERE conditions</h4>
 
-<p>Using <strong>@rid</strong> in where conditions slow down queries. Much better to use the <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a> as target. Example:</p>
+<p>Using <strong>@rid</strong> in where conditions slow down queries. Much better to use the <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a> as target. Example:</p>
 
 <p>Change this:
 </p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="n">FROM</span> <span class="n">Profile</span> <span class="n">WHERE</span> <span class="nd">@rid</span> <span class="o">=</span> <span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">44</span>
@@ -943,9 +943,9 @@ myClass.setOverSize(2);</p>
 
 <h3>Wise use of transactions</h3>
 
-<p>To obtain real linear performance with OrientDB you should avoid to use <a class="internal present" href="/wiki/Transactions.html">Transactions</a> as far as you can. In facts OrientDB keeps in memory all the changes until you flush it with a commit. So the bottleneck is your Heap space and the management of local transaction cache (implemented as a Map).</p>
+<p>To obtain real linear performance with OrientDB you should avoid to use <a class="internal present" href="/orientdb/wiki/Transactions.html">Transactions</a> as far as you can. In facts OrientDB keeps in memory all the changes until you flush it with a commit. So the bottleneck is your Heap space and the management of local transaction cache (implemented as a Map).</p>
 
-<p><a class="internal present" href="/wiki/Transactions.html">Transactions</a> slow down massive inserts unless you're using a "remote" connection. In that case it speeds up all the insertion because the client/server communication happens only at commit time.</p>
+<p><a class="internal present" href="/orientdb/wiki/Transactions.html">Transactions</a> slow down massive inserts unless you're using a "remote" connection. In that case it speeds up all the insertion because the client/server communication happens only at commit time.</p>
 
 <h4>Disable Transaction Log</h4>
 

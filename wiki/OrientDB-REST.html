@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -65,7 +65,7 @@
 
     <h3>Introduction</h3>
 
-<p>OrientDB RESTful HTTP protocol allows to talk with a <a class="internal present" href="/wiki/DB-Server.html">OrientDB Server instance</a> using the <a href="http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol">HTTP protocol</a> and <a href="http://en.wikipedia.org/wiki/JSON">JSON</a>. OrientDB supports also a highly optimized <a class="internal present" href="/wiki/Network-Binary-Protocol.html">Binary protocol</a> for superior performances.</p>
+<p>OrientDB RESTful HTTP protocol allows to talk with a <a class="internal present" href="/orientdb/wiki/DB-Server.html">OrientDB Server instance</a> using the <a href="http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol">HTTP protocol</a> and <a href="http://en.wikipedia.org/wiki/JSON">JSON</a>. OrientDB supports also a highly optimized <a class="internal present" href="/orientdb/wiki/Network-Binary-Protocol.html">Binary protocol</a> for superior performances.</p>
 
 
 
@@ -199,7 +199,7 @@ HTTP response:
     <span class="o">}</span>
   <span class="o">}</span>
 </pre></div>
-For more information about properties look at the <a class="internal present" href="/wiki/Types.html">supported types</a>, or see the <a class="internal present" href="/wiki/SQL-Create-Property.html">SQL Create property</a> page for text values to be used when getting or posting class commands 
+For more information about properties look at the <a class="internal present" href="/orientdb/wiki/Types.html">supported types</a>, or see the <a class="internal present" href="/orientdb/wiki/SQL-Create-Property.html">SQL Create property</a> page for text values to be used when getting or posting class commands 
 
 <h5>Example</h5>
 
@@ -370,12 +370,12 @@ HTTP response: <code>6</code>
 <li>
 <em><code>limit</code></em> is the maximum number of record to return. Optional, default is 20</li>
 <li>
-<em><code>fetchPlan</code></em> is the fetching strategy to use. For more information look at <a class="internal present" href="/wiki/Fetching-Strategies.html">Fetching Strategies</a>. Optional, default is *:1 (1 depth level only)</li>
+<em><code>fetchPlan</code></em> is the fetching strategy to use. For more information look at <a class="internal present" href="/orientdb/wiki/Fetching-Strategies.html">Fetching Strategies</a>. Optional, default is *:1 (1 depth level only)</li>
 </ul><p>The <em><code>command-text</code></em> can appear in either the URL or the content of the POST transmission.</p>
 
 <p>Where the command-text is included in the URL, it must be encoded as per  normal URL encoding.</p>
 
-<p>Read the <a href="port%3E%5D/command/%3Cdatabase%3E/%3Clanguage%3E%5B/%3Ccommand-text%3E%5D%5B/limit%5D%5B/%3CfetchPlan%3E%5D%7D%7D%7D">SQL SQL section</a>, or the <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> introduction for the type of commands.</p>
+<p>Read the <a href="port%3E%5D/command/%3Cdatabase%3E/%3Clanguage%3E%5B/%3Ccommand-text%3E%5D%5B/limit%5D%5B/%3CfetchPlan%3E%5D%7D%7D%7D">SQL SQL section</a>, or the <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> introduction for the type of commands.</p>
 
 <h5>Example</h5>
 
@@ -502,7 +502,7 @@ HTTP response: demo2.gzip file</p>
 
 <h5>GET - List Databases</h5>
 
-<p>Retrieves the available databases. It needs the <a class="internal present" href="/wiki/Security.html#server's_resourcesserver'sresource">]/export/}}}</a> "server.listDatabases".</p>
+<p>Retrieves the available databases. It needs the <a class="internal present" href="/orientdb/wiki/Security.html#server's_resourcesserver'sresource">]/export/}}}</a> "server.listDatabases".</p>
 
 <p>Syntax: {{{http://:[To let to the Studio to display the database list by default the permission to list the database is assigned to guest. Remove this permission if you don't want anonymous user can display it.</p>
 
@@ -748,7 +748,7 @@ No response.</p>
 <li>
 <em><code>limit</code></em> is the maximum number of record to return. Optional, default is 20</li>
 <li>
-<em><code>fetchPlan</code></em> is the fetching strategy to use. For more information look at <a class="internal present" href="/wiki/Fetching-Strategies.html">Fetching Strategies</a>. Optional, default is *:1 (1 depth level only)</li>
+<em><code>fetchPlan</code></em> is the fetching strategy to use. For more information look at <a class="internal present" href="/orientdb/wiki/Fetching-Strategies.html">Fetching Strategies</a>. Optional, default is *:1 (1 depth level only)</li>
 </ul><h5>Example</h5>
 
 <p>HTTP GET request: <code>http://localhost:2480/query/demo/sql/select from Profile</code></p>

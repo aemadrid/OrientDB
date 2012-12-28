@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -72,13 +72,13 @@
 <ul>
 <li>
 <strong>target</strong>, as the starting point where to traverse records. Can be:</li>
-<li><strong><a class="internal present" href="/wiki/Concepts.html#class">class</a></strong></li>
-<li><strong><a class="internal present" href="/wiki/Concepts.html#cluster">cluster</a></strong></li>
+<li><strong><a class="internal present" href="/orientdb/wiki/Concepts.html#class">class</a></strong></li>
+<li><strong><a class="internal present" href="/orientdb/wiki/Concepts.html#cluster">cluster</a></strong></li>
 <li>
-<strong>set of records</strong>, specifying its <a class="internal present" href="/wiki/Concepts.html#recordid">RecordID</a>
+<strong>set of records</strong>, specifying its <a class="internal present" href="/orientdb/wiki/Concepts.html#recordid">RecordID</a>
 </li>
 <li>
-<strong>sub-command</strong> that returns an <code>Iterable&lt;OIdentifiable&gt;</code>. You can nest multiple <a href="SQLSelect">select</a> and <a class="internal present" href="/wiki/SQL-Traverse.html">traverse</a> all together</li>
+<strong>sub-command</strong> that returns an <code>Iterable&lt;OIdentifiable&gt;</code>. You can nest multiple <a href="SQLSelect">select</a> and <a class="internal present" href="/orientdb/wiki/SQL-Traverse.html">traverse</a> all together</li>
 <li>
 <strong>fields</strong>, the fields to traverse. Use <code>*</code>, <code>any()</code> or <code>all()</code> to traverse all the fields of a document</li>
 <li>
@@ -100,13 +100,13 @@
 
 <h3>SQL Traverse</h3>
 
-<p>The simpler available way to execute a traversal is using the <a class="internal present" href="/wiki/SQL-Traverse.html">SQL Traverse command</a>. Example to retrieve all the records connected <strong>from</strong> and <strong>to</strong> <strong>Movie</strong> records up to the <strong>5th level of depth</strong>:
+<p>The simpler available way to execute a traversal is using the <a class="internal present" href="/orientdb/wiki/SQL-Traverse.html">SQL Traverse command</a>. Example to retrieve all the records connected <strong>from</strong> and <strong>to</strong> <strong>Movie</strong> records up to the <strong>5th level of depth</strong>:
 </p><div class="highlight"><pre>  for (OIdentifiable id : new OSQLSynchQuery<span class="nt">&lt;ODocument&gt;</span>("traverse in, out from Movie while $depth <span class="err">&lt;</span>= 5")) {
     System.out.println(id);
   }
 </pre></div>
 
-<p>Look at the <a class="internal present" href="/wiki/SQL-Traverse.html">command syntax</a> for more information.</p>
+<p>Look at the <a class="internal present" href="/orientdb/wiki/SQL-Traverse.html">command syntax</a> for more information.</p>
 
 <h3>Native Fluent API</h3>
 

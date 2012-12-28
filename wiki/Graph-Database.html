@@ -19,7 +19,7 @@
   <div class="row">
     <div class="five columns">
       <h1>
-        <a href="/">
+        <a href="/orientdb/">
           Orient<span class="highl">DB</span>
         </a>
         <span class="subtitle">The Document/Graph NoSQL Database</span>
@@ -65,13 +65,13 @@
 
     <h3>Introduction</h3>
 
-<p>OrientDB is a Document-Graph DBMS because has the features of both Document DBMS and Graph DBMS. This section explores the Graph capabilities of OrientDB. To better understand how OrientDB compares to other GraphDB in features and performance look at this <a class="internal present" href="/wiki/GraphDB-Comparison.html">comparison</a>. To know more about Graph Databases look at the following presentations:</p>
+<p>OrientDB is a Document-Graph DBMS because has the features of both Document DBMS and Graph DBMS. This section explores the Graph capabilities of OrientDB. To better understand how OrientDB compares to other GraphDB in features and performance look at this <a class="internal present" href="/orientdb/wiki/GraphDB-Comparison.html">comparison</a>. To know more about Graph Databases look at the following presentations:</p>
 
 <ul>
 <li>
 <a href="http://www.slideshare.net/ingdavidino/graph-db-inphp">GraphDB PHP</a> contains an amazing introduction to what GraphDB can do for you</li>
 <li><a href="http://www.slideshare.net/pierredewilde/a-walk-in-graph-databases-v10">A walk in Graph Databases</a></li>
-</ul><p>NOTE: _If you plan to use OrientDB as pure Graph Database look at the <a class="internal absent" href="/wiki/Graph%28Ed%29-tutorial.html">Graph Ed Tutorial</a>.</p>
+</ul><p>NOTE: _If you plan to use OrientDB as pure Graph Database look at the <a class="internal absent" href="/orientdb/wiki/Graph%28Ed%29-tutorial.html">Graph Ed Tutorial</a>.</p>
 
 <p>The principal feature of a GraphDB is the ability to handle relationships. A GraphDB can traverse thousands of edges at a fraction of the cost of the Relational JOINs because relationships are direct links between document/nodes.</p>
 
@@ -90,7 +90,7 @@
 
 <p>OrientDB supports a superset of <a href="http://blueprints.tinkerpop.com">TinkerPop Blueprints</a> model, the <a href="https://github.com/tinkerpop/blueprints/wiki/Property-Graph-Model">Property Graph Model</a>. The difference is that with OrientDB you can create custom types of vertices and edges. In this example the orange classes are Vertex types, while the green one is the Edge type.</p>
 
-<p>To cross the graph you can use the powerful <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> language, the OrientDB's SQL (an extended version of SQL with new operators to work with Trees and Graphs or a mix of both.</p>
+<p>To cross the graph you can use the powerful <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> language, the OrientDB's SQL (an extended version of SQL with new operators to work with Trees and Graphs or a mix of both.</p>
 
 <p><img src="http://www.orientechnologies.com/images/graph-instance.png"></p>
 
@@ -109,7 +109,7 @@ Extract the name of the animals that eat at 10 AM:
   
   <span class="n">Kelly</span>
 </pre></div>
-Usage of SQL + <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> to extract all the outgoing vertices connected to 'Gaudì' Animal:
+Usage of SQL + <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> to extract all the outgoing vertices connected to 'Gaudì' Animal:
 <div class="highlight"><pre>  <span class="o">&gt;</span> <span class="n">SELECT</span> <span class="n">GREMLIN</span><span class="o">(</span><span class="s">"current.out"</span><span class="o">)</span> <span class="n">FROM</span> <span class="n">Animal</span> <span class="n">where</span> <span class="n">name</span> <span class="o">=</span> <span class="err">'</span><span class="n">Gaud</span><span class="err">ì'</span>
   
   <span class="n">Kelly</span>
@@ -121,11 +121,11 @@ Usage of SQL + <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a>
 
 <ul>
 <li>
-<strong><a class="internal present" href="/wiki/Graph-Database-Raw.html">Graph Database Raw</a></strong>: Raw native API, the fastest but not so fluent API</li>
+<strong><a class="internal present" href="/orientdb/wiki/Graph-Database-Raw.html">Graph Database Raw</a></strong>: Raw native API, the fastest but not so fluent API</li>
 <li>
-<strong><a class="internal present" href="/wiki/Graph-Database-Native.html">Graph Database Native</a></strong>: Native APIs, built on top of core engine (deprecated)</li>
+<strong><a class="internal present" href="/orientdb/wiki/Graph-Database-Native.html">Graph Database Native</a></strong>: Native APIs, built on top of core engine (deprecated)</li>
 <li>
-<strong><a class="internal present" href="/wiki/Graph-Database-Tinkerpop.html">Graph Database Tinkerpop</a></strong>: APIs, using all the technologies buil on top of it such as Gremlin language and Pipes</li>
+<strong><a class="internal present" href="/orientdb/wiki/Graph-Database-Tinkerpop.html">Graph Database Tinkerpop</a></strong>: APIs, using all the technologies buil on top of it such as Gremlin language and Pipes</li>
 </ul><h3>How is it implemented?</h3>
 
 <div class="highlight"><pre>  <span class="o">+--------------+</span>                                       <span class="o">+--------------+</span>
@@ -178,7 +178,7 @@ Since the internal Document-Graph architecture of OrientDB is flexible and fast 
 
 <p>To know more about crossing graph in SQL projections look at <a href="Document_Field_Part#Use_in_graphs">SQL Projections</a>.</p>
 
-<p>Or if you've installed the <a href="http://code.google.com/p/orient/wiki/GraphEdTutorial">Graph(Ed)</a> you can mix <a class="internal present" href="/wiki/Gremlin.html">Gremlin</a> and SQL together:</p>
+<p>Or if you've installed the <a href="http://code.google.com/p/orient/wiki/GraphEdTutorial">Graph(Ed)</a> you can mix <a class="internal present" href="/orientdb/wiki/Gremlin.html">Gremlin</a> and SQL together:</p>
 
 <p>Simple query against vertexes:
 </p><div class="highlight"><pre>  <span class="n">SELECT</span> <span class="nf">GREMLIN</span><span class="o">(</span> <span class="err">'</span><span class="n">current</span><span class="o">.</span><span class="na">outE</span><span class="o">.</span><span class="na">inV</span><span class="err">'</span> <span class="o">)</span> <span class="n">AS</span> <span class="n">labels</span> <span class="n">FROM</span> <span class="n">V</span> <span class="n">WHERE</span> <span class="n">out</span> <span class="n">CONTAINS</span> <span class="o">(</span> <span class="n">label</span> <span class="n">IS</span> <span class="n">NOT</span> <span class="n">NULL</span> <span class="o">)</span>
@@ -194,7 +194,7 @@ Since the internal Document-Graph architecture of OrientDB is flexible and fast 
   <span class="n">CREATE</span> <span class="n">EDGE</span> <span class="n">drive</span> <span class="n">FROM</span> <span class="err">#</span><span class="mi">10</span><span class="o">:</span><span class="mi">2</span> <span class="n">TO</span> <span class="err">#</span><span class="mi">13</span><span class="o">:</span><span class="mi">6</span> <span class="n">SET</span> <span class="n">since</span> <span class="o">=</span> <span class="mi">1980</span>
 </pre></div>
 
-<p>For more information about TRAVERSE command look at <a class="internal present" href="/wiki/SQL-Traverse.html#using_traverse_with_graph_model_and_api">Traverse operator</a>.</p>
+<p>For more information about TRAVERSE command look at <a class="internal present" href="/orientdb/wiki/SQL-Traverse.html#using_traverse_with_graph_model_and_api">Traverse operator</a>.</p>
 
 <p>Do you have doubts if the Graph Model fits at the best your needs? Look at [<a href="http://code.google.com/p/orient/wiki/UseCases#Document_or_Graph_model?">http://code.google.com/p/orient/wiki/UseCases#Document_or_Graph_model?</a>]</p>
 
